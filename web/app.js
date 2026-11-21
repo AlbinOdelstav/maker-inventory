@@ -23,7 +23,7 @@ const I18N = {
     "proj.ready": "{a}/{b} ready", "proj.short": "{n} short", "proj.missing": "{n} missing", "proj.example": "example",
     "proj.need": "Need", "proj.qty": "Qty", "proj.have": "Have", "proj.from": "From stock", "proj.notes": "Notes",
     "proj.shop": "Shopping list", "proj.copy": "Copy as Markdown", "proj.copied": "Shopping list copied", "proj.nothing": "Nothing to buy. You have everything.",
-    "proj.optional": "optional", "proj.alt": "you have: {name} ({qty})", "why.other color": "other color", "why.other specs": "other specs",
+    "proj.optional": "optional", "proj.altHead": "Similar in stock · {why}", "proj.altMore": "+{n} more", "proj.altMissing": "no {key}", "why.other color": "other color", "why.other specs": "other sizes",
     "why.same category": "same category", "why.other finish/brand": "other finish/brand", "proj.inuse": "in use in {p}",
     "col.name": "Name", "col.category": "Category", "col.tags": "Tags", "col.specs": "Specs", "col.location": "Location", "col.qty": "Qty",
     "col.status": "Status", "col.section": "Section", "col.color": "Filament", "col.finish": "Finish", "col.brand": "Brand", "col.grams": "Left", "col.spools": "Spools",
@@ -58,7 +58,7 @@ const I18N = {
     "proj.ready": "{a}/{b} klart", "proj.short": "{n} räcker inte", "proj.missing": "{n} saknas", "proj.example": "exempel",
     "proj.need": "Behov", "proj.qty": "Antal", "proj.have": "Hemma", "proj.from": "Från lagret", "proj.notes": "Noteringar",
     "proj.shop": "Inköpslista", "proj.copy": "Kopiera som Markdown", "proj.copied": "Inköpslistan kopierad", "proj.nothing": "Inget att köpa. Du har allt.",
-    "proj.optional": "valfri", "proj.alt": "du har: {name} ({qty})", "why.other color": "annan färg", "why.other specs": "andra specs",
+    "proj.optional": "valfri", "proj.altHead": "Liknande i lager · {why}", "proj.altMore": "+{n} till", "proj.altMissing": "saknar {key}", "why.other color": "annan färg", "why.other specs": "andra mått",
     "why.same category": "samma kategori", "why.other finish/brand": "annan finish/märke", "proj.inuse": "sitter i {p}",
     "col.name": "Namn", "col.category": "Kategori", "col.tags": "Taggar", "col.specs": "Specs", "col.location": "Plats", "col.qty": "Antal",
     "col.status": "Status", "col.section": "Sektion", "col.color": "Filament", "col.finish": "Finish", "col.brand": "Märke", "col.grams": "Kvar", "col.spools": "Rullar",
@@ -378,6 +378,22 @@ function searchView() {
 }
 
 // ---------------------------------------------------------------- projects
+// Near matches under a need: one compact group per reason, each item a chip that opens the item.
+function altsHtml(r, why) {
+  if (!r.alternatives.length) return "";
+  const groups = [];
+  for (const a of r.alternatives) {
+    const g = groups.find((x) => x.why === a.why) || (groups.push({ why: a.why, list: [] }), groups.at(-1));
+    g.list.push(a);
+  }
+  const chip = (a) => {
+    const diff = (a.diff || []).map((d) => d.have == null ? t("proj.altMissing", { key: specLabel(d.key) }) : `${specLabel(d.key)} ${d.have}`).join(", ");
+    return `<a href="#" class="alt-chip" data-open="${esc(a.id)}" title="${esc(a.name)}"><span class="alt-name">${esc(a.name)}</span>
+      <span class="alt-meta">${esc(fmtNum(a.qty) + " " + unitLabel(a.unit))}${diff ? " · " + esc(diff) : ""}</span></a>`;
+  };
+  return `<div class="alts">${groups.map((g, i) => `<div class="alt-group"><span class="alt-head">${esc(t("proj.altHead", { why: why(g.why) }))}</span>
+    ${g.list.map(chip).join("")}${i === groups.length - 1 && r.moreAlternatives ? `<span class="alt-more">${esc(t("proj.altMore", { n: r.moreAlternatives }))}</span>` : ""}</div>`).join("")}</div>`;
+}
 const fromLabel = (f) => { const it = S.items.find((i) => i.id === f.id); return it ? (it._file === "filament" ? filamentTitle(it) : it.name) : (f.name || f.id); };
 function projectsView() {
   if (!S.projects.length) return `<div class="welcome">${icon("projects")}<h2>${esc(t("proj.none"))}</h2><p>${esc(t("proj.empty"))}</p>
@@ -393,7 +409,7 @@ function projectsView() {
   const rows = cur.rows.map((r) => {
     const notes = [r.optional && `<span class="badge b-info">${esc(t("proj.optional"))}</span>`, r.unverified && `<span class="badge b-warn">${esc(t("b.unverified"))}</span>`,
       ...r.from.filter((f) => f.in_use).map((f) => `<span class="badge b-info">${esc(t("proj.inuse", { p: f.in_use }))}</span>`), r.note && `<span class="muted">${esc(r.note)}</span>`].filter(Boolean).join(" ");
-    const alts = r.alternatives.map((a) => `<div class="alt">↳ ${esc(why(a.why))}: ${esc(t("proj.alt", { name: a.name, qty: fmtNum(a.qty) + " " + unitLabel(a.unit) }))}</div>`).join("");
+    const alts = altsHtml(r, why);
     return `<tr style="cursor:default"><td><span class="st st-${r.status}">${r.status === "OK" ? "✓" : r.status === "SHORT" ? "◐" : "✕"}</span></td>
       <td><div class="name">${esc(r.need)}</div>${alts}</td><td class="num">${fmtNum(r.qty)} ${esc(unitLabel(r.unit))}</td><td class="num">${fmtNum(r.got)}</td>
       <td class="hide-sm">${r.from.map((f) => `<a href="#" data-open="${esc(f.id)}">${esc(fromLabel(f))}</a>`).join(", ") || "–"}</td><td class="hide-sm">${notes}</td></tr>`;
@@ -410,7 +426,7 @@ function projectsView() {
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">${progBar(projStats(cur)).replace('class="prog"', 'class="prog" style="width:110px"')}
         ${LIVE ? `<button class="btn sm" data-act="edit-project">${icon("edit")}${esc(t("proj.edit"))}</button>
           <button class="btn sm" data-act="build-project" ${canBuild ? "" : "disabled"} title="${esc(t("proj.build.hint"))}">${icon("check")}${esc(t("proj.build"))}</button>` : ""}</div></div>
-        ${cur.rows.length ? `<div style="overflow-x:auto"><table><thead><tr><th></th><th>${esc(t("proj.need"))}</th><th class="num">${esc(t("proj.qty"))}</th><th class="num">${esc(t("proj.have"))}</th><th class="hide-sm">${esc(t("proj.from"))}</th><th class="hide-sm">${esc(t("proj.notes"))}</th></tr></thead><tbody>${rows}</tbody></table></div>`
+        ${cur.rows.length ? `<div style="overflow-x:auto"><table class="proj-table"><thead><tr><th></th><th>${esc(t("proj.need"))}</th><th class="num">${esc(t("proj.qty"))}</th><th class="num">${esc(t("proj.have"))}</th><th class="hide-sm">${esc(t("proj.from"))}</th><th class="hide-sm">${esc(t("proj.notes"))}</th></tr></thead><tbody>${rows}</tbody></table></div>`
           : `<div class="empty-mini">${esc(t("proj.noNeeds"))}</div>`}</section>
       <section class="panel full"><div class="panel-h"><h2>${esc(t("proj.shop"))}</h2>${buyIdx.length ? `<button class="btn sm" data-act="copy-shop">${icon("copy")}${esc(t("proj.copy"))}</button>` : ""}</div><div class="shop">${shop}</div></section>
     </div></div>`;

@@ -82,6 +82,37 @@ function relaxations(m) {
   return out;
 }
 
+const MAX_ALTERNATIVES = 3;
+const num = (v) => { const n = parseFloat(String(v ?? "").replace(",", ".")); return Number.isFinite(n) ? n : null; };
+
+// Near matches the user already owns, closest first. With specs, items that share more of the wanted
+// specs rank higher, earlier keys weigh more (thread before length), then numerically closer values
+// (15 mm for 16 mm). Items that miss the first wanted spec are dropped when some item has it. Each alternative lists how its specs differ.
+function findAlternatives(inv, m, cands) {
+  const seen = new Set(cands.map((c) => c.id));
+  const wanted = Object.entries(m.specs ?? {});
+  const all = [];
+  relaxations(m).forEach(([why, r], tier) => {
+    for (const it of inv.filter((i) => matches(i, r) && !seen.has(i.id))) {
+      seen.add(it.id);
+      let same = 0, dist = 0, lead = wanted.length === 0;
+      const diff = [];
+      for (const [k, want] of wanted) {
+        const have = it.specs?.[k];
+        if (norm(have) === norm(want)) { same += 2 ** (wanted.length - 1 - wanted.findIndex(([x]) => x === k)); if (k === wanted[0][0]) lead = true; continue; }
+        diff.push({ key: k, want: String(want), have: have == null ? null : String(have) });
+        const a = num(have), b = num(want);
+        dist += a != null && b != null ? Math.abs(a - b) / Math.max(Math.abs(b), 1) : 1;
+      }
+      all.push({ why, tier, same, dist, lead, alt: { why, id: it.id, name: it.name, qty: it.qty, unit: unitOf(it), diff } });
+    }
+  });
+  const anyLead = all.some((a) => a.why === "other specs" && a.lead);
+  const kept = all.filter((a) => a.why !== "other specs" || a.lead || !anyLead)
+    .sort((a, b) => a.tier - b.tier || b.same - a.same || a.dist - b.dist);
+  return { alternatives: kept.slice(0, MAX_ALTERNATIVES).map((a) => a.alt), moreAlternatives: Math.max(0, kept.length - MAX_ALTERNATIVES) };
+}
+
 const describe = (need) =>
   need.name ?? need.id ?? Object.entries(need.match ?? {}).map(([k, v]) => `${k}=${typeof v === "object" ? JSON.stringify(v) : v}`).join(", ");
 
@@ -107,17 +138,8 @@ export function computeCheck(inv, proj) {
     }
     const status = got >= qty ? "OK" : got > 0 ? "SHORT" : "MISSING";
     const unit = need.unit ?? (cands[0] ? unitOf(cands[0]) : need.match?.material ? "g" : "pcs");
-    const alternatives = [];
-    if (status !== "OK" && need.match) {
-      const seen = new Set(cands.map((c) => c.id));
-      for (const [why, m] of relaxations(need.match)) {
-        for (const it of inv.filter((i) => matches(i, m) && !seen.has(i.id))) {
-          seen.add(it.id);
-          alternatives.push({ why, id: it.id, name: it.name, qty: it.qty, unit: unitOf(it) });
-        }
-      }
-    }
-    rows.push({ need: describe(need), qty, unit, got, status, from, alternatives,
+    const { alternatives, moreAlternatives } = status !== "OK" && need.match ? findAlternatives(inv, need.match, cands) : { alternatives: [], moreAlternatives: 0 };
+    rows.push({ need: describe(need), qty, unit, got, status, from, alternatives, moreAlternatives,
       unverified: from.some((f) => !f.verified), optional: !!need.optional, buy: need.buy, note: need.note });
   }
   return rows;
