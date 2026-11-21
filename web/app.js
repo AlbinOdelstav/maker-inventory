@@ -87,6 +87,7 @@ const fileLabel = (f) => I18N[lang]["file." + f] ? t("file." + f) : f;
 // ---------------------------------------------------------------- vocabulary
 // Data stores canonical keys (English); the UI shows them in the chosen language and accepts either.
 const VOCAB = window.__VOCAB__ || { colors: {}, finishes: {}, categories: {}, units: {}, specKeys: {} };
+if (!window.__VOCAB__) console.warn("maker-inventory: no vocabulary from the server. Restart `node inv.mjs app` after updating the tool.");
 const ALL_CATS = Object.assign({}, ...Object.values(VOCAB.categories));
 const vnorm = (s) => String(s ?? "").trim().toLowerCase();
 function canon(table, value) {

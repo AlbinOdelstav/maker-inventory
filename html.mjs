@@ -10,9 +10,13 @@ const BS = String.fromCharCode(92);
 const safeJson = (v) => JSON.stringify(v).split("<").join(BS + "u003c")
   .split(String.fromCharCode(0x2028)).join(BS + "u2028").split(String.fromCharCode(0x2029)).join(BS + "u2029");
 
+// Read the page assets once, when the server (or CLI) starts, so the page always matches the
+// server code that is running. Reading them per request mixed new app.js with an old server
+// (e.g. an empty color list). After updating the tool, restart `node inv.mjs app`.
+const css = readFileSync(join(ROOT, "web", "app.css"), "utf8");
+const js = readFileSync(join(ROOT, "web", "app.js"), "utf8").replace(/<\/script/gi, "<\\/script");
+
 export function renderApp({ live = false, snapshot = null } = {}) {
-  const css = readFileSync(join(ROOT, "web", "app.css"), "utf8");
-  const js = readFileSync(join(ROOT, "web", "app.js"), "utf8").replace(/<\/script/gi, "<\\/script");
   const boot = live ? { mode: "live", data: { items: [], projects: [] } } : { mode: "snapshot", data: snapshot ?? { items: [], projects: [] } };
   return `<!doctype html>
 <html lang="en">
