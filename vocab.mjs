@@ -41,13 +41,13 @@ export const VOCAB = {
       mcu: { en: "microcontroller", sv: "mikrokontroller" }, driver: { en: "driver", sv: "drivkrets" },
       motor: { en: "motor", sv: "motor" }, servo: { en: "servo", sv: "servo" }, sensor: { en: "sensor", sv: "sensor" },
       display: { en: "display", sv: "display" }, power: { en: "power", sv: "ström" }, module: { en: "module", sv: "modul" },
-      passive: { en: "passive", sv: "passiv komponent" }, connector: { en: "connector", sv: "kontakt" }, button: { en: "button / switch", sv: "knapp / brytare", aliases: ["button", "switch", "knapp"] },
+      passive: { en: "passive", sv: "passiv komponent" }, led: { en: "LED", sv: "lysdiod", aliases: ["leds", "lysdioder"] }, connector: { en: "connector", sv: "kontakt" }, button: { en: "button / switch", sv: "knapp / brytare", aliases: ["button", "switch", "knapp"] },
       other: { en: "other", sv: "övrigt" },
     },
     hardware: {
       screw: { en: "screw", sv: "skruv" }, nut: { en: "nut", sv: "mutter" }, insert: { en: "heat-set insert", sv: "insatsmutter" },
       washer: { en: "washer", sv: "bricka" }, magnet: { en: "magnet", sv: "magnet" }, spring: { en: "spring", sv: "fjäder" },
-      bearing: { en: "bearing", sv: "kullager" }, shaft: { en: "shaft", sv: "axel" }, pin: { en: "pin", sv: "stift" },
+      bearing: { en: "bearing", sv: "kullager" }, shaft: { en: "shaft", sv: "axel" }, pin: { en: "pin", sv: "stift" }, standoff: { en: "standoff", sv: "distans", aliases: ["spacer"] },
       panel: { en: "panel / sheet", sv: "skiva", aliases: ["panel", "sheet"] }, foot: { en: "rubber foot", sv: "gummifot", aliases: ["foot", "feet"] }, other: { en: "other", sv: "övrigt" },
     },
     consumables: {
@@ -72,6 +72,7 @@ export const VOCAB = {
     wire: { en: "wire", sv: "tråd" }, od: { en: "outer diameter", sv: "ytterdiameter" }, free_length: { en: "free length", sv: "fri längd" },
     solid_length: { en: "solid length", sv: "blocklängd" }, k_est: { en: "spring rate (est.)", sv: "fjäderkonstant (uppsk.)" }, pitch: { en: "pitch", sv: "stigning" }, t: { en: "thickness", sv: "tjocklek" },
     diameter: { en: "diameter", sv: "diameter" }, build_volume: { en: "build volume", sv: "byggvolym" }, nozzle: { en: "nozzle", sv: "munstycke" },
+    resistance: { en: "resistance", sv: "resistans" }, capacitance: { en: "capacitance", sv: "kapacitans" }, standard: { en: "standard", sv: "standard" },
   },
 };
 

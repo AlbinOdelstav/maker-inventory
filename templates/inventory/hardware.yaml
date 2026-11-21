@@ -1,6 +1,6 @@
 # Mechanical parts and fasteners: screws, nuts, heat-set inserts, magnets, springs, bearings, shafts ...
 #
-#   category  screw | nut | insert | washer | magnet | spring | bearing | shaft | other
+#   category  screw | nut | insert | washer | magnet | spring | standoff | bearing | shaft | pin | panel | foot | other
 #   specs     screw:  { thread: M3, length: 12, head: socket|pan|flat|self-tap }
 #             magnet: { d: 6, h: 3, grade: N52 }
 #             spring: { wire: 1.0, od: 7, free_length: 40 }

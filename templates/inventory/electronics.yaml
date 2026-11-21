@@ -2,7 +2,7 @@
 #
 #   id        unique, kebab-case, never changes (projects refer to it)
 #   name      what it is, as specific as possible (variant matters: single vs dual shaft, 3.3V vs 5V)
-#   category  mcu | driver | motor | servo | sensor | display | power | module | passive | connector | other
+#   category  mcu | driver | motor | servo | sensor | display | power | module | passive | led | connector | button | other
 #   qty       how many you have
 #   unit      pcs (default)
 #   tags      keywords agents match on (voltage, protocol, form factor ...)
