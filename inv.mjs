@@ -46,7 +46,7 @@ function check(projectPath, asJson) {
     const from = r.from.map((f) => `${f.id}${f.verified ? "" : " ⚠"}${f.location ? ` (${f.location})` : ""}`).join(", ");
     const notes = [r.optional && "optional", r.note, r.unverified && "⚠ not verified",
       ...r.from.filter((f) => f.in_use).map((f) => `in use in ${f.in_use} (must be taken out)`),
-      ...r.alternatives.map((a) => `alt (${a.why}): ${a.name} ${a.qty} ${a.unit}${a.diff?.length ? ` [${a.diff.map((d) => `${d.key} ${d.have ?? "–"}`).join(", ")}]` : ""}`), r.moreAlternatives && `+${r.moreAlternatives} more`].filter(Boolean).join("; ");
+      ...r.alternatives.slice(0, 3).map((a) => `alt (${a.why}): ${a.name} ${a.qty} ${a.unit}${a.diff?.length ? ` [${a.diff.map((d) => `${d.key} ${d.have ?? "–"}`).join(", ")}]` : ""}`), r.alternatives.length > 3 && `+${r.alternatives.length - 3} more`].filter(Boolean).join("; ");
     console.log(`| ${icon[r.status]} | ${r.need} | ${r.qty} ${r.unit} | ${r.got} | ${from || "–"} | ${notes} |`);
   }
   const buy = rows.filter((r) => r.status !== "OK");

@@ -82,7 +82,6 @@ function relaxations(m) {
   return out;
 }
 
-const MAX_ALTERNATIVES = 3;
 const num = (v) => { const n = parseFloat(String(v ?? "").replace(",", ".")); return Number.isFinite(n) ? n : null; };
 
 // Near matches the user already owns, closest first. With specs, items that share more of the wanted
@@ -110,7 +109,7 @@ function findAlternatives(inv, m, cands) {
   const anyLead = all.some((a) => a.why === "other specs" && a.lead);
   const kept = all.filter((a) => a.why !== "other specs" || a.lead || !anyLead)
     .sort((a, b) => a.tier - b.tier || b.same - a.same || a.dist - b.dist);
-  return { alternatives: kept.slice(0, MAX_ALTERNATIVES).map((a) => a.alt), moreAlternatives: Math.max(0, kept.length - MAX_ALTERNATIVES) };
+  return kept.map((a) => a.alt);
 }
 
 const describe = (need) =>
@@ -138,8 +137,8 @@ export function computeCheck(inv, proj) {
     }
     const status = got >= qty ? "OK" : got > 0 ? "SHORT" : "MISSING";
     const unit = need.unit ?? (cands[0] ? unitOf(cands[0]) : need.match?.material ? "g" : "pcs");
-    const { alternatives, moreAlternatives } = status !== "OK" && need.match ? findAlternatives(inv, need.match, cands) : { alternatives: [], moreAlternatives: 0 };
-    rows.push({ need: describe(need), qty, unit, got, status, from, alternatives, moreAlternatives,
+    const alternatives = status !== "OK" && need.match ? findAlternatives(inv, need.match, cands) : [];
+    rows.push({ need: describe(need), qty, unit, got, status, from, alternatives,
       unverified: from.some((f) => !f.verified), optional: !!need.optional, buy: need.buy, note: need.note });
   }
   return rows;

@@ -11,14 +11,13 @@ const dir = mkdtempSync(join(tmpdir(), "maker-inv-"));
 const run = (...a) => execFileSync(process.execPath, [CLI, ...a], { env: { ...process.env, MAKER_INVENTORY_DIR: dir }, encoding: "utf8" });
 
 try {
-  // Alternatives: same thread and closest length first, other threads dropped, capped at 3.
+  // Alternatives: same thread and closest length first, other threads dropped.
   {
     const { computeCheck } = await import("../lib.mjs");
     const scr = (t, l) => ({ id: `${t}x${l}`, name: `${t}x${l}`, category: "screw", qty: 5, specs: { thread: t, length: l } });
     const inv = [scr("M3", 30), scr("M3", 15), scr("M4", 16), scr("M3", 20), scr("M3", 6), scr("M5", 16)];
     const [row] = computeCheck(inv, { needs: [{ name: "M3x16", match: { category: "screw", specs: { thread: "M3", length: 16 } }, qty: 4 }] });
-    assert.deepEqual(row.alternatives.map((a) => a.id), ["M3x15", "M3x20", "M3x6"]);
-    assert.equal(row.moreAlternatives, 1);
+    assert.deepEqual(row.alternatives.map((a) => a.id), ["M3x15", "M3x20", "M3x6", "M3x30"]);
     assert.deepEqual(row.alternatives[0].diff, [{ key: "length", want: "16", have: "15" }]);
   }
 

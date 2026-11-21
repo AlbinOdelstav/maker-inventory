@@ -23,7 +23,7 @@ const I18N = {
     "proj.ready": "{a}/{b} ready", "proj.short": "{n} short", "proj.missing": "{n} missing", "proj.example": "example",
     "proj.need": "Need", "proj.qty": "Qty", "proj.have": "Have", "proj.from": "From stock", "proj.notes": "Notes",
     "proj.shop": "Shopping list", "proj.copy": "Copy as Markdown", "proj.copied": "Shopping list copied", "proj.nothing": "Nothing to buy. You have everything.",
-    "proj.optional": "optional", "proj.altHead": "Similar in stock · {why}", "proj.altMore": "+{n} more", "proj.altMissing": "no {key}", "why.other color": "other color", "why.other specs": "other sizes",
+    "proj.optional": "optional", "proj.altHead": "Similar in stock · {why}", "proj.altToggle": "{n} similar", "proj.altMissing": "no {key}", "why.other color": "other color", "why.other specs": "other sizes",
     "why.same category": "same category", "why.other finish/brand": "other finish/brand", "proj.inuse": "in use in {p}",
     "col.name": "Name", "col.category": "Category", "col.tags": "Tags", "col.specs": "Specs", "col.location": "Location", "col.qty": "Qty",
     "col.status": "Status", "col.section": "Section", "col.color": "Filament", "col.finish": "Finish", "col.brand": "Brand", "col.grams": "Left", "col.spools": "Spools",
@@ -40,7 +40,7 @@ const I18N = {
     "f.specs": "Specs", "f.spec.key": "key (e.g. voltage)", "f.spec.val": "value", "f.spec.add": "Add spec", "f.notes": "Notes", "f.source": "Source",
     "t.saved": "Saved", "t.added": "Added {n}", "t.deleted": "Deleted {n}", "t.conflict": "The file was changed elsewhere (an agent?). Reloaded — check and save again.",
     "t.reloaded": "Updated from disk", "t.error": "Could not save: {e}", "t.offline": "Lost connection to the app server",
-    "a.dec": "Decrease", "a.inc": "Increase", "a.remove": "Remove", "nav.settings": "Settings", "proj.new": "New project", "proj.fromExample": "Start from example", "proj.empty": "List what a build needs and see at a glance what you already have and what to buy.", "proj.agentHint": "You can also ask an agent: “check if I have everything for …”.", "proj.edit": "Edit", "proj.build": "Mark as built", "proj.build.hint": "Take the parts this project uses out of stock", "proj.restock": "Add to stock", "proj.restock.hint": "Bought it? Add it to your inventory", "proj.noNeeds": "No needs yet. Click Edit to list what this project needs.", "pe.new": "New project", "pe.edit": "Edit project", "pe.name": "Project name", "pe.name.ph": "e.g. Vending machine v12", "pe.notes.ph": "Optional: version, link to the design …", "pe.needs": "What it needs", "pe.needs.hint": "One row per part. “Any matching” finds anything in stock that fits (e.g. any 5V microcontroller); “Specific item” points at one thing you own.", "pe.mode.match": "Any matching", "pe.mode.item": "Specific item", "pe.remove": "Remove need", "pe.what": "What", "pe.what.ph": "e.g. Microcontroller", "pe.item": "Item from your inventory", "pe.item.hint": "Missing from the list? Use “Any matching” and describe it instead.", "pe.pick": "Pick an item…", "pe.anySection": "Any section", "pe.tags": "Must have tags", "pe.tags.ph": "e.g. 5v, i2c", "pe.specs": "Must have specs", "pe.specs.ph": "e.g. thread=M3, length=10", "pe.optional": "Optional (nice to have)", "pe.more": "Note & where to buy", "pe.text": "Name contains", "pe.text.ph": "e.g. uno", "pe.where": "Where to buy", "pe.price": "Est. price", "pe.link": "Link", "pe.add": "Add need", "pe.created": "Created {n}", "bd.title": "Built: {n}", "bd.intro": "Record that you built this project. Choose what happens to the parts it used.", "bd.deduct": "Use up the parts", "bd.deduct.hint": "Subtract the quantities from stock (filament, screws, components).", "bd.inuse": "Mark them as built in", "bd.inuse.hint": "Keep them in stock but flag them as in use in “{p}”.", "bd.parts": "Parts", "bd.none": "Nothing from your stock is allocated to this project.", "bd.confirm": "Confirm", "bd.done.deduct": "Stock updated ({n} items)", "bd.done.inuse": "Marked {n} items as in use", "st.appearance": "Appearance", "st.data": "Data", "st.dataDir": "Data folder", "st.dataDir.hint": "Your YAML files. Set MAKER_INVENTORY_DIR before starting the app to use another folder.", "st.copy": "Copy", "st.copied": "Copied", "st.check": "Check data", "st.check.hint": "Finds duplicate ids, missing fields and bad quantities.", "st.check.run": "Run check", "st.check.ok": "All good · {n} items", "st.snapshot": "Read-only snapshot", "st.snapshot.hint": "A single HTML file you can open without the app. Updated on every save.", "st.snapshot.run": "Rebuild now", "st.snapshot.done": "Snapshot rebuilt", "st.ai": "AI agents (Claude Code)", "st.ai.intro": "Optional. Installs a skill so agents in any project folder can check this inventory and update it when you tell them.", "st.skill": "Inventory skill", "st.skill.ok": "Installed", "st.skill.missing": "Not installed", "st.skill.other": "Points to another folder", "st.skill.install": "Install", "st.skill.update": "Reinstall", "st.skill.done": "Skill installed", "st.keys": "Keyboard shortcuts", "st.key.search": "Search", "st.key.new": "New item / project", "st.key.save": "Save", "st.key.close": "Close panel",
+    "a.dec": "Decrease", "a.inc": "Increase", "a.remove": "Remove", "nav.settings": "Settings", "proj.new": "New project", "proj.fromExample": "Start from example", "proj.empty": "List what a build needs and see at a glance what you already have and what to buy.", "proj.agentHint": "You can also ask an agent: “check if I have everything for …”.", "proj.edit": "Edit", "proj.build": "Mark as built", "proj.build.hint": "Take the parts this project uses out of stock", "proj.restock": "Add to stock", "proj.restock.hint": "Bought it? Add it to your inventory", "proj.noNeeds": "No needs yet. Click Edit to list what this project needs.", "pe.new": "New project", "pe.edit": "Edit project", "pe.name": "Project name", "pe.name.ph": "e.g. Vending machine v12", "pe.notes.ph": "Optional: version, link to the design …", "pe.needs": "What it needs", "pe.needs.hint": "One row per part. “Any matching” finds anything in stock that fits (e.g. any 5V microcontroller); “Specific item” points at one thing you own.", "pe.mode.match": "Any matching", "pe.mode.item": "Specific item", "pe.remove": "Remove need", "pe.what": "What", "pe.what.ph": "e.g. Microcontroller", "pe.item": "Item from your inventory", "pe.item.hint": "Missing from the list? Use “Any matching” and describe it instead.", "pe.pick": "Pick an item…", "pe.anySection": "Any section", "pe.tags": "Must have tags", "pe.tags.ph": "e.g. 5v, i2c", "pe.specs": "Must have specs", "pe.specs.ph": "e.g. thread=M3, length=10", "pe.optional": "Optional (nice to have)", "pe.more": "Note & where to buy", "pe.text": "Name contains", "pe.text.ph": "e.g. uno", "pe.where": "Where to buy", "pe.price": "Est. price", "pe.link": "Link", "pe.add": "Add need", "pe.created": "Created {n}", "bd.title": "Built: {n}", "bd.intro": "Record that you built this project. Choose what happens to the parts it used.", "bd.deduct": "Use up the parts", "bd.deduct.hint": "Subtract the quantities from stock (filament, screws, components).", "bd.inuse": "Mark them as built in", "bd.inuse.hint": "Keep them in stock but flag them as in use in “{p}”.", "bd.parts": "Parts", "bd.none": "Nothing from your stock is allocated to this project.", "bd.confirm": "Confirm", "bd.done.deduct": "Stock updated ({n} items)", "bd.done.inuse": "Marked {n} items as in use", "st.appearance": "Appearance", "st.data": "Data", "st.dataDir": "Data folder", "st.dataDir.hint": "Your YAML files. Set MAKER_INVENTORY_DIR before starting the app to use another folder.", "st.copy": "Copy", "st.copied": "Copied", "stale": "The app server is older than this page, so colors and translations are wrong. Stop it (Ctrl+C) and run node inv.mjs app again.", "st.check": "Check data", "st.check.hint": "Finds duplicate ids, missing fields and bad quantities.", "st.check.run": "Run check", "st.check.ok": "All good · {n} items", "st.snapshot": "Read-only snapshot", "st.snapshot.hint": "A single HTML file you can open without the app. Updated on every save.", "st.snapshot.run": "Rebuild now", "st.snapshot.done": "Snapshot rebuilt", "st.ai": "AI agents (Claude Code)", "st.ai.intro": "Optional. Installs a skill so agents in any project folder can check this inventory and update it when you tell them.", "st.skill": "Inventory skill", "st.skill.ok": "Installed", "st.skill.missing": "Not installed", "st.skill.other": "Points to another folder", "st.skill.install": "Install", "st.skill.update": "Reinstall", "st.skill.done": "Skill installed", "st.keys": "Keyboard shortcuts", "st.key.search": "Search", "st.key.new": "New item / project", "st.key.save": "Save", "st.key.close": "Close panel",
     "unsaved": "Discard unsaved changes?",
   },
   sv: {
@@ -58,7 +58,7 @@ const I18N = {
     "proj.ready": "{a}/{b} klart", "proj.short": "{n} räcker inte", "proj.missing": "{n} saknas", "proj.example": "exempel",
     "proj.need": "Behov", "proj.qty": "Antal", "proj.have": "Hemma", "proj.from": "Från lagret", "proj.notes": "Noteringar",
     "proj.shop": "Inköpslista", "proj.copy": "Kopiera som Markdown", "proj.copied": "Inköpslistan kopierad", "proj.nothing": "Inget att köpa. Du har allt.",
-    "proj.optional": "valfri", "proj.altHead": "Liknande i lager · {why}", "proj.altMore": "+{n} till", "proj.altMissing": "saknar {key}", "why.other color": "annan färg", "why.other specs": "andra mått",
+    "proj.optional": "valfri", "proj.altHead": "Liknande i lager · {why}", "proj.altToggle": "{n} liknande", "proj.altMissing": "saknar {key}", "why.other color": "annan färg", "why.other specs": "andra mått",
     "why.same category": "samma kategori", "why.other finish/brand": "annan finish/märke", "proj.inuse": "sitter i {p}",
     "col.name": "Namn", "col.category": "Kategori", "col.tags": "Taggar", "col.specs": "Specs", "col.location": "Plats", "col.qty": "Antal",
     "col.status": "Status", "col.section": "Sektion", "col.color": "Filament", "col.finish": "Finish", "col.brand": "Märke", "col.grams": "Kvar", "col.spools": "Rullar",
@@ -75,7 +75,7 @@ const I18N = {
     "f.specs": "Specs", "f.spec.key": "nyckel (t.ex. spänning)", "f.spec.val": "värde", "f.spec.add": "Lägg till spec", "f.notes": "Anteckningar", "f.source": "Källa",
     "t.saved": "Sparat", "t.added": "Lade till {n}", "t.deleted": "Tog bort {n}", "t.conflict": "Filen ändrades någon annanstans (en agent?). Laddade om – kolla och spara igen.",
     "t.reloaded": "Uppdaterat från disk", "t.error": "Kunde inte spara: {e}", "t.offline": "Tappade kontakten med app-servern",
-    "a.dec": "Minska", "a.inc": "Öka", "a.remove": "Ta bort", "nav.settings": "Inställningar", "proj.new": "Nytt projekt", "proj.fromExample": "Utgå från exempel", "proj.empty": "Lista vad ett bygge behöver och se direkt vad du redan har och vad du måste köpa.", "proj.agentHint": "Du kan också fråga en agent: ”kolla om jag har allt för …”.", "proj.edit": "Ändra", "proj.build": "Markera som byggt", "proj.build.hint": "Ta delarna projektet använder ur lagret", "proj.restock": "Lägg in i lagret", "proj.restock.hint": "Köpt? Lägg in det i lagret", "proj.noNeeds": "Inga behov än. Klicka Ändra för att lista vad projektet behöver.", "pe.new": "Nytt projekt", "pe.edit": "Ändra projekt", "pe.name": "Projektnamn", "pe.name.ph": "t.ex. Godisautomat v12", "pe.notes.ph": "Valfritt: version, länk till ritningen …", "pe.needs": "Vad det behöver", "pe.needs.hint": "En rad per del. ”Valfri som matchar” hittar allt i lagret som passar (t.ex. valfri 5V-mikrokontroller); ”Specifik post” pekar på en sak du har.", "pe.mode.match": "Valfri som matchar", "pe.mode.item": "Specifik post", "pe.remove": "Ta bort behov", "pe.what": "Vad", "pe.what.ph": "t.ex. Mikrokontroller", "pe.item": "Post i lagret", "pe.item.hint": "Saknas den i listan? Välj ”Valfri som matchar” och beskriv den i stället.", "pe.pick": "Välj en post…", "pe.anySection": "Valfri sektion", "pe.tags": "Måste ha taggar", "pe.tags.ph": "t.ex. 5v, i2c", "pe.specs": "Måste ha specs", "pe.specs.ph": "t.ex. gänga=M3, längd=10", "pe.optional": "Valfri (bra att ha)", "pe.more": "Anteckning & var man köper", "pe.text": "Namnet innehåller", "pe.text.ph": "t.ex. uno", "pe.where": "Var man köper", "pe.price": "Ungefärligt pris", "pe.link": "Länk", "pe.add": "Lägg till behov", "pe.created": "Skapade {n}", "bd.title": "Byggt: {n}", "bd.intro": "Registrera att du har byggt projektet. Välj vad som händer med delarna det använde.", "bd.deduct": "Förbruka delarna", "bd.deduct.hint": "Dra av antalen från lagret (filament, skruv, komponenter).", "bd.inuse": "Markera som monterade i", "bd.inuse.hint": "Behåll dem i lagret men flagga dem som monterade i ”{p}”.", "bd.parts": "Delar", "bd.none": "Inget från lagret är kopplat till projektet.", "bd.confirm": "Bekräfta", "bd.done.deduct": "Lagret uppdaterat ({n} poster)", "bd.done.inuse": "Markerade {n} poster som monterade", "st.appearance": "Utseende", "st.data": "Data", "st.dataDir": "Datamapp", "st.dataDir.hint": "Dina YAML-filer. Sätt MAKER_INVENTORY_DIR innan du startar appen för att använda en annan mapp.", "st.copy": "Kopiera", "st.copied": "Kopierat", "st.check": "Kontrollera data", "st.check.hint": "Hittar dubbla id:n, saknade fält och felaktiga antal.", "st.check.run": "Kör kontroll", "st.check.ok": "Allt ok · {n} poster", "st.snapshot": "Skrivskyddad ögonblicksbild", "st.snapshot.hint": "En enda HTML-fil du kan öppna utan appen. Uppdateras vid varje sparning.", "st.snapshot.run": "Bygg om nu", "st.snapshot.done": "Ögonblicksbilden ombyggd", "st.ai": "AI-agenter (Claude Code)", "st.ai.intro": "Valfritt. Installerar en skill så att agenter i vilken projektmapp som helst kan kolla lagret och uppdatera det när du ber dem.", "st.skill": "Inventory-skill", "st.skill.ok": "Installerad", "st.skill.missing": "Inte installerad", "st.skill.other": "Pekar på en annan mapp", "st.skill.install": "Installera", "st.skill.update": "Installera om", "st.skill.done": "Skill installerad", "st.keys": "Kortkommandon", "st.key.search": "Sök", "st.key.new": "Ny post / nytt projekt", "st.key.save": "Spara", "st.key.close": "Stäng panelen",
+    "a.dec": "Minska", "a.inc": "Öka", "a.remove": "Ta bort", "nav.settings": "Inställningar", "proj.new": "Nytt projekt", "proj.fromExample": "Utgå från exempel", "proj.empty": "Lista vad ett bygge behöver och se direkt vad du redan har och vad du måste köpa.", "proj.agentHint": "Du kan också fråga en agent: ”kolla om jag har allt för …”.", "proj.edit": "Ändra", "proj.build": "Markera som byggt", "proj.build.hint": "Ta delarna projektet använder ur lagret", "proj.restock": "Lägg in i lagret", "proj.restock.hint": "Köpt? Lägg in det i lagret", "proj.noNeeds": "Inga behov än. Klicka Ändra för att lista vad projektet behöver.", "pe.new": "Nytt projekt", "pe.edit": "Ändra projekt", "pe.name": "Projektnamn", "pe.name.ph": "t.ex. Godisautomat v12", "pe.notes.ph": "Valfritt: version, länk till ritningen …", "pe.needs": "Vad det behöver", "pe.needs.hint": "En rad per del. ”Valfri som matchar” hittar allt i lagret som passar (t.ex. valfri 5V-mikrokontroller); ”Specifik post” pekar på en sak du har.", "pe.mode.match": "Valfri som matchar", "pe.mode.item": "Specifik post", "pe.remove": "Ta bort behov", "pe.what": "Vad", "pe.what.ph": "t.ex. Mikrokontroller", "pe.item": "Post i lagret", "pe.item.hint": "Saknas den i listan? Välj ”Valfri som matchar” och beskriv den i stället.", "pe.pick": "Välj en post…", "pe.anySection": "Valfri sektion", "pe.tags": "Måste ha taggar", "pe.tags.ph": "t.ex. 5v, i2c", "pe.specs": "Måste ha specs", "pe.specs.ph": "t.ex. gänga=M3, längd=10", "pe.optional": "Valfri (bra att ha)", "pe.more": "Anteckning & var man köper", "pe.text": "Namnet innehåller", "pe.text.ph": "t.ex. uno", "pe.where": "Var man köper", "pe.price": "Ungefärligt pris", "pe.link": "Länk", "pe.add": "Lägg till behov", "pe.created": "Skapade {n}", "bd.title": "Byggt: {n}", "bd.intro": "Registrera att du har byggt projektet. Välj vad som händer med delarna det använde.", "bd.deduct": "Förbruka delarna", "bd.deduct.hint": "Dra av antalen från lagret (filament, skruv, komponenter).", "bd.inuse": "Markera som monterade i", "bd.inuse.hint": "Behåll dem i lagret men flagga dem som monterade i ”{p}”.", "bd.parts": "Delar", "bd.none": "Inget från lagret är kopplat till projektet.", "bd.confirm": "Bekräfta", "bd.done.deduct": "Lagret uppdaterat ({n} poster)", "bd.done.inuse": "Markerade {n} poster som monterade", "st.appearance": "Utseende", "st.data": "Data", "st.dataDir": "Datamapp", "st.dataDir.hint": "Dina YAML-filer. Sätt MAKER_INVENTORY_DIR innan du startar appen för att använda en annan mapp.", "st.copy": "Kopiera", "st.copied": "Kopierat", "stale": "Appservern är äldre än sidan, så färger och översättningar blir fel. Stoppa den (Ctrl+C) och kör node inv.mjs app igen.", "st.check": "Kontrollera data", "st.check.hint": "Hittar dubbla id:n, saknade fält och felaktiga antal.", "st.check.run": "Kör kontroll", "st.check.ok": "Allt ok · {n} poster", "st.snapshot": "Skrivskyddad ögonblicksbild", "st.snapshot.hint": "En enda HTML-fil du kan öppna utan appen. Uppdateras vid varje sparning.", "st.snapshot.run": "Bygg om nu", "st.snapshot.done": "Ögonblicksbilden ombyggd", "st.ai": "AI-agenter (Claude Code)", "st.ai.intro": "Valfritt. Installerar en skill så att agenter i vilken projektmapp som helst kan kolla lagret och uppdatera det när du ber dem.", "st.skill": "Inventory-skill", "st.skill.ok": "Installerad", "st.skill.missing": "Inte installerad", "st.skill.other": "Pekar på en annan mapp", "st.skill.install": "Installera", "st.skill.update": "Installera om", "st.skill.done": "Skill installerad", "st.keys": "Kortkommandon", "st.key.search": "Sök", "st.key.new": "Ny post / nytt projekt", "st.key.save": "Spara", "st.key.close": "Stäng panelen",
     "unsaved": "Släng osparade ändringar?",
   },
 };
@@ -128,7 +128,7 @@ applyTheme();
 let S = normalize(BOOT.data || { items: [], projects: [] });
 let route = parseRoute();
 let query = "";
-const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, project: null };
+const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, project: null, altsOpen: new Set() };
 let drawer = null; // { mode: "new"|"edit"|"view", originalId, file, form, dirty, armed }
 let saving = false;
 
@@ -139,6 +139,7 @@ function parseRoute() {
   if (FILES.includes(page)) return { page: "file", file: page };
   if (page === "projects") return { page: "projects", project: arg || null };
   if (page === "settings") return { page: "settings" };
+  if (page === "attention") return { page: "attention", kind: ["low", "unverified"].includes(arg) ? arg : "all" };
   return { page: "dashboard" };
 }
 
@@ -200,7 +201,7 @@ function renderShell() {
   const nav = (href, ic, label, current, extra = "") =>
     `<a href="#/${href}" ${current ? 'aria-current="page"' : ""}>${icon(ic)}<span>${esc(label)}</span>${extra}</a>`;
   const title = route.page === "dashboard" ? (query ? t("results") : t("nav.dashboard"))
-    : route.page === "projects" ? t("nav.projects") : route.page === "settings" ? t("nav.settings") : fileLabel(route.file);
+    : route.page === "projects" ? t("nav.projects") : route.page === "settings" ? t("nav.settings") : route.page === "attention" ? attnTitle(route.kind) : fileLabel(route.file);
   const stamp = S.generatedAt ? new Date(S.generatedAt).toLocaleString(lang === "sv" ? "sv-SE" : "en-GB", { dateStyle: "medium", timeStyle: "short" }) : "";
 
   $("#app").innerHTML = `
@@ -248,6 +249,7 @@ function renderContent() {
   if (route.page === "projects") el.innerHTML = projectsView();
   else if (route.page === "settings") el.innerHTML = settingsView();
   else if (route.page === "file") el.innerHTML = fileView(route.file);
+  else if (route.page === "attention") el.innerHTML = attentionView(route.kind);
   else el.innerHTML = query.trim() ? searchView() : dashboardView();
 }
 
@@ -263,7 +265,7 @@ function dashboardView() {
   const toBuy = S.projects.filter((p) => !p.example).reduce((s, p) => s + p.rows.filter((r) => r.status !== "OK" && !r.optional).length, 0);
   const kpi = (cls, label, value, act) => `<button class="kpi ${cls}" data-act="${act}"><div class="label">${esc(label)}</div><div class="value">${value}</div></button>`;
 
-  const attn = [...low, ...unv.filter((i) => !isLow(i)), ...S.items.filter((i) => i.in_use && !isLow(i) && i.verified !== false)].slice(0, 9);
+  const attnAll = attentionItems("all"), attn = attnAll.slice(0, 9);
   const attnRows = attn.map((it) => {
     const why = [isLow(it) && t("attn.low", { n: it.min_qty }), it.verified === false && t("attn.unverified"), it.in_use && t("attn.inuse", { p: it.in_use })].filter(Boolean).join(" · ");
     return `<div class="list-row" data-open="${esc(it.id)}">${it._file === "filament" ? swatch(it.color) : `<span class="muted">${icon(it._file)}</span>`}
@@ -280,12 +282,12 @@ function dashboardView() {
   return `<div class="kpis">
       ${kpi("", t("kpi.items"), S.items.length, "nav:")}
       ${kpi("", t("kpi.filament"), (grams / 1000).toLocaleString(lang === "sv" ? "sv-SE" : "en-US", { maximumFractionDigits: 1 }) + " kg", "nav:filament")}
-      ${kpi(low.length ? "bad" : "", t("kpi.low"), low.length, "attn")}
-      ${kpi(unv.length ? "warn" : "", t("kpi.unverified"), unv.length, "attn")}
+      ${kpi(low.length ? "bad" : "", t("kpi.low"), low.length, "nav:attention/low")}
+      ${kpi(unv.length ? "warn" : "", t("kpi.unverified"), unv.length, "nav:attention/unverified")}
       ${kpi(toBuy ? "bad" : "", t("kpi.tobuy"), toBuy, "nav:projects")}
     </div>
     <div class="panels">
-      <section class="panel"><div class="panel-h"><h2>${esc(t("attn.title"))}</h2><span class="muted">${attn.length}</span></div>
+      <section class="panel"><div class="panel-h"><h2>${esc(t("attn.title"))}</h2>${attnAll.length ? `<a class="btn sm ghost" href="#/attention">${fmtNum(attnAll.length)} →</a>` : ""}</div>
         <div class="panel-b">${attnRows || `<div class="empty-mini">${esc(t("attn.none"))}</div>`}</div></section>
       <section class="panel"><div class="panel-h"><h2>${esc(t("fil.title"))}</h2><a class="btn sm ghost" href="#/filament">${fmtNum(fil.length)} →</a></div>
         <div class="panel-b">${filRows || `<div class="empty-mini">${esc(t("fil.none"))}</div>`}</div></section>
@@ -372,27 +374,41 @@ function fileView(file) {
     <div class="table-foot" style="border:0;background:transparent">${esc(t("count", { n: shown.length, total: all.length }))}</div>`;
 }
 
+// Items that need a look, across every section: below min, not verified, or built into something.
+function attentionItems(kind) {
+  if (kind === "low") return S.items.filter(isLow);
+  if (kind === "unverified") return S.items.filter((i) => i.verified === false);
+  return [...S.items.filter(isLow), ...S.items.filter((i) => i.verified === false && !isLow(i)), ...S.items.filter((i) => i.in_use && !isLow(i) && i.verified !== false)];
+}
+const attnTitle = (kind) => kind === "low" ? t("kpi.low") : kind === "unverified" ? t("kpi.unverified") : t("attn.title");
+function attentionView(kind) {
+  const list = attentionItems(kind);
+  const tabs = ["all", "unverified", "low"].map((k) => `<button class="chip" data-act="nav:attention${k === "all" ? "" : "/" + k}" aria-pressed="${k === kind}">${esc(attnTitle(k))} <span class="muted">${attentionItems(k).length}</span></button>`).join("");
+  return `<div class="toolbar">${tabs}</div>` + (list.length ? itemTable(list, null, true) + `<div class="table-foot" style="border:0;background:transparent">${esc(t("count", { n: list.length, total: S.items.length }))}</div>`
+    : `<div class="empty-mini">${esc(t("attn.none"))}</div>`);
+}
 function searchView() {
   const shown = S.items.filter(matchQuery);
   return itemTable(shown, null, true) + `<div class="table-foot" style="border:0;background:transparent">${esc(t("count", { n: shown.length, total: S.items.length }))}</div>`;
 }
 
 // ---------------------------------------------------------------- projects
-// Near matches under a need: one compact group per reason, each item a chip that opens the item.
-function altsHtml(r, why) {
+// Near matches the user owns, shown in a row under the need that the user expands on demand.
+const altKey = (p, i) => p.file + ":" + i;
+function altToggle(p, r, i) {
   if (!r.alternatives.length) return "";
+  const open = ui.altsOpen.has(altKey(p, i));
+  return `<button type="button" class="alt-toggle" data-alts="${esc(altKey(p, i))}" aria-expanded="${open}">${esc(t("proj.altToggle", { n: r.alternatives.length }))}<span class="chev">▾</span></button>`;
+}
+function altRow(p, r, i, why) {
+  if (!r.alternatives.length || !ui.altsOpen.has(altKey(p, i))) return "";
   const groups = [];
-  for (const a of r.alternatives) {
-    const g = groups.find((x) => x.why === a.why) || (groups.push({ why: a.why, list: [] }), groups.at(-1));
-    g.list.push(a);
-  }
-  const chip = (a) => {
+  for (const a of r.alternatives) (groups.find((g) => g.why === a.why) || (groups.push({ why: a.why, list: [] }), groups.at(-1))).list.push(a);
+  const line = (a) => {
     const diff = (a.diff || []).map((d) => d.have == null ? t("proj.altMissing", { key: specLabel(d.key) }) : `${specLabel(d.key)} ${d.have}`).join(", ");
-    return `<a href="#" class="alt-chip" data-open="${esc(a.id)}" title="${esc(a.name)}"><span class="alt-name">${esc(a.name)}</span>
-      <span class="alt-meta">${esc(fmtNum(a.qty) + " " + unitLabel(a.unit))}${diff ? " · " + esc(diff) : ""}</span></a>`;
+    return `<li><a href="#" data-open="${esc(a.id)}">${esc(a.name)}</a><span class="alt-qty">${esc(fmtNum(a.qty) + " " + unitLabel(a.unit))}</span><span class="alt-diff">${esc(diff)}</span></li>`;
   };
-  return `<div class="alts">${groups.map((g, i) => `<div class="alt-group"><span class="alt-head">${esc(t("proj.altHead", { why: why(g.why) }))}</span>
-    ${g.list.map(chip).join("")}${i === groups.length - 1 && r.moreAlternatives ? `<span class="alt-more">${esc(t("proj.altMore", { n: r.moreAlternatives }))}</span>` : ""}</div>`).join("")}</div>`;
+  return `<tr class="alt-row"><td></td><td colspan="5">${groups.map((g) => `<div class="alt-head">${esc(t("proj.altHead", { why: why(g.why) }))}</div><ul class="alt-list">${g.list.map(line).join("")}</ul>`).join("")}</td></tr>`;
 }
 const fromLabel = (f) => { const it = S.items.find((i) => i.id === f.id); return it ? (it._file === "filament" ? filamentTitle(it) : it.name) : (f.name || f.id); };
 function projectsView() {
@@ -406,13 +422,12 @@ function projectsView() {
       <div class="title">${esc(p.name)}</div>${progBar(s)}<div class="sub" style="margin-top:4px">${esc(t("proj.ready", { a: s.ok, b: p.rows.length }))}${p.example ? " · " + esc(t("proj.example")) : ""}</div></div></div>`;
   }).join("");
   const why = (w) => t("why." + w);
-  const rows = cur.rows.map((r) => {
+  const rows = cur.rows.map((r, ri) => {
     const notes = [r.optional && `<span class="badge b-info">${esc(t("proj.optional"))}</span>`, r.unverified && `<span class="badge b-warn">${esc(t("b.unverified"))}</span>`,
       ...r.from.filter((f) => f.in_use).map((f) => `<span class="badge b-info">${esc(t("proj.inuse", { p: f.in_use }))}</span>`), r.note && `<span class="muted">${esc(r.note)}</span>`].filter(Boolean).join(" ");
-    const alts = altsHtml(r, why);
     return `<tr style="cursor:default"><td><span class="st st-${r.status}">${r.status === "OK" ? "✓" : r.status === "SHORT" ? "◐" : "✕"}</span></td>
-      <td><div class="name">${esc(r.need)}</div>${alts}</td><td class="num">${fmtNum(r.qty)} ${esc(unitLabel(r.unit))}</td><td class="num">${fmtNum(r.got)}</td>
-      <td class="hide-sm">${r.from.map((f) => `<a href="#" data-open="${esc(f.id)}">${esc(fromLabel(f))}</a>`).join(", ") || "–"}</td><td class="hide-sm">${notes}</td></tr>`;
+      <td><div class="name">${esc(r.need)} ${altToggle(cur, r, ri)}</div></td><td class="num">${fmtNum(r.qty)} ${esc(unitLabel(r.unit))}</td><td class="num">${fmtNum(r.got)}</td>
+      <td class="hide-sm">${r.from.map((f) => `<a href="#" data-open="${esc(f.id)}">${esc(fromLabel(f))}</a>`).join(", ") || "–"}</td><td class="hide-sm">${notes}</td></tr>${altRow(cur, r, ri, why)}`;
   }).join("");
   const buyIdx = cur.rows.map((r, i) => [r, i]).filter(([r]) => r.status !== "OK");
   const shop = buyIdx.length ? buyIdx.map(([r, i]) => `<div class="shop-row"><span class="grow">${esc(r.need)}: <b>${fmtNum(r.qty - r.got)} ${esc(unitLabel(r.unit))}</b>${r.optional ? ` <span class="muted">(${esc(t("proj.optional"))})</span>` : ""}${r.buy?.where ? ` <span class="muted">· ${esc(r.buy.where)}</span>` : ""}${r.buy?.link ? ` <a href="${esc(r.buy.link)}" target="_blank" rel="noopener noreferrer">↗</a>` : ""}</span>
@@ -877,6 +892,8 @@ document.addEventListener("click", (e) => {
   const rmSpec = tEl.closest("[data-rmspec]");
   if (rmSpec) { syncForm(); const k = $(`[data-spec-k="${rmSpec.dataset.rmspec}"]`).value.trim(); delete drawer.form.specs[k]; drawer.dirty = true; renderDrawerKeepScroll(); return; }
   if (tEl.closest("#tagsBox")) { $("#tagIn")?.focus(); }
+  const altBtn = tEl.closest("[data-alts]");
+  if (altBtn) { const k = altBtn.dataset.alts; ui.altsOpen.has(k) ? ui.altsOpen.delete(k) : ui.altsOpen.add(k); renderContent(); return; }
   const open = tEl.closest("[data-open]");
   if (open && !tEl.closest(".drawer")) { e.preventDefault(); const it = S.items.find((i) => i.id === open.dataset.open); if (it) openDrawer(LIVE ? "edit" : "view", it); return; }
   if (tEl.id === "scrim") { closeDrawer(); return; }
@@ -894,7 +911,6 @@ document.addEventListener("click", (e) => {
   else if (act === "close") closeDrawer();
   else if (act === "save") saveDrawer();
   else if (act === "delete") deleteCurrent();
-  else if (act === "attn") { query = ""; go("#/" + (S.items.find(needsAttention)?._file || "electronics")); ui.attention = true; renderContent(); }
   else if (act === "copy-shop") {
     const p = S.projects.find((x) => x.file === route.project) || S.projects[0];
     navigator.clipboard?.writeText(shoppingMarkdown(p)).then(() => toast(t("proj.copied")), () => toast(shoppingMarkdown(p)));
@@ -968,5 +984,7 @@ window.addEventListener("beforeunload", (e) => { if (drawer?.dirty) { e.preventD
 document.documentElement.lang = lang;
 document.body.insertAdjacentHTML("beforeend", '<div id="scrim" class="scrim"></div><aside id="drawer" class="drawer"></aside><div id="toasts" class="toasts" aria-live="polite"></div>');
 renderShell();
+// A server started before an update can serve new page code without the vocabulary. Say so instead of showing wrong colors.
+if (!window.__VOCAB__) document.body.insertAdjacentHTML("afterbegin", `<div class="stale-banner" role="alert">${icon("alert")}<span>${esc(t("stale"))}</span></div>`);
 if (LIVE) { loadState(true); setInterval(poll, 3000); document.addEventListener("visibilitychange", poll); }
 })();
