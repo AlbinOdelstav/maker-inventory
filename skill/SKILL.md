@@ -33,6 +33,10 @@ set `verified: true` on items they confirm, then run `node {{TOOL_DIR}}/inv.mjs 
 (it also rebuilds `overview.html`). After a print or build, subtract the filament grams and parts
 used, or set `in_use: <project>`.
 
+The user can also edit stock in the web app (`node {{TOOL_DIR}}/inv.mjs app`, http://localhost:4310),
+so re-read a YAML file right before you edit it. If they want to look at or edit the inventory
+themselves, point them to the app.
+
 ## Never
 
 - Claim they own something that is not in the files.

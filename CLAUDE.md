@@ -18,5 +18,9 @@ read/updated by agents. Schema and commands: README.md. Personal notes, if any, 
 - Add new items with the specific variant (voltage, shaft type, thread). Prefer one row too many
   over a merged row that loses the variant.
 - Filament: one row per material + color + finish + brand, qty = grams left. Not per spool.
+- The user may also edit stock in the web app (`node inv.mjs app`). It writes the same YAML, so
+  always re-read a file before editing it rather than relying on an earlier read.
 - User data (`inventory/`, `projects/`, `overview.html`, `CLAUDE.local.md`) is git-ignored and
-  must never be committed. Tool changes go in `inv.mjs`, `html.mjs`, `templates/`, `skill/`.
+  must never be committed. Tool code lives in `inv.mjs`, `lib.mjs`, `server.mjs`, `html.mjs`,
+  `web/`, `templates/` and `skill/`. Run `npm test` after changing it.
+- UI strings live in `web/app.js` (`I18N`, English and Swedish). Add every new string to both.

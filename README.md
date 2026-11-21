@@ -7,9 +7,31 @@ those files, and answer **"do I have everything for this idea, and what do I nee
 - **YAML files you (or an agent) edit.** Easy to diff, work offline, no database.
 - **`check`** compares a project's needs with your stock. It shows what you have, what is short
   and what is missing, writes a shopping list, and suggests substitutes you already own.
-- **`overview.html`**, a visual overview generated from the files. It shows filament as color
-  swatches with grams left, cards per part, items that need attention, and project status.
+- **A web app** (`node inv.mjs app`) to browse and edit the inventory yourself: a dashboard,
+  sortable tables per section, filament color swatches, a side panel to add, edit and delete
+  items, +/- buttons for quick stock changes, and project status with a shopping list.
+  It is available in English and Swedish, with light and dark themes.
+- **`overview.html`**, a read-only snapshot of the same app that you can open without a server.
 - **A Claude Code skill**, so agents in *any* project folder can check your stock.
+
+## The app
+
+```sh
+node inv.mjs app              # opens http://localhost:4310
+node inv.mjs app --port 5000 --no-open
+```
+
+The app writes straight to the YAML files, so you and your agents share one source of truth.
+- **When an agent changes a file while the app is open**, the app reloads by itself.
+- **When you save over a file that changed since you loaded it**, the app refuses and asks you to
+  check and save again.
+- **The server listens on `127.0.0.1` only.** It accepts JSON writes from its own page and
+  nothing else.
+
+Shortcuts: `/` search, `N` new item, `Ctrl+Enter` save, `Esc` close.
+
+When the app saves, it rewrites the YAML file in a consistent layout. The comment block at the
+top of each file is kept. Comments between items are not.
 
 ## Setup
 
@@ -30,6 +52,7 @@ are in `.gitignore`. To keep your data somewhere else (a private repo or a synce
 ## Commands
 
 ```sh
+node inv.mjs app                  # web app: browse, add, edit, delete
 node inv.mjs check <project>      # have / short / missing + shopping list (markdown)
 node inv.mjs check <project> --json
 node inv.mjs find petg red        # search; all words must match
@@ -55,7 +78,11 @@ projects/            what each project needs (git-ignored)
 templates/inventory/ empty files with schema comments (copied by init)
 examples/projects/   example project file
 skill/SKILL.md       Claude Code skill template (installed by install-skill)
-inv.mjs, html.mjs    the CLI and the overview renderer
+inv.mjs              the CLI
+lib.mjs              shared logic: loading, matching, checks, validation, safe writes
+server.mjs           the local web app server (JSON API on 127.0.0.1)
+html.mjs, web/       the app page (vanilla JS/CSS, no build step), live or as a snapshot
+test/smoke.mjs       npm test
 ```
 
 ## Item schema
