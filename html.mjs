@@ -3,6 +3,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT } from "./lib.mjs";
+import { VOCAB } from "./vocab.mjs";
 
 // Make JSON safe inside <script>: escape "<" and the two line separators JS strings can't hold.
 const BS = String.fromCharCode(92);
@@ -25,7 +26,7 @@ export function renderApp({ live = false, snapshot = null } = {}) {
 </head>
 <body>
 <div id="app"></div>
-<script>window.__BOOT__ = ${safeJson(boot)};</script>
+<script>window.__BOOT__ = ${safeJson(boot)}; window.__VOCAB__ = ${safeJson(VOCAB)};</script>
 <script>${js}</script>
 </body>
 </html>`;

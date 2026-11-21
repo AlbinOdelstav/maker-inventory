@@ -40,7 +40,7 @@ const I18N = {
     "f.specs": "Specs", "f.spec.key": "key (e.g. voltage)", "f.spec.val": "value", "f.spec.add": "Add spec", "f.notes": "Notes", "f.source": "Source",
     "t.saved": "Saved", "t.added": "Added {n}", "t.deleted": "Deleted {n}", "t.conflict": "The file was changed elsewhere (an agent?). Reloaded — check and save again.",
     "t.reloaded": "Updated from disk", "t.error": "Could not save: {e}", "t.offline": "Lost connection to the app server",
-    "unit.pcs": "pcs", "unit.g": "g", "unsaved": "Discard unsaved changes?",
+    "a.dec": "Decrease", "a.inc": "Increase", "a.remove": "Remove", "unsaved": "Discard unsaved changes?",
   },
   sv: {
     "app.sub": "Delar, filament & projekt", "nav.workspace": "Arbetsyta", "nav.inventory": "Lager",
@@ -71,10 +71,10 @@ const I18N = {
     "f.qty": "Antal", "f.grams": "Gram kvar", "f.unit": "Enhet", "f.spools": "Rullar", "f.min": "Varna under", "f.location": "Plats",
     "f.inuse": "Monterad i projekt", "f.inuse.hint": "Räknas som ägd, men flaggas i kontroller.", "f.verified": "Verifierad: jag har kollat i lådan",
     "f.tags": "Taggar", "f.tags.hint": "Enter eller komma för att lägga till. Agenter matchar delar på dem (t.ex. 5v, i2c).",
-    "f.specs": "Specs", "f.spec.key": "nyckel (t.ex. voltage)", "f.spec.val": "värde", "f.spec.add": "Lägg till spec", "f.notes": "Anteckningar", "f.source": "Källa",
+    "f.specs": "Specs", "f.spec.key": "nyckel (t.ex. spänning)", "f.spec.val": "värde", "f.spec.add": "Lägg till spec", "f.notes": "Anteckningar", "f.source": "Källa",
     "t.saved": "Sparat", "t.added": "Lade till {n}", "t.deleted": "Tog bort {n}", "t.conflict": "Filen ändrades någon annanstans (en agent?). Laddade om – kolla och spara igen.",
     "t.reloaded": "Uppdaterat från disk", "t.error": "Kunde inte spara: {e}", "t.offline": "Tappade kontakten med app-servern",
-    "unit.pcs": "st", "unit.g": "g", "unsaved": "Släng osparade ändringar?",
+    "a.dec": "Minska", "a.inc": "Öka", "a.remove": "Ta bort", "unsaved": "Släng osparade ändringar?",
   },
 };
 const store = {
@@ -84,7 +84,36 @@ const store = {
 let lang = store.get("lang") || ((navigator.language || "").toLowerCase().startsWith("sv") ? "sv" : "en");
 const t = (k, vars = {}) => (I18N[lang][k] ?? I18N.en[k] ?? k).replace(/\{(\w+)\}/g, (_, v) => vars[v] ?? "");
 const fileLabel = (f) => I18N[lang]["file." + f] ? t("file." + f) : f;
-const unitLabel = (u) => (u === "pcs" || u === "g") ? t("unit." + u) : u;
+// ---------------------------------------------------------------- vocabulary
+// Data stores canonical keys (English); the UI shows them in the chosen language and accepts either.
+const VOCAB = window.__VOCAB__ || { colors: {}, finishes: {}, categories: {}, units: {}, specKeys: {} };
+const ALL_CATS = Object.assign({}, ...Object.values(VOCAB.categories));
+const vnorm = (s) => String(s ?? "").trim().toLowerCase();
+function canon(table, value) {
+  const v = vnorm(value); if (!v) return null;
+  for (const [key, e] of Object.entries(table)) if (vnorm(key) === v || vnorm(e.en) === v || vnorm(e.sv) === v || (e.aliases || []).some((a) => vnorm(a) === v)) return key;
+  return null;
+}
+const label = (table, value) => { const k = canon(table, value); return k ? table[k][lang] : (value ?? ""); };
+const catTable = (file) => VOCAB.categories[file] || ALL_CATS;
+const colorLabel = (c) => label(VOCAB.colors, c);
+const finishLabel = (f) => label(VOCAB.finishes, f);
+const catLabel = (c, file) => label(catTable(file), c);
+const unitLabel = (u) => label(VOCAB.units, u);
+const specLabel = (k) => label(VOCAB.specKeys, k);
+// Every way to name a vocab value, so search finds "grön" and "green" alike.
+const allNames = (table, value) => { const k = canon(table, value); return k ? [k, table[k].en, table[k].sv, ...(table[k].aliases || [])] : [value]; };
+// Form shows labels in the current language; the server stores the canonical key.
+function localizeForm(f, file) {
+  // A filament name that is just "material + color" (in any language) is auto: show it empty with a localized placeholder.
+  if (file === "filament" && f.name && allNames(VOCAB.colors, f.color).some((c) => vnorm(f.name) === vnorm(`${f.material} ${c}`))) f.name = "";
+  if (f.color) f.color = colorLabel(f.color);
+  if (f.finish) f.finish = finishLabel(f.finish);
+  if (f.category) f.category = catLabel(f.category, file);
+  if (f.unit) f.unit = unitLabel(f.unit);
+  if (f.specs) f.specs = Object.fromEntries(Object.entries(f.specs).map(([k, v]) => [specLabel(k), v]));
+  return f;
+}
 const fmtNum = (n) => Number(n).toLocaleString(lang === "sv" ? "sv-SE" : "en-US", { maximumFractionDigits: 2 });
 
 // ---------------------------------------------------------------- theme
@@ -117,8 +146,9 @@ const isLow = (it) => it.min_qty !== undefined && it.min_qty !== null && Number(
 const needsAttention = (it) => it.verified === false || isLow(it) || !!it.in_use;
 const slug = (s) => String(s || "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "")
   .replace(/×/g, "x").replace(/[^a-z0-9.]+/g, "-").replace(/^-+|-+$/g, "").replace(/-{2,}/g, "-");
-const hay = (it) => [it.id, it.name, it.category, it.material, it.color, it.finish, it.brand, it.location, it.notes, it.in_use,
-  fileLabel(it._file), ...(it.tags || []), ...Object.entries(it.specs || {}).flat()].join(" ").toLowerCase();
+const hay = (it) => [it.id, it.name, it.material, it.brand, it.location, it.notes, it.in_use, fileLabel(it._file),
+  ...allNames(catTable(it._file), it.category), ...allNames(VOCAB.colors, it.color), ...allNames(VOCAB.finishes, it.finish),
+  ...(it.tags || []), ...Object.entries(it.specs || {}).flatMap(([k, v]) => [...allNames(VOCAB.specKeys, k), v])].join(" ").toLowerCase();
 const matchQuery = (it) => query.trim().toLowerCase().split(/\s+/).filter(Boolean).every((w) => hay(it).includes(w));
 
 const ICONS = {
@@ -138,23 +168,16 @@ const ICONS = {
 };
 const icon = (n, cls = "i") => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n] || ""}</svg>`;
 
-const COLORS = {
-  svart: "#1b1b1b", vit: "#f4f4f2", grå: "#8c8c8c", silver: "#c0c4c8", röd: "#d0352b", blå: "#2f63c9", ljusblå: "#7fb6e8", mörkblå: "#1f3a7a",
-  grön: "#3a9a4c", ljusgrön: "#8fd17a", gul: "#f2c62e", orange: "#ef8424", lila: "#7f4cc4", rosa: "#ec86ad", brun: "#7a4e2d", beige: "#d9c6a2",
-  guld: "#c9a43c", natur: "#e9e2cf", turkos: "#2bb3b1", magenta: "#c62f8e",
-  black: "#1b1b1b", white: "#f4f4f2", gray: "#8c8c8c", grey: "#8c8c8c", red: "#d0352b", blue: "#2f63c9", "light blue": "#7fb6e8", "dark blue": "#1f3a7a",
-  green: "#3a9a4c", "light green": "#8fd17a", yellow: "#f2c62e", purple: "#7f4cc4", pink: "#ec86ad", brown: "#7a4e2d", gold: "#c9a43c",
-  natural: "#e9e2cf", teal: "#2bb3b1", cyan: "#22b8cf",
-};
 function swatch(color, lg) {
   const k = String(color || "").toLowerCase().trim();
+  const key = canon(VOCAB.colors, k);
   let st;
-  if (["transparent", "genomskinlig", "clear", "transparant"].includes(k)) st = "background: repeating-conic-gradient(#ccc 0 25%, #fff 0 50%) 50%/8px 8px";
-  else if (COLORS[k]) st = "background:" + COLORS[k];
+  if (key === "transparent") st = "background: repeating-conic-gradient(#ccc 0 25%, #fff 0 50%) 50%/8px 8px";
+  else if (key) st = "background:" + VOCAB.colors[key].hex;
   else if (/^#[0-9a-f]{3,8}$/i.test(k)) st = "background:" + k;
   else if (!k) st = "background: var(--surface-2)";
   else { let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) % 360; st = `background: hsl(${h} 55% 55%)`; }
-  return `<span class="sw${lg ? " lg" : ""}" style="${st}" title="${esc(color)}"></span>`;
+  return `<span class="sw${lg ? " lg" : ""}" style="${st}" title="${esc(colorLabel(color))}"></span>`;
 }
 function badges(it) {
   const b = [];
@@ -163,7 +186,7 @@ function badges(it) {
   if (it.in_use) b.push(`<span class="badge b-info">${esc(t("b.inuse", { p: it.in_use }))}</span>`);
   return `<div class="badges">${b.join("")}</div>`;
 }
-const filamentTitle = (it) => [it.material, it.color].filter(Boolean).join(" ") || it.name;
+const filamentTitle = (it) => [it.material, colorLabel(it.color)].filter(Boolean).join(" ") || it.name;
 
 // ---------------------------------------------------------------- layout
 function renderShell() {
@@ -241,7 +264,7 @@ function dashboardView() {
 
   const maxG = Math.max(1000, ...fil.map((i) => Number(i.qty || 0)));
   const filRows = [...fil].sort((a, b) => b.qty - a.qty).slice(0, 8).map((it) =>
-    `<div class="list-row" data-open="${esc(it.id)}">${swatch(it.color, true)}<div class="grow"><div class="title">${esc(filamentTitle(it))}${it.finish ? ` <span class="muted">· ${esc(it.finish)}</span>` : ""}</div>
+    `<div class="list-row" data-open="${esc(it.id)}">${swatch(it.color, true)}<div class="grow"><div class="title">${esc(filamentTitle(it))}${it.finish ? ` <span class="muted">· ${esc(finishLabel(it.finish))}</span>` : ""}</div>
       <div class="bar ${isLow(it) ? "low" : ""}"><i style="width:${Math.min(100, (Number(it.qty || 0) / maxG) * 100)}%"></i></div></div>
       <div class="qty-ro">${fmtNum(it.qty ?? 0)} <small>g</small></div></div>`).join("");
 
@@ -282,7 +305,8 @@ const projHint = () => t("proj.hint", { dir: "<code>projects/</code>", ex: "<cod
 function sortItems(list, file) {
   const { key, dir } = ui.sort;
   const val = (it) => key === "qty" ? Number(it.qty || 0) : key === "name" ? String(file === "filament" ? filamentTitle(it) : it.name).toLowerCase()
-    : key === "section" ? fileLabel(it._file) : String(it[key] ?? "").toLowerCase();
+    : key === "section" ? fileLabel(it._file) : key === "category" ? catLabel(it.category, it._file).toLowerCase()
+    : key === "finish" ? finishLabel(it.finish).toLowerCase() : String(it[key] ?? "").toLowerCase();
   return [...list].sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * dir; });
 }
 function th(key, label, cls = "") {
@@ -292,11 +316,11 @@ function th(key, label, cls = "") {
 function qtyCell(it) {
   const u = unitOf(it);
   if (!LIVE) return `<span class="qty-ro">${fmtNum(it.qty ?? 0)} <small>${esc(unitLabel(u))}</small></span>`;
-  return `<div class="stepper" data-stop><button data-step="-1" data-id="${esc(it.id)}" aria-label="-">${icon("minus")}</button>
+  return `<div class="stepper" data-stop><button data-step="-1" data-id="${esc(it.id)}" aria-label="${esc(t("a.dec"))}">${icon("minus")}</button>
     <span class="v">${fmtNum(it.qty ?? 0)}<small>${esc(unitLabel(u))}</small></span>
-    <button data-step="1" data-id="${esc(it.id)}" aria-label="+">${icon("plus")}</button></div>`;
+    <button data-step="1" data-id="${esc(it.id)}" aria-label="${esc(t("a.inc"))}">${icon("plus")}</button></div>`;
 }
-const specsText = (it) => Object.entries(it.specs || {}).map(([k, v]) => `${k}: ${v}`).join(" · ");
+const specsText = (it) => Object.entries(it.specs || {}).map(([k, v]) => `${specLabel(k)}: ${v}`).join(" · ");
 const tagsHtml = (it) => (it.tags || []).slice(0, 5).map((x) => `<span class="tag">${esc(x)}</span>`).join("") + ((it.tags || []).length > 5 ? `<span class="tag">+${it.tags.length - 5}</span>` : "");
 
 function itemTable(list, file, showSection) {
@@ -304,13 +328,13 @@ function itemTable(list, file, showSection) {
   const rows = sortItems(list, file).map((it) => {
     if (it._file === "filament" && !showSection) {
       return `<tr data-open="${esc(it.id)}"><td><div class="cell-flex">${swatch(it.color, true)}<div><div class="name">${esc(filamentTitle(it))}</div><div class="id">${esc(it.id)}</div></div></div></td>
-        <td>${esc(it.finish || "")}</td><td class="hide-sm">${esc(it.brand || "")}</td>
+        <td>${esc(finishLabel(it.finish))}</td><td class="hide-sm">${esc(it.brand || "")}</td>
         <td class="hide-sm" style="min-width:120px"><div class="bar ${isLow(it) ? "low" : ""}"><i style="width:${Math.min(100, Number(it.qty || 0) / (1000 * Math.max(1, Number(it.spools || 1))) * 100)}%"></i></div></td>
         <td class="num hide-sm">${esc(it.spools ?? "")}</td><td class="hide-sm">${esc(it.location || "")}</td><td>${badges(it)}</td><td class="num">${qtyCell(it)}</td></tr>`;
     }
     return `<tr data-open="${esc(it.id)}"><td><div class="cell-flex">${it._file === "filament" ? swatch(it.color) : ""}<div><div class="name">${esc(it._file === "filament" ? filamentTitle(it) : it.name)}</div><div class="id">${esc(it.id)}</div></div></div></td>
       ${showSection ? `<td>${esc(fileLabel(it._file))}</td>` : ""}
-      <td>${esc(it.category || "")}</td><td class="hide-sm">${tagsHtml(it)}</td><td class="specs hide-sm">${esc(specsText(it))}</td>
+      <td>${esc(catLabel(it.category, it._file))}</td><td class="hide-sm">${tagsHtml(it)}</td><td class="specs hide-sm">${esc(specsText(it))}</td>
       <td class="hide-sm">${esc(it.location || "")}</td><td>${badges(it)}</td><td class="num">${qtyCell(it)}</td></tr>`;
   }).join("");
   const head = file === "filament" && !showSection
@@ -325,13 +349,15 @@ function fileView(file) {
     return `<div class="welcome">${icon(file)}<h2>${esc(t("empty.file", { f: fileLabel(file) }))}</h2><p>${esc(t("empty.text"))}</p>
       ${LIVE ? `<button class="btn primary" data-act="new">${icon("plus")}${esc(t("add"))}</button>` : ""}</div>`;
   }
-  const cats = [...new Set(all.map((i) => (file === "filament" ? i.material : i.category)).filter(Boolean))].sort();
+  const catOf = (i) => file === "filament" ? i.material : (canon(catTable(file), i.category) ?? i.category);
+  const catName = (c) => file === "filament" ? c : catLabel(c, file);
+  const cats = [...new Set(all.map(catOf).filter(Boolean))].sort((a, b) => catName(a).localeCompare(catName(b)));
   const catKey = file === "filament" ? "material" : "category";
   if (ui.category && !cats.includes(ui.category)) ui.category = "";
-  const shown = all.filter((i) => matchQuery(i) && (!ui.attention || needsAttention(i)) && (!ui.category || i[catKey] === ui.category));
+  const shown = all.filter((i) => matchQuery(i) && (!ui.attention || needsAttention(i)) && (!ui.category || catOf(i) === ui.category));
   return `<div class="toolbar">
       <button class="chip" data-cat="" aria-pressed="${!ui.category}">${esc(t("all"))}</button>
-      ${cats.map((c) => `<button class="chip" data-cat="${esc(c)}" aria-pressed="${ui.category === c}">${esc(c)}</button>`).join("")}
+      ${cats.map((c) => `<button class="chip" data-cat="${esc(c)}" aria-pressed="${ui.category === c}">${esc(catName(c))}</button>`).join("")}
       <span class="spacer"></span>
       <label class="switch"><input type="checkbox" id="attn" ${ui.attention ? "checked" : ""}>${esc(t("attention"))}</label>
     </div>${itemTable(shown, file, false)}
@@ -378,17 +404,13 @@ function shoppingMarkdown(p) {
 }
 
 // ---------------------------------------------------------------- drawer
-const MATERIALS = ["PLA", "PLA+", "PLA Matte", "PLA Silk", "PETG", "TPU", "ABS", "ASA", "PLA-CF", "PETG-CF", "PC", "Nylon"];
-const CATEGORIES = {
-  electronics: ["mcu", "driver", "motor", "servo", "sensor", "display", "power", "module", "passive", "connector", "other"],
-  hardware: ["screw", "nut", "insert", "washer", "magnet", "spring", "bearing", "shaft", "other"],
-  consumables: ["wire", "cable", "heat-shrink", "solder", "glue", "tape", "battery", "other"],
-  tools: ["printer", "soldering", "measuring", "hand-tool", "power-tool", "other"],
-};
+const MATERIALS = ["PLA", "PLA+", "PETG", "TPU", "ABS", "ASA", "PLA-CF", "PETG-CF", "PC", "Nylon"];
+// Datalist options: every vocab label in the current language, plus the user's own values that aren't in the vocab.
+const vocabOptions = (table, own) => [...Object.values(table).map((e) => e[lang]), ...own.filter((v) => v && !canon(table, v))];
 
 function openDrawer(mode, item) {
   const base = item ? JSON.parse(JSON.stringify(item)) : { _file: route.page === "file" ? route.file : "electronics", qty: 1 };
-  drawer = { mode, originalId: item?.id || null, file: base._file, form: base, dirty: false, armed: false, idTouched: !!item, error: "" };
+  drawer = { mode, originalId: item?.id || null, file: base._file, form: localizeForm(base, base._file), dirty: false, armed: false, idTouched: !!item, error: "" };
   renderDrawer();
   requestAnimationFrame(() => { $("#scrim").classList.add("open"); $("#drawer").classList.add("open"); setTimeout(() => $("#drawer [name=name]")?.focus(), 60); });
 }
@@ -420,27 +442,28 @@ function renderDrawer() {
       ${fil ? `<div class="row2">${field("material", t("f.material"), 'list="dl-mat"', "", true)}
           <label class="field"><span>${esc(t("f.color"))} <em>*</em></span><div class="color-in">${swatch(f.color)}<input name="color" list="dl-color" value="${esc(f.color ?? "")}" ${dis}></div></label></div>
         <div class="row2">${field("finish", t("f.finish"), 'list="dl-finish"')}${field("brand", t("f.brand"), 'list="dl-brand"')}</div>
-        ${datalist("dl-mat", [...MATERIALS, ...sameFile.map((i) => i.material)])}${datalist("dl-color", [...sameFile.map((i) => i.color), ...Object.keys(COLORS)])}
-        ${datalist("dl-finish", ["basic", "matte", "silk", "translucent", "glow", ...sameFile.map((i) => i.finish)])}${datalist("dl-brand", sameFile.map((i) => i.brand))}` : ""}
+        ${datalist("dl-mat", [...MATERIALS, ...sameFile.map((i) => i.material)])}${datalist("dl-color", vocabOptions(VOCAB.colors, sameFile.map((i) => i.color)))}
+        ${datalist("dl-finish", vocabOptions(VOCAB.finishes, sameFile.map((i) => i.finish)))}${datalist("dl-brand", sameFile.map((i) => i.brand))}` : ""}
       ${fil ? field("name", t("f.name"), `placeholder="${esc(filamentTitle({ ...f, name: "" }) || "")}"`, t("f.name.auto")) : field("name", t("f.name"), "", "", true)}
       <div class="row2">${field("id", t("f.id"), 'class="mono" spellcheck="false"', t("f.id.hint"), true)}
         ${fil ? "" : field("category", t("f.category"), 'list="dl-cat"')}</div>
-      ${fil ? "" : datalist("dl-cat", [...(CATEGORIES[d.file] || []), ...sameFile.map((i) => i.category)])}
+      ${fil ? "" : datalist("dl-cat", vocabOptions(catTable(d.file), sameFile.map((i) => i.category)))}
       <div class="section-t">${esc(t("f.stock"))}</div>
       <div class="row3">${field("qty", fil ? t("f.grams") : t("f.qty"), 'type="number" min="0" step="any" inputmode="decimal"', "", true)}
-        ${fil ? field("spools", t("f.spools"), 'type="number" min="0" step="1"') : field("unit", t("f.unit"), 'list="dl-unit" placeholder="pcs"')}
+        ${fil ? field("spools", t("f.spools"), 'type="number" min="0" step="1"') : field("unit", t("f.unit"), `list="dl-unit" placeholder="${esc(unitLabel("pcs"))}"`)}
         ${field("min_qty", t("f.min"), 'type="number" min="0" step="any"')}</div>
-      ${datalist("dl-unit", ["pcs", "m", "g", "ml", "pack"])}
+      ${datalist("dl-unit", vocabOptions(VOCAB.units, []))}
       <div class="row2">${field("location", t("f.location"), 'list="dl-loc"')}${field("in_use", t("f.inuse"), "", t("f.inuse.hint"))}</div>
       ${datalist("dl-loc", S.items.map((i) => i.location))}
       <label class="check"><input type="checkbox" name="verified" ${f.verified === false ? "" : "checked"} ${dis}><span>${esc(t("f.verified"))}</span></label>
       <div class="section-t">${esc(t("f.details"))}</div>
       <div class="field"><span>${esc(t("f.tags"))}</span><div class="tags-input" id="tagsBox">${(f.tags || []).map((x, i) =>
-        `<span class="t">${esc(x)}${ro ? "" : `<button type="button" data-rmtag="${i}" aria-label="remove">×</button>`}</span>`).join("")}${ro ? "" : '<input id="tagIn" spellcheck="false">'}</div>
+        `<span class="t">${esc(x)}${ro ? "" : `<button type="button" data-rmtag="${i}" aria-label="${esc(t("a.remove"))}">×</button>`}</span>`).join("")}${ro ? "" : '<input id="tagIn" spellcheck="false">'}</div>
         ${ro ? "" : `<small>${esc(t("f.tags.hint"))}</small>`}</div>
       <div class="field"><span>${esc(t("f.specs"))}</span><div class="kv">${specs.map(([k, v], i) =>
-        `<div class="r"><input data-spec-k="${i}" placeholder="${esc(t("f.spec.key"))}" value="${esc(k)}" ${dis}><input data-spec-v="${i}" placeholder="${esc(t("f.spec.val"))}" value="${esc(v)}" ${dis}>
-        ${ro || (!k && !v) ? "<span></span>" : `<button type="button" class="icon-btn" data-rmspec="${i}" aria-label="remove">${icon("x")}</button>`}</div>`).join("")}</div></div>
+        `<div class="r"><input data-spec-k="${i}" placeholder="${esc(t("f.spec.key"))}" list="dl-spec" value="${esc(k)}" ${dis}><input data-spec-v="${i}" placeholder="${esc(t("f.spec.val"))}" value="${esc(v)}" ${dis}>
+        ${ro || (!k && !v) ? "<span></span>" : `<button type="button" class="icon-btn" data-rmspec="${i}" aria-label="${esc(t("a.remove"))}">${icon("x")}</button>`}</div>`).join("")}</div></div>
+      ${datalist("dl-spec", vocabOptions(VOCAB.specKeys, []))}
       <label class="field"><span>${esc(t("f.notes"))}</span><textarea name="notes" ${dis}>${esc(f.notes ?? "")}</textarea></label>
       ${field("source", t("f.source"))}
     </form>
@@ -473,7 +496,10 @@ function syncForm() {
 function autoId() {
   const f = drawer.form;
   if (drawer.idTouched) return;
-  const base = drawer.file === "filament" ? [f.material, f.color, f.finish, f.brand].filter(Boolean).join(" ") : f.name;
+  // ids use the canonical (English) words so they don't depend on the UI language
+  const base = drawer.file === "filament"
+    ? [f.material, canon(VOCAB.colors, f.color) ?? f.color, canon(VOCAB.finishes, f.finish) ?? f.finish, f.brand].filter(Boolean).join(" ")
+    : f.name;
   f.id = slug(base);
   const el = $("#itemForm [name=id]"); if (el) el.value = f.id;
 }
@@ -567,7 +593,7 @@ document.addEventListener("click", (e) => {
   if (stepBtn) { e.stopPropagation(); step(stepBtn.dataset.id, Number(stepBtn.dataset.step)); return; }
   if (tEl.closest("[data-stop]")) return;
   const langBtn = tEl.closest("[data-lang]");
-  if (langBtn) { lang = langBtn.dataset.lang; store.set("lang", lang); document.documentElement.lang = lang; renderShell(); if (drawer) { syncForm(); renderDrawerKeepScroll(); } return; }
+  if (langBtn) { lang = langBtn.dataset.lang; store.set("lang", lang); document.documentElement.lang = lang; renderShell(); if (drawer) { syncForm(); localizeForm(drawer.form, drawer.file); renderDrawerKeepScroll(); } return; }
   const themeBtn = tEl.closest("[data-theme-set]");
   if (themeBtn) { theme = themeBtn.dataset.themeSet; store.set("theme", theme); applyTheme(); renderShell(); return; }
   const sortTh = tEl.closest("[data-sort]");
@@ -644,7 +670,7 @@ window.addEventListener("beforeunload", (e) => { if (drawer?.dirty) { e.preventD
 
 // ---------------------------------------------------------------- boot
 document.documentElement.lang = lang;
-document.body.insertAdjacentHTML("beforeend", '<div id="scrim" class="scrim"></div><aside id="drawer" class="drawer" aria-label="item"></aside><div id="toasts" class="toasts" aria-live="polite"></div>');
+document.body.insertAdjacentHTML("beforeend", '<div id="scrim" class="scrim"></div><aside id="drawer" class="drawer"></aside><div id="toasts" class="toasts" aria-live="polite"></div>');
 renderShell();
 if (LIVE) { loadState(true); setInterval(poll, 3000); document.addEventListener("visibilitychange", poll); }
 })();

@@ -4,6 +4,7 @@ import { join, dirname, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import YAML from "yaml";
+import { VOCAB, canon, allCategories } from "./vocab.mjs";
 
 export const ROOT = dirname(fileURLToPath(import.meta.url));
 // Your data lives here. Default: next to the tool (git-ignored). Override with MAKER_INVENTORY_DIR.
@@ -58,10 +59,16 @@ export function matches(it, m) {
       for (const [sk, sv] of Object.entries(want)) if (norm(it.specs?.[sk]) !== norm(sv)) return false;
     } else if (k === "file") {
       if (it._file !== norm(want)) return false;
+    } else if (VOCAB_FIELD[k]) {
+      // color/finish/category/unit: "grön" matches "green", "skruv" matches "screw"
+      const c = (v) => canon(VOCAB_FIELD[k](), v) ?? norm(v);
+      if (c(it[k]) !== c(want)) return false;
     } else if (norm(it[k]) !== norm(want)) return false;
   }
   return true;
 }
+
+const VOCAB_FIELD = { color: () => VOCAB.colors, finish: () => VOCAB.finishes, category: allCategories, unit: () => VOCAB.units };
 
 function relaxations(m) {
   const out = [];
@@ -142,7 +149,8 @@ const FIELD_ORDER = ["id", "name", "category", "material", "color", "finish", "b
   "min_qty", "tags", "specs", "location", "in_use", "verified", "source", "notes"];
 
 // Clean an item coming from the UI: drop empty values and internal fields, coerce numbers, stable key order.
-export function cleanItem(raw) {
+export function cleanItem(raw, file) {
+  raw = canonicalize(raw, file);
   const it = {};
   for (const [k, v] of Object.entries(raw)) {
     if (k.startsWith("_") || v === undefined || v === null || v === "") continue;
@@ -156,10 +164,24 @@ export function cleanItem(raw) {
   }
   for (const k of ["qty", "min_qty", "spools"]) if (it[k] !== undefined && !isNaN(Number(it[k]))) it[k] = Number(it[k]);
   if (it.verified === true) delete it.verified; // verified is the default
+  if (it.unit === (file === "filament" ? "g" : "pcs")) delete it.unit; // default unit
   const ordered = {};
   for (const k of FIELD_ORDER) if (k in it) ordered[k] = it[k];
   for (const k of Object.keys(it)) if (!(k in ordered)) ordered[k] = it[k];
   return ordered;
+}
+
+// Store known vocabulary in canonical form (key), whatever language it was typed in.
+// Unknown values (a custom color, a new category) are kept as typed.
+export function canonicalize(raw, file) {
+  const it = { ...raw };
+  const cats = VOCAB.categories[file] ?? allCategories();
+  const fix = (k, table) => { if (it[k]) it[k] = canon(table, it[k]) ?? it[k]; };
+  fix("color", VOCAB.colors); fix("finish", VOCAB.finishes); fix("category", cats); fix("unit", VOCAB.units);
+  if (it.specs && typeof it.specs === "object") {
+    it.specs = Object.fromEntries(Object.entries(it.specs).map(([k, v]) => [canon(VOCAB.specKeys, k) ?? k, v]));
+  }
+  return it;
 }
 
 function readFile(file) {
@@ -191,7 +213,7 @@ export class InputError extends Error {}
 // Add, update (and move between files) or delete an item. `expect` = { file: version } the client saw.
 export function saveItem({ originalId, file, item, expect = {} }) {
   if (!FILES.includes(file) && !existsSync(join(INV_DIR, `${file}.yaml`))) throw new InputError(`unknown file ${file}`);
-  const clean = cleanItem(item);
+  const clean = cleanItem(item, file);
   const errs = itemErrors(clean, file);
   if (errs.length) throw new InputError(errs.join("; "));
 

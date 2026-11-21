@@ -66,6 +66,17 @@ try {
     assert.match(tools, /^# header kept/);
     assert.match(tools, /tags: \[ measuring \]/);
 
+    // Swedish input is stored in canonical (English) form, and matching understands both languages
+    r = await call("POST", "/api/items", { file: "filament", item: { id: "petg-green", name: "PETG grön", material: "PETG", color: "Grön", finish: "matt", qty: 300 } });
+    assert.equal(r.status, 201);
+    const fil = readFileSync(join(dir, "inventory", "filament.yaml"), "utf8");
+    assert.match(fil, /color: green/); assert.match(fil, /finish: matte/); assert.doesNotMatch(fil, /unit: g/);
+    r = await call("POST", "/api/items", { file: "hardware", item: { id: "m3", name: "M3", category: "skruv", qty: 5, unit: "st", specs: { "gänga": "M3" } } });
+    assert.match(readFileSync(join(dir, "inventory", "hardware.yaml"), "utf8"), /category: screw\n  qty: 5\n  specs: \{ thread: M3 \}/);
+    const green = JSON.parse(run("check", "plant-watering", "--json")).rows.find((x) => x.need === "Enclosure in green PETG");
+    assert.equal(green.status, "OK", "green PETG found via canonical color");
+    for (const id of ["petg-green", "m3"]) assert.equal((await call("DELETE", "/api/items/" + id, {})).status, 200);
+
     r = await call("POST", "/api/items", { file: "tools", item: { id: "multimeter", name: "dup", qty: 1 } });
     assert.equal(r.status, 400, "duplicate id refused");
     r = await call("PUT", "/api/items/uno", { file: "electronics", item: { id: "uno", name: "Uno", qty: 3 }, expect: { electronics: "stale" } });
