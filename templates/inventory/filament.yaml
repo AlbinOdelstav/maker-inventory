@@ -1,0 +1,24 @@
+# Filament. ONE row per material + color + finish + brand (not per spool).
+#
+#   qty       grams left in total (sum over spools, rough is fine)
+#   unit      g
+#   spools    number of spools (opened + sealed)
+#   material  PLA | PLA+ | PETG | TPU | ABS | ASA | PLA-CF ...
+#   color     lowercase color name (black, white, red ... or a #hex)
+#   finish    basic | matte | silk | translucent | glow ...
+#   brand     manufacturer
+#   specs     e.g. { diameter: 1.75 }
+#   min_qty   warn below this many grams (optional)
+#
+# Example:
+# - id: pla-black-basic-bambu
+#   name: PLA Basic black
+#   material: PLA
+#   color: black
+#   finish: basic
+#   brand: Bambu Lab
+#   qty: 1650
+#   unit: g
+#   spools: 2
+
+[]

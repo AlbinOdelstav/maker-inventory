@@ -1,0 +1,25 @@
+# Electronics: microcontrollers, drivers, sensors, modules, motors, power.
+#
+#   id        unique, kebab-case, never changes (projects refer to it)
+#   name      what it is, as specific as possible (variant matters: single vs dual shaft, 3.3V vs 5V)
+#   category  mcu | driver | motor | servo | sensor | display | power | module | passive | connector | other
+#   qty       how many you have
+#   unit      pcs (default)
+#   tags      keywords agents match on (voltage, protocol, form factor ...)
+#   specs     free key/value: voltage, current, interface, pins ...
+#   location  where it is
+#   in_use    project it is currently built into (counts as owned, but flagged)
+#   verified  false = guessed or from old notes, not checked in the drawer
+#   min_qty   warn below this (optional)
+#   notes     free text
+#
+# Example:
+# - id: arduino-nano
+#   name: Arduino Nano (ATmega328P, USB-C clone)
+#   category: mcu
+#   qty: 2
+#   tags: [arduino, nano, 5v]
+#   specs: { voltage: 5V }
+#   location: drawer 1
+
+[]

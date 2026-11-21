@@ -1,0 +1,11 @@
+# Tools and machines. qty = 1 is usually enough.
+#   category  printer | soldering | measuring | hand-tool | power-tool | other
+#
+# Example:
+# - id: printer-main
+#   name: FDM 3D printer
+#   category: printer
+#   qty: 1
+#   specs: { build_volume: 256x256x256, nozzle: 0.4 }
+
+[]

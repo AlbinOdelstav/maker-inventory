@@ -1,0 +1,17 @@
+# Mechanical parts and fasteners: screws, nuts, heat-set inserts, magnets, springs, bearings, shafts ...
+#
+#   category  screw | nut | insert | washer | magnet | spring | bearing | shaft | other
+#   specs     screw:  { thread: M3, length: 12, head: socket|pan|flat|self-tap }
+#             magnet: { d: 6, h: 3, grade: N52 }
+#             spring: { wire: 1.0, od: 7, free_length: 40 }
+#   qty       count (an estimate is fine for screws)
+#
+# Example:
+# - id: m3x12-socket
+#   name: M3×12 socket head screw
+#   category: screw
+#   qty: 40
+#   specs: { thread: M3, length: 12, head: socket }
+#   min_qty: 20
+
+[]

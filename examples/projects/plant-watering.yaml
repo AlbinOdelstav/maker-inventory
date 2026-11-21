@@ -1,0 +1,39 @@
+# Example project. Run:  node inv.mjs check plant-watering
+# Your own projects go in projects/ (git-ignored).
+#
+# Each need is ONE of:
+#   id: <inventory-id>          exactly that item
+#   match: { ... }              any item that matches:
+#       category, material, color, finish, brand, file   equal (case-insensitive)
+#       tags: [a, b]            item has all tags
+#       text: "uno"             substring of name/id
+#       specs: { thread: M3 }   each spec equal
+# Optional per need: name (readable label), qty, unit, optional: true, note, buy: { where, est_price, link }
+
+name: Automatic plant watering (example)
+needs:
+  - name: Microcontroller
+    match: { category: mcu, tags: [5v] }
+    qty: 1
+  - name: Capacitive soil moisture sensor
+    match: { category: sensor, tags: [soil-moisture] }
+    qty: 1
+    buy: { where: any electronics shop, est_price: 4 USD }
+  - name: Small 5V water pump
+    match: { category: motor, tags: [pump] }
+    qty: 1
+  - name: Motor driver for the pump
+    match: { category: driver, tags: [dc-motor] }
+    qty: 1
+  - name: Servo to turn the nozzle
+    match: { category: servo, tags: [micro-servo] }
+    qty: 1
+    optional: true
+  - name: Enclosure in green PETG
+    match: { material: PETG, color: green }
+    qty: 180
+    unit: g
+    note: slicer estimate + ~10 %
+  - name: M3×10 screw
+    match: { category: screw, specs: { thread: M3, length: 10 } }
+    qty: 8

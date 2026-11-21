@@ -1,0 +1,19 @@
+{
+  "name": "maker-inventory",
+  "version": "0.1.0",
+  "description": "Plain-text maker inventory (filament, electronics, hardware) that AI agents can check projects against.",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "maker-inventory": "inv.mjs" },
+  "scripts": {
+    "init": "node inv.mjs init",
+    "validate": "node inv.mjs validate",
+    "html": "node inv.mjs html",
+    "test": "node test/smoke.mjs"
+  },
+  "engines": { "node": ">=18" },
+  "keywords": ["inventory", "maker", "arduino", "3d-printing", "filament", "claude-code", "bom"],
+  "dependencies": {
+    "yaml": "^2.9.1"
+  }
+}

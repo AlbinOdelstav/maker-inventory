@@ -1,0 +1,13 @@
+# Consumables: wire, dupont cables, heat-shrink, solder, glue, tape, batteries ...
+#
+#   unit      pcs | m | g | ml | pack
+#   min_qty   warn below this (useful here!)
+#
+# Example:
+# - id: dupont-mf-20cm
+#   name: Dupont jumper wires male-female 20 cm
+#   category: wire
+#   qty: 30
+#   min_qty: 10
+
+[]

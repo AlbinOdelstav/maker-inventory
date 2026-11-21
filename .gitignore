@@ -1,0 +1,9 @@
+# Your personal data – never committed (anchored to the repo root so templates/ and examples/ are kept)
+/inventory/
+/projects/
+/overview.html
+/oversikt.html
+CLAUDE.local.md
+.claude/settings.local.json
+
+node_modules/
