@@ -11,12 +11,11 @@
 //   html                            regenerate overview.html, a read-only snapshot of the app
 //   install-skill                   install the Claude Code skill to ~/.claude/skills/inventory
 
-import { readFileSync, readdirSync, existsSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
+import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { join, resolve, basename } from "node:path";
-import { homedir } from "node:os";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
-import { ROOT, DATA, INV_DIR, PROJ_DIR, norm, unitOf, inventoryExists, loadInventory, loadProjects, computeCheck, validateAll } from "./lib.mjs";
+import { ROOT, DATA, INV_DIR, PROJ_DIR, norm, unitOf, inventoryExists, loadInventory, loadProjects, computeCheck, validateAll, initData, installSkill } from "./lib.mjs";
 import { renderApp } from "./html.mjs";
 
 function requireInventory() {
@@ -94,25 +93,11 @@ function writeHtml() {
 }
 
 function init() {
-  mkdirSync(INV_DIR, { recursive: true });
-  mkdirSync(PROJ_DIR, { recursive: true });
-  const tdir = join(ROOT, "templates", "inventory");
-  for (const f of readdirSync(tdir)) {
-    const dst = join(INV_DIR, f);
-    if (existsSync(dst)) console.log(`exists, kept: ${dst}`);
-    else { copyFileSync(join(tdir, f), dst); console.log(`created: ${dst}`); }
-  }
-  console.log(`\nProjects go in ${PROJ_DIR}. Example: ${join(ROOT, "examples", "projects")}`);
-}
-
-function installSkill() {
-  const dst = join(homedir(), ".claude", "skills", "inventory");
-  mkdirSync(dst, { recursive: true });
-  const body = readFileSync(join(ROOT, "skill", "SKILL.md"), "utf8")
-    .replaceAll("{{TOOL_DIR}}", ROOT.replaceAll("\\", "/"))
-    .replaceAll("{{DATA_DIR}}", DATA.replaceAll("\\", "/"));
-  writeFileSync(join(dst, "SKILL.md"), body);
-  console.log(`Installed: ${join(dst, "SKILL.md")}`);
+  const created = initData();
+  for (const f of created) console.log(`created: ${f}`);
+  if (!created.length) console.log(`Inventory already set up in ${INV_DIR}`);
+  console.log(`
+Projects go in ${PROJ_DIR}. Example: ${join(ROOT, "examples", "projects")}`);
 }
 
 const [cmd, ...args] = process.argv.slice(2);
@@ -123,7 +108,7 @@ const flagVal = (name) => { const i = args.indexOf(name); return i >= 0 ? args[i
 switch (cmd) {
   case "init": init(); break;
   case "app": case "serve": {
-    requireInventory();
+    if (!inventoryExists()) { initData(); console.log(`Created an empty inventory in ${INV_DIR}`); }
     const { startServer } = await import("./server.mjs");
     startServer({ port: Number(flagVal("--port") ?? process.env.PORT ?? 4310), open: !flags.includes("--no-open") });
     break;
@@ -146,7 +131,7 @@ switch (cmd) {
   }
   case "validate": validate(); break;
   case "html": writeHtml(); break;
-  case "install-skill": installSkill(); break;
+  case "install-skill": console.log(`Installed: ${installSkill()}`); break;
   default:
     console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(1, 13).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));
 }

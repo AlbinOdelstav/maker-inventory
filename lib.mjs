@@ -1,5 +1,6 @@
 // Shared logic for the CLI (inv.mjs) and the web app server (server.mjs).
-import { readFileSync, readdirSync, existsSync, writeFileSync, renameSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync, writeFileSync, renameSync, mkdirSync, copyFileSync, unlinkSync } from "node:fs";
+import { homedir } from "node:os";
 import { join, dirname, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
@@ -40,8 +41,10 @@ export const loadInventory = () => loadInventoryWithVersions().items;
 export function loadProjects(inv) {
   if (!existsSync(PROJ_DIR)) return [];
   return readdirSync(PROJ_DIR).filter((f) => /\.ya?ml$/.test(f)).sort().map((f) => {
-    const proj = YAML.parse(readFileSync(join(PROJ_DIR, f), "utf8")) ?? {};
-    return { file: f, name: proj.name ?? f, example: f.startsWith("_"), rows: computeCheck(inv, proj) };
+    const text = readFileSync(join(PROJ_DIR, f), "utf8");
+    const proj = YAML.parse(text) ?? {};
+    return { file: f, name: proj.name ?? f, notes: proj.notes, needs: proj.needs ?? [], version: hash(text),
+      example: f.startsWith("_"), rows: computeCheck(inv, proj) };
   }).sort((a, b) => a.example - b.example);
 }
 
@@ -250,4 +253,147 @@ export function deleteItem({ id, expect = {} }) {
   const src = readFile(prev._file);
   if (expect[prev._file] && expect[prev._file] !== src.version) throw new ConflictError(`${prev._file}.yaml was changed elsewhere`);
   writeFile(src.p, src.header, src.items.filter((i) => i.id !== id));
+}
+
+// ---------- projects ----------
+const PROJECT_HEADER = "# Project needs. Edited in the maker-inventory app or by hand; format: README.md \"Project file\".";
+const NEED_ORDER = ["name", "id", "match", "qty", "unit", "optional", "note", "buy"];
+const MATCH_ORDER = ["file", "category", "material", "color", "finish", "brand", "tags", "specs", "text"];
+const orderKeys = (o, order) => { const r = {}; for (const k of order) if (k in o) r[k] = o[k]; for (const k of Object.keys(o)) if (!(k in r)) r[k] = o[k]; return r; };
+const projPath = (file) => {
+  if (!/^[a-z0-9_][a-z0-9_.-]*\.ya?ml$/i.test(file ?? "")) throw new InputError(`bad project file name: ${file}`);
+  return join(PROJ_DIR, file);
+};
+export const projectFileName = (name) => `${(norm(name).normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "project").slice(0, 60)}.yaml`;
+
+// Clean a need from the UI: drop empties, canonical vocab values in `match`, numbers as numbers.
+function cleanNeed(raw) {
+  const n = {};
+  const str = (v) => (typeof v === "string" ? v.trim() : v);
+  for (const k of ["name", "id", "unit", "note"]) if (str(raw[k])) n[k] = str(raw[k]);
+  if (raw.qty !== undefined && raw.qty !== "") n.qty = Number(raw.qty);
+  if (raw.optional) n.optional = true;
+  if (!n.id && raw.match && typeof raw.match === "object") {
+    const m = {};
+    for (const [k, v] of Object.entries(raw.match)) {
+      if (k === "tags") { const a = [].concat(v ?? []).map(String).map((s) => s.trim()).filter(Boolean); if (a.length) m.tags = a; }
+      else if (k === "specs") { const o = Object.fromEntries(Object.entries(v ?? {}).filter(([sk, sv]) => sk.trim() && String(sv).trim()).map(([sk, sv]) => [canon(VOCAB.specKeys, sk) ?? sk.trim(), String(sv).trim()])); if (Object.keys(o).length) m.specs = o; }
+      else if (str(v)) m[k] = str(v);
+    }
+    const c = canonicalize(m, m.file);
+    if (Object.keys(c).length) n.match = orderKeys(c, MATCH_ORDER);
+  }
+  if (n.unit) n.unit = canon(VOCAB.units, n.unit) ?? n.unit;
+  if (raw.buy && typeof raw.buy === "object") {
+    const b = Object.fromEntries(Object.entries(raw.buy).filter(([, v]) => str(v)).map(([k, v]) => [k, str(v)]));
+    if (Object.keys(b).length) n.buy = b;
+  }
+  return orderKeys(n, NEED_ORDER);
+}
+
+export function projectErrors(p) {
+  const errs = [];
+  if (!String(p.name ?? "").trim()) errs.push("project needs a name");
+  (p.needs ?? []).forEach((n, i) => {
+    const where = `need ${i + 1}${n.name ? ` (${n.name})` : ""}`;
+    if (!n.id && !n.match) errs.push(`${where}: pick an item or describe what matches`);
+    if (n.qty !== undefined && (isNaN(n.qty) || n.qty <= 0)) errs.push(`${where}: qty must be a number > 0`);
+  });
+  return errs;
+}
+
+// Create or update a project. Renaming the project renames its file (unless it is an example).
+export function saveProject({ originalFile, project, expect }) {
+  const clean = { name: String(project.name ?? "").trim() };
+  if (String(project.notes ?? "").trim()) clean.notes = String(project.notes).trim();
+  clean.needs = (project.needs ?? []).map(cleanNeed);
+  const errs = projectErrors(clean);
+  if (errs.length) throw new InputError(errs.join("; "));
+  mkdirSync(PROJ_DIR, { recursive: true });
+
+  let file = originalFile;
+  if (originalFile) {
+    const p = projPath(originalFile);
+    if (!existsSync(p)) throw new ConflictError(`project ${originalFile} no longer exists`);
+    if (expect && hash(readFileSync(p, "utf8")) !== expect) throw new ConflictError(`${originalFile} was changed elsewhere`);
+  }
+  const wanted = projectFileName(clean.name);
+  if (!originalFile || (!originalFile.startsWith("_") && wanted !== originalFile)) {
+    file = wanted;
+    for (let i = 2; existsSync(join(PROJ_DIR, file)) && file !== originalFile; i++) file = wanted.replace(/\.yaml$/, `-${i}.yaml`);
+  }
+  const doc = new YAML.Document(clean);
+  YAML.visit(doc, { Pair(_, pair) { if (["match", "buy", "tags", "specs"].includes(pair.key?.value) && pair.value) pair.value.flow = true; } });
+  const out = projPath(file);
+  writeFileSync(`${out}.tmp`, `${PROJECT_HEADER}\n\n${doc.toString({ lineWidth: 0 })}`);
+  renameSync(`${out}.tmp`, out);
+  if (originalFile && originalFile !== file) unlinkSync(projPath(originalFile));
+  return file;
+}
+
+export function deleteProject({ file, expect }) {
+  const p = projPath(file);
+  if (!existsSync(p)) throw new ConflictError(`project ${file} no longer exists`);
+  if (expect && hash(readFileSync(p, "utf8")) !== expect) throw new ConflictError(`${file} was changed elsewhere`);
+  unlinkSync(p);
+}
+
+export function copyExampleProject() {
+  mkdirSync(PROJ_DIR, { recursive: true });
+  const src = join(ROOT, "examples", "projects", "plant-watering.yaml");
+  let file = "plant-watering.yaml";
+  for (let i = 2; existsSync(join(PROJ_DIR, file)); i++) file = `plant-watering-${i}.yaml`;
+  copyFileSync(src, join(PROJ_DIR, file));
+  return file;
+}
+
+// ---------- stock changes ----------
+// Apply several changes at once (e.g. "mark project as built"): [{ id, delta } | { id, set: { field: value } }].
+export function adjustStock(changes) {
+  if (!Array.isArray(changes) || !changes.length) throw new InputError("no changes");
+  const { items } = loadInventoryWithVersions();
+  const byFile = new Map();
+  for (const ch of changes) {
+    const it = items.find((i) => i.id === ch.id);
+    if (!it) throw new ConflictError(`item ${ch.id} no longer exists`);
+    if (!byFile.has(it._file)) byFile.set(it._file, readFile(it._file));
+    const f = byFile.get(it._file);
+    const target = f.items.find((i) => i.id === ch.id);
+    if (ch.delta !== undefined) {
+      if (isNaN(Number(ch.delta))) throw new InputError(`bad delta for ${ch.id}`);
+      target.qty = Math.max(0, Math.round((Number(target.qty ?? 0) + Number(ch.delta)) * 1000) / 1000);
+    }
+    for (const [k, v] of Object.entries(ch.set ?? {})) {
+      if (!["in_use", "location", "verified"].includes(k)) throw new InputError(`can't set ${k} here`);
+      if (v === null || v === "") delete target[k]; else target[k] = v;
+    }
+  }
+  for (const f of byFile.values()) writeFile(f.p, f.header, f.items);
+}
+
+// ---------- setup / admin ----------
+export function initData() {
+  mkdirSync(INV_DIR, { recursive: true });
+  mkdirSync(PROJ_DIR, { recursive: true });
+  const tdir = join(ROOT, "templates", "inventory");
+  const created = [];
+  for (const f of readdirSync(tdir)) {
+    const dst = join(INV_DIR, f);
+    if (!existsSync(dst)) { copyFileSync(join(tdir, f), dst); created.push(dst); }
+  }
+  return created;
+}
+
+export const SKILL_PATH = join(homedir(), ".claude", "skills", "inventory", "SKILL.md");
+export function installSkill() {
+  mkdirSync(dirname(SKILL_PATH), { recursive: true });
+  const body = readFileSync(join(ROOT, "skill", "SKILL.md"), "utf8")
+    .replaceAll("{{TOOL_DIR}}", ROOT.replaceAll("\\", "/"))
+    .replaceAll("{{DATA_DIR}}", DATA.replaceAll("\\", "/"));
+  writeFileSync(SKILL_PATH, body);
+  return SKILL_PATH;
+}
+export function skillStatus() {
+  if (!existsSync(SKILL_PATH)) return "missing";
+  return readFileSync(SKILL_PATH, "utf8").includes(DATA.replaceAll("\\", "/")) ? "installed" : "other";
 }

@@ -40,7 +40,8 @@ const I18N = {
     "f.specs": "Specs", "f.spec.key": "key (e.g. voltage)", "f.spec.val": "value", "f.spec.add": "Add spec", "f.notes": "Notes", "f.source": "Source",
     "t.saved": "Saved", "t.added": "Added {n}", "t.deleted": "Deleted {n}", "t.conflict": "The file was changed elsewhere (an agent?). Reloaded — check and save again.",
     "t.reloaded": "Updated from disk", "t.error": "Could not save: {e}", "t.offline": "Lost connection to the app server",
-    "a.dec": "Decrease", "a.inc": "Increase", "a.remove": "Remove", "unsaved": "Discard unsaved changes?",
+    "a.dec": "Decrease", "a.inc": "Increase", "a.remove": "Remove", "nav.settings": "Settings", "proj.new": "New project", "proj.fromExample": "Start from example", "proj.empty": "List what a build needs and see at a glance what you already have and what to buy.", "proj.agentHint": "You can also ask an agent: “check if I have everything for …”.", "proj.edit": "Edit", "proj.build": "Mark as built", "proj.build.hint": "Take the parts this project uses out of stock", "proj.restock": "Add to stock", "proj.restock.hint": "Bought it? Add it to your inventory", "proj.noNeeds": "No needs yet. Click Edit to list what this project needs.", "pe.new": "New project", "pe.edit": "Edit project", "pe.name": "Project name", "pe.name.ph": "e.g. Vending machine v12", "pe.notes.ph": "Optional: version, link to the design …", "pe.needs": "What it needs", "pe.needs.hint": "One row per part. “Any matching” finds anything in stock that fits (e.g. any 5V microcontroller); “Specific item” points at one thing you own.", "pe.mode.match": "Any matching", "pe.mode.item": "Specific item", "pe.remove": "Remove need", "pe.what": "What", "pe.what.ph": "e.g. Microcontroller", "pe.item": "Item from your inventory", "pe.item.hint": "Missing from the list? Use “Any matching” and describe it instead.", "pe.pick": "Pick an item…", "pe.anySection": "Any section", "pe.tags": "Must have tags", "pe.tags.ph": "e.g. 5v, i2c", "pe.specs": "Must have specs", "pe.specs.ph": "e.g. thread=M3, length=10", "pe.optional": "Optional (nice to have)", "pe.more": "Note & where to buy", "pe.text": "Name contains", "pe.text.ph": "e.g. uno", "pe.where": "Where to buy", "pe.price": "Est. price", "pe.link": "Link", "pe.add": "Add need", "pe.created": "Created {n}", "bd.title": "Built: {n}", "bd.intro": "Record that you built this project. Choose what happens to the parts it used.", "bd.deduct": "Use up the parts", "bd.deduct.hint": "Subtract the quantities from stock (filament, screws, components).", "bd.inuse": "Mark them as built in", "bd.inuse.hint": "Keep them in stock but flag them as in use in “{p}”.", "bd.parts": "Parts", "bd.none": "Nothing from your stock is allocated to this project.", "bd.confirm": "Confirm", "bd.done.deduct": "Stock updated ({n} items)", "bd.done.inuse": "Marked {n} items as in use", "st.appearance": "Appearance", "st.data": "Data", "st.dataDir": "Data folder", "st.dataDir.hint": "Your YAML files. Set MAKER_INVENTORY_DIR before starting the app to use another folder.", "st.copy": "Copy", "st.copied": "Copied", "st.check": "Check data", "st.check.hint": "Finds duplicate ids, missing fields and bad quantities.", "st.check.run": "Run check", "st.check.ok": "All good · {n} items", "st.snapshot": "Read-only snapshot", "st.snapshot.hint": "A single HTML file you can open without the app. Updated on every save.", "st.snapshot.run": "Rebuild now", "st.snapshot.done": "Snapshot rebuilt", "st.ai": "AI agents (Claude Code)", "st.ai.intro": "Optional. Installs a skill so agents in any project folder can check this inventory and update it when you tell them.", "st.skill": "Inventory skill", "st.skill.ok": "Installed", "st.skill.missing": "Not installed", "st.skill.other": "Points to another folder", "st.skill.install": "Install", "st.skill.update": "Reinstall", "st.skill.done": "Skill installed", "st.keys": "Keyboard shortcuts", "st.key.search": "Search", "st.key.new": "New item / project", "st.key.save": "Save", "st.key.close": "Close panel",
+    "unsaved": "Discard unsaved changes?",
   },
   sv: {
     "app.sub": "Delar, filament & projekt", "nav.workspace": "Arbetsyta", "nav.inventory": "Lager",
@@ -74,7 +75,8 @@ const I18N = {
     "f.specs": "Specs", "f.spec.key": "nyckel (t.ex. spänning)", "f.spec.val": "värde", "f.spec.add": "Lägg till spec", "f.notes": "Anteckningar", "f.source": "Källa",
     "t.saved": "Sparat", "t.added": "Lade till {n}", "t.deleted": "Tog bort {n}", "t.conflict": "Filen ändrades någon annanstans (en agent?). Laddade om – kolla och spara igen.",
     "t.reloaded": "Uppdaterat från disk", "t.error": "Kunde inte spara: {e}", "t.offline": "Tappade kontakten med app-servern",
-    "a.dec": "Minska", "a.inc": "Öka", "a.remove": "Ta bort", "unsaved": "Släng osparade ändringar?",
+    "a.dec": "Minska", "a.inc": "Öka", "a.remove": "Ta bort", "nav.settings": "Inställningar", "proj.new": "Nytt projekt", "proj.fromExample": "Utgå från exempel", "proj.empty": "Lista vad ett bygge behöver och se direkt vad du redan har och vad du måste köpa.", "proj.agentHint": "Du kan också fråga en agent: ”kolla om jag har allt för …”.", "proj.edit": "Ändra", "proj.build": "Markera som byggt", "proj.build.hint": "Ta delarna projektet använder ur lagret", "proj.restock": "Lägg in i lagret", "proj.restock.hint": "Köpt? Lägg in det i lagret", "proj.noNeeds": "Inga behov än. Klicka Ändra för att lista vad projektet behöver.", "pe.new": "Nytt projekt", "pe.edit": "Ändra projekt", "pe.name": "Projektnamn", "pe.name.ph": "t.ex. Godisautomat v12", "pe.notes.ph": "Valfritt: version, länk till ritningen …", "pe.needs": "Vad det behöver", "pe.needs.hint": "En rad per del. ”Valfri som matchar” hittar allt i lagret som passar (t.ex. valfri 5V-mikrokontroller); ”Specifik post” pekar på en sak du har.", "pe.mode.match": "Valfri som matchar", "pe.mode.item": "Specifik post", "pe.remove": "Ta bort behov", "pe.what": "Vad", "pe.what.ph": "t.ex. Mikrokontroller", "pe.item": "Post i lagret", "pe.item.hint": "Saknas den i listan? Välj ”Valfri som matchar” och beskriv den i stället.", "pe.pick": "Välj en post…", "pe.anySection": "Valfri sektion", "pe.tags": "Måste ha taggar", "pe.tags.ph": "t.ex. 5v, i2c", "pe.specs": "Måste ha specs", "pe.specs.ph": "t.ex. gänga=M3, längd=10", "pe.optional": "Valfri (bra att ha)", "pe.more": "Anteckning & var man köper", "pe.text": "Namnet innehåller", "pe.text.ph": "t.ex. uno", "pe.where": "Var man köper", "pe.price": "Ungefärligt pris", "pe.link": "Länk", "pe.add": "Lägg till behov", "pe.created": "Skapade {n}", "bd.title": "Byggt: {n}", "bd.intro": "Registrera att du har byggt projektet. Välj vad som händer med delarna det använde.", "bd.deduct": "Förbruka delarna", "bd.deduct.hint": "Dra av antalen från lagret (filament, skruv, komponenter).", "bd.inuse": "Markera som monterade i", "bd.inuse.hint": "Behåll dem i lagret men flagga dem som monterade i ”{p}”.", "bd.parts": "Delar", "bd.none": "Inget från lagret är kopplat till projektet.", "bd.confirm": "Bekräfta", "bd.done.deduct": "Lagret uppdaterat ({n} poster)", "bd.done.inuse": "Markerade {n} poster som monterade", "st.appearance": "Utseende", "st.data": "Data", "st.dataDir": "Datamapp", "st.dataDir.hint": "Dina YAML-filer. Sätt MAKER_INVENTORY_DIR innan du startar appen för att använda en annan mapp.", "st.copy": "Kopiera", "st.copied": "Kopierat", "st.check": "Kontrollera data", "st.check.hint": "Hittar dubbla id:n, saknade fält och felaktiga antal.", "st.check.run": "Kör kontroll", "st.check.ok": "Allt ok · {n} poster", "st.snapshot": "Skrivskyddad ögonblicksbild", "st.snapshot.hint": "En enda HTML-fil du kan öppna utan appen. Uppdateras vid varje sparning.", "st.snapshot.run": "Bygg om nu", "st.snapshot.done": "Ögonblicksbilden ombyggd", "st.ai": "AI-agenter (Claude Code)", "st.ai.intro": "Valfritt. Installerar en skill så att agenter i vilken projektmapp som helst kan kolla lagret och uppdatera det när du ber dem.", "st.skill": "Inventory-skill", "st.skill.ok": "Installerad", "st.skill.missing": "Inte installerad", "st.skill.other": "Pekar på en annan mapp", "st.skill.install": "Installera", "st.skill.update": "Installera om", "st.skill.done": "Skill installerad", "st.keys": "Kortkommandon", "st.key.search": "Sök", "st.key.new": "Ny post / nytt projekt", "st.key.save": "Spara", "st.key.close": "Stäng panelen",
+    "unsaved": "Släng osparade ändringar?",
   },
 };
 const store = {
@@ -130,12 +132,13 @@ const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, proj
 let drawer = null; // { mode: "new"|"edit"|"view", originalId, file, form, dirty, armed }
 let saving = false;
 
-function normalize(d) { return { items: d.items || [], projects: d.projects || [], versions: d.versions || {}, version: d.version, generatedAt: d.generatedAt, dataDir: d.dataDir }; }
+function normalize(d) { return { items: d.items || [], projects: d.projects || [], versions: d.versions || {}, version: d.version, generatedAt: d.generatedAt, dataDir: d.dataDir, admin: d.admin }; }
 function parseRoute() {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
   const [page, arg] = h.split("/");
   if (FILES.includes(page)) return { page: "file", file: page };
   if (page === "projects") return { page: "projects", project: arg || null };
+  if (page === "settings") return { page: "settings" };
   return { page: "dashboard" };
 }
 
@@ -166,6 +169,8 @@ const ICONS = {
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>', auto: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/>',
   box: '<path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  check: '<path d="M20 6L9 17l-5-5"/>', edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
 };
 const icon = (n, cls = "i") => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n] || ""}</svg>`;
 
@@ -195,7 +200,7 @@ function renderShell() {
   const nav = (href, ic, label, current, extra = "") =>
     `<a href="#/${href}" ${current ? 'aria-current="page"' : ""}>${icon(ic)}<span>${esc(label)}</span>${extra}</a>`;
   const title = route.page === "dashboard" ? (query ? t("results") : t("nav.dashboard"))
-    : route.page === "projects" ? t("nav.projects") : fileLabel(route.file);
+    : route.page === "projects" ? t("nav.projects") : route.page === "settings" ? t("nav.settings") : fileLabel(route.file);
   const stamp = S.generatedAt ? new Date(S.generatedAt).toLocaleString(lang === "sv" ? "sv-SE" : "en-GB", { dateStyle: "medium", timeStyle: "short" }) : "";
 
   $("#app").innerHTML = `
@@ -206,6 +211,7 @@ function renderShell() {
         <div class="nav-label">${esc(t("nav.workspace"))}</div>
         ${nav("", "grid", t("nav.dashboard"), route.page === "dashboard")}
         ${nav("projects", "projects", t("nav.projects"), route.page === "projects", `<span class="count">${S.projects.filter((p) => !p.example).length}</span>`)}
+        ${nav("settings", "gear", t("nav.settings"), route.page === "settings")}
         <div class="nav-label">${esc(t("nav.inventory"))}</div>
         ${FILES.map((f) => nav(f, f, fileLabel(f), route.page === "file" && route.file === f,
           `<span class="count">${counts[f].length}</span>${counts[f].some(needsAttention) ? '<span class="dot" title="' + esc(t("attention")) + '"></span>' : ""}`)).join("")}
@@ -226,7 +232,8 @@ function renderShell() {
       <header class="topbar">
         <h1>${esc(title)}</h1>
         <label class="search">${icon("search")}<input id="q" type="search" placeholder="${esc(t("search"))}" value="${esc(query)}" autocomplete="off"><kbd>/</kbd></label>
-        ${LIVE ? `<button class="btn primary" data-act="new">${icon("plus")}<span class="hide-sm">${esc(t("add"))}</span></button>` : ""}
+        ${!LIVE || route.page === "settings" ? "" : route.page === "projects" ? `<button class="btn primary" data-act="new-project">${icon("plus")}<span class="hide-sm">${esc(t("proj.new"))}</span></button>`
+          : `<button class="btn primary" data-act="new">${icon("plus")}<span class="hide-sm">${esc(t("add"))}</span></button>`}
       </header>
       ${LIVE ? "" : `<div class="banner">${icon("alert")}<span>${esc(t("ro.banner"))} <code>node inv.mjs app</code></span></div>`}
       <main class="content" id="content"></main>
@@ -239,6 +246,7 @@ function renderContent() {
   const el = $("#content");
   if (!el) return;
   if (route.page === "projects") el.innerHTML = projectsView();
+  else if (route.page === "settings") el.innerHTML = settingsView();
   else if (route.page === "file") el.innerHTML = fileView(route.file);
   else el.innerHTML = query.trim() ? searchView() : dashboardView();
 }
@@ -298,9 +306,8 @@ function projectsPanel() {
       <div class="meta"><span>${esc(t("proj.ready", { a: s.ok, b: p.rows.length }))}</span>${s.short ? `<span>${esc(t("proj.short", { n: s.short }))}</span>` : ""}${s.missing ? `<span>${esc(t("proj.missing", { n: s.missing }))}</span>` : ""}</div></button>`;
   }).join("");
   return `<section class="panel full"><div class="panel-h"><h2>${esc(t("proj.title"))}</h2></div>
-    ${cards ? `<div class="proj-grid">${cards}</div>` : `<div class="hint">${projHint()}</div>`}</section>`;
+    ${cards ? `<div class="proj-grid">${cards}</div>` : `<div class="hint">${esc(t("proj.empty"))} ${LIVE ? `<button class="btn sm" data-act="new-project" style="margin-left:6px">${icon("plus")}${esc(t("proj.new"))}</button>` : ""}</div>`}</section>`;
 }
-const projHint = () => t("proj.hint", { dir: "<code>projects/</code>", ex: "<code>examples/projects/plant-watering.yaml</code>" });
 
 // ---------------------------------------------------------------- tables
 function sortItems(list, file) {
@@ -371,8 +378,11 @@ function searchView() {
 }
 
 // ---------------------------------------------------------------- projects
+const fromLabel = (f) => { const it = S.items.find((i) => i.id === f.id); return it ? (it._file === "filament" ? filamentTitle(it) : it.name) : (f.name || f.id); };
 function projectsView() {
-  if (!S.projects.length) return `<div class="welcome">${icon("projects")}<h2>${esc(t("proj.none"))}</h2><p>${projHint()}</p></div>`;
+  if (!S.projects.length) return `<div class="welcome">${icon("projects")}<h2>${esc(t("proj.none"))}</h2><p>${esc(t("proj.empty"))}</p>
+    ${LIVE ? `<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn primary" data-act="new-project">${icon("plus")}${esc(t("proj.new"))}</button>
+      <button class="btn" data-act="example-project">${esc(t("proj.fromExample"))}</button></div>` : ""}<p class="hint" style="margin-top:14px">${esc(t("proj.agentHint"))}</p></div>`;
   const cur = S.projects.find((p) => p.file === route.project) || S.projects[0];
   const list = S.projects.map((p) => {
     const s = projStats(p);
@@ -386,17 +396,23 @@ function projectsView() {
     const alts = r.alternatives.map((a) => `<div class="alt">↳ ${esc(why(a.why))}: ${esc(t("proj.alt", { name: a.name, qty: fmtNum(a.qty) + " " + unitLabel(a.unit) }))}</div>`).join("");
     return `<tr style="cursor:default"><td><span class="st st-${r.status}">${r.status === "OK" ? "✓" : r.status === "SHORT" ? "◐" : "✕"}</span></td>
       <td><div class="name">${esc(r.need)}</div>${alts}</td><td class="num">${fmtNum(r.qty)} ${esc(unitLabel(r.unit))}</td><td class="num">${fmtNum(r.got)}</td>
-      <td class="hide-sm">${r.from.map((f) => `<a href="#" data-open="${esc(f.id)}">${esc(f.id)}</a>`).join(", ") || "–"}</td><td class="hide-sm">${notes}</td></tr>`;
+      <td class="hide-sm">${r.from.map((f) => `<a href="#" data-open="${esc(f.id)}">${esc(fromLabel(f))}</a>`).join(", ") || "–"}</td><td class="hide-sm">${notes}</td></tr>`;
   }).join("");
-  const buy = cur.rows.filter((r) => r.status !== "OK");
-  const shop = buy.length ? buy.map((r) => `<label><input type="checkbox"> <span>${esc(r.need)}: <b>${fmtNum(r.qty - r.got)} ${esc(unitLabel(r.unit))}</b>${r.optional ? ` <span class="muted">(${esc(t("proj.optional"))})</span>` : ""}${r.buy?.where ? ` <span class="muted">· ${esc(r.buy.where)}</span>` : ""}</span></label>`).join("")
+  const buyIdx = cur.rows.map((r, i) => [r, i]).filter(([r]) => r.status !== "OK");
+  const shop = buyIdx.length ? buyIdx.map(([r, i]) => `<div class="shop-row"><span class="grow">${esc(r.need)}: <b>${fmtNum(r.qty - r.got)} ${esc(unitLabel(r.unit))}</b>${r.optional ? ` <span class="muted">(${esc(t("proj.optional"))})</span>` : ""}${r.buy?.where ? ` <span class="muted">· ${esc(r.buy.where)}</span>` : ""}${r.buy?.link ? ` <a href="${esc(r.buy.link)}" target="_blank" rel="noopener noreferrer">↗</a>` : ""}</span>
+      ${LIVE ? `<button class="btn sm" data-act="restock:${i}" title="${esc(t("proj.restock.hint"))}">${icon("plus")}${esc(t("proj.restock"))}</button>` : ""}</div>`).join("")
     : `<span class="muted">${esc(t("proj.nothing"))}</span>`;
+  const canBuild = cur.rows.some((r) => r.from.length);
   return `<div class="proj-layout">
-    <section class="panel proj-list"><div class="panel-h"><h2>${esc(t("proj.title"))}</h2></div><div class="panel-b">${list}</div><div class="hint">${projHint()}</div></section>
+    <section class="panel proj-list"><div class="panel-h"><h2>${esc(t("proj.title"))}</h2><span class="muted">${S.projects.length}</span></div><div class="panel-b">${list}</div></section>
     <div>
-      <section class="panel"><div class="panel-h"><h2>${esc(cur.name)}</h2>${progBar(projStats(cur)).replace('class="prog"', 'class="prog" style="width:140px"')}</div>
-        <div style="overflow-x:auto"><table><thead><tr><th></th><th>${esc(t("proj.need"))}</th><th class="num">${esc(t("proj.qty"))}</th><th class="num">${esc(t("proj.have"))}</th><th class="hide-sm">${esc(t("proj.from"))}</th><th class="hide-sm">${esc(t("proj.notes"))}</th></tr></thead><tbody>${rows}</tbody></table></div></section>
-      <section class="panel full"><div class="panel-h"><h2>${esc(t("proj.shop"))}</h2>${buy.length ? `<button class="btn sm" data-act="copy-shop">${icon("copy")}${esc(t("proj.copy"))}</button>` : ""}</div><div class="shop">${shop}</div></section>
+      <section class="panel"><div class="panel-h"><div style="min-width:0"><h2>${esc(cur.name)}</h2>${cur.notes ? `<div class="muted" style="font-size:12.5px;margin-top:2px">${esc(cur.notes)}</div>` : ""}</div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">${progBar(projStats(cur)).replace('class="prog"', 'class="prog" style="width:110px"')}
+        ${LIVE ? `<button class="btn sm" data-act="edit-project">${icon("edit")}${esc(t("proj.edit"))}</button>
+          <button class="btn sm" data-act="build-project" ${canBuild ? "" : "disabled"} title="${esc(t("proj.build.hint"))}">${icon("check")}${esc(t("proj.build"))}</button>` : ""}</div></div>
+        ${cur.rows.length ? `<div style="overflow-x:auto"><table><thead><tr><th></th><th>${esc(t("proj.need"))}</th><th class="num">${esc(t("proj.qty"))}</th><th class="num">${esc(t("proj.have"))}</th><th class="hide-sm">${esc(t("proj.from"))}</th><th class="hide-sm">${esc(t("proj.notes"))}</th></tr></thead><tbody>${rows}</tbody></table></div>`
+          : `<div class="empty-mini">${esc(t("proj.noNeeds"))}</div>`}</section>
+      <section class="panel full"><div class="panel-h"><h2>${esc(t("proj.shop"))}</h2>${buyIdx.length ? `<button class="btn sm" data-act="copy-shop">${icon("copy")}${esc(t("proj.copy"))}</button>` : ""}</div><div class="shop">${shop}</div></section>
     </div></div>`;
 }
 function shoppingMarkdown(p) {
@@ -409,20 +425,27 @@ const MATERIALS = ["PLA", "PLA+", "PETG", "TPU", "ABS", "ASA", "PLA-CF", "PETG-C
 // Datalist options: every vocab label in the current language, plus the user's own values that aren't in the vocab.
 const vocabOptions = (table, own) => [...Object.values(table).map((e) => e[lang]), ...own.filter((v) => v && !canon(table, v))];
 
-function openDrawer(mode, item) {
-  const base = item ? JSON.parse(JSON.stringify(item)) : { _file: route.page === "file" ? route.file : "electronics", qty: 1 };
-  drawer = { mode, originalId: item?.id || null, file: base._file, form: localizeForm(base, base._file), dirty: false, armed: false, idTouched: !!item, error: "" };
+function openDrawer(mode, item, prefill) {
+  const base = item ? JSON.parse(JSON.stringify(item)) : { _file: route.page === "file" ? route.file : "electronics", qty: 1, ...JSON.parse(JSON.stringify(prefill || {})) };
+  drawer = { kind: "item", mode, originalId: item?.id || null, file: base._file, form: localizeForm(base, base._file), dirty: !!prefill, armed: false, idTouched: !!item || !!prefill?.id, error: "" };
+  if (prefill && !prefill.id) autoId();
   renderDrawer();
   requestAnimationFrame(() => { $("#scrim").classList.add("open"); $("#drawer").classList.add("open"); setTimeout(() => $("#drawer [name=name]")?.focus(), 60); });
 }
 function closeDrawer(force) {
   if (!drawer) return;
+  if (drawer.kind === "project") syncProject();
   if (drawer.dirty && !force && !confirm(t("unsaved"))) return;
   drawer = null;
   $("#scrim").classList.remove("open"); $("#drawer").classList.remove("open");
 }
 
 function renderDrawer() {
+  if (drawer?.kind === "project") return renderProjectDrawer();
+  if (drawer?.kind === "build") return renderBuildDrawer();
+  return renderItemDrawer();
+}
+function renderItemDrawer() {
   const d = drawer, f = d.form, ro = !LIVE, fil = d.file === "filament";
   const dis = ro ? "disabled" : "";
   const datalist = (id, opts) => `<datalist id="${id}">${[...new Set(opts)].filter(Boolean).map((o) => `<option value="${esc(o)}">`).join("")}</datalist>`;
@@ -514,6 +537,8 @@ async function api(method, path, body) {
 function expectFor(...files) { const e = {}; for (const f of files) if (f && S.versions[f]) e[f] = S.versions[f]; return e; }
 
 async function saveDrawer() {
+  if (drawer?.kind === "project") return saveProjectDrawer();
+  if (drawer?.kind === "build") return confirmBuild();
   if (!drawer || saving) return;
   syncForm();
   const d = drawer, f = { ...d.form };
@@ -537,6 +562,7 @@ async function saveDrawer() {
   }
 }
 async function deleteCurrent() {
+  if (drawer?.kind === "project") return deleteProjectDrawer();
   const d = drawer;
   if (!d.armed) { d.armed = true; syncForm(); renderDrawerKeepScroll(); return; }
   const prev = S.items.find((i) => i.id === d.originalId);
@@ -558,6 +584,221 @@ async function step(id, dir) {
   catch (e) { if (e.status === 409) toast(t("t.conflict"), true); else toast(t("t.error", { e: e.message }), true); await loadState(true); }
 }
 function renderDrawerKeepScroll() { const b = $("#drawer .drawer-b"); const top = b ? b.scrollTop : 0; renderDrawer(); const nb = $("#drawer .drawer-b"); if (nb) nb.scrollTop = top; }
+
+// ---------------------------------------------------------------- project editor
+// A need is edited as flat form fields; the server cleans it and stores canonical values.
+function guessFile(m) {
+  if (m.file) return m.file;
+  if (m.material || m.color || m.finish) return "filament";
+  for (const f of FILES) if (m.category && VOCAB.categories[f] && canon(VOCAB.categories[f], m.category)) return f;
+  return "";
+}
+function needToForm(n = {}) {
+  const m = n.match || {}, file = guessFile(m);
+  return { name: n.name || "", mode: n.id ? "item" : "match", id: n.id || "", qty: n.qty ?? 1, unit: n.unit ? unitLabel(n.unit) : "",
+    optional: !!n.optional, note: n.note || "", where: n.buy?.where || "", price: n.buy?.est_price || "", link: n.buy?.link || "",
+    file: m.file || "", category: m.category ? catLabel(m.category, file) : "", material: m.material || "",
+    color: m.color ? colorLabel(m.color) : "", finish: m.finish ? finishLabel(m.finish) : "", brand: m.brand || "",
+    tags: (m.tags || []).join(", "), specs: Object.entries(m.specs || {}).map(([k, v]) => `${specLabel(k)}=${v}`).join(", "), text: m.text || "" };
+}
+function formToNeed(f) {
+  const n = { name: f.name, qty: f.qty, unit: f.unit, optional: f.optional, note: f.note, buy: { where: f.where, est_price: f.price, link: f.link } };
+  if (f.mode === "item") n.id = f.id;
+  else n.match = { file: f.file, category: f.file === "filament" ? "" : f.category, material: f.material, color: f.color, finish: f.finish, brand: f.brand, text: f.text,
+    tags: f.tags.split(",").map((s) => s.trim()).filter(Boolean),
+    specs: Object.fromEntries(f.specs.split(",").map((s) => s.split("=")).filter((p) => p.length >= 2 && p[0].trim()).map(([k, ...v]) => [k.trim(), v.join("=").trim()])) };
+  return n;
+}
+function relabelNeed(n) {
+  const file = n.file || guessFile({ material: n.material, color: n.color, category: n.category });
+  return { unit: n.unit ? unitLabel(n.unit) : "", category: n.category ? catLabel(n.category, file) : "", color: n.color ? colorLabel(n.color) : "",
+    finish: n.finish ? finishLabel(n.finish) : "",
+    specs: n.specs.split(",").map((p) => p.split("=")).filter((p) => p[0].trim()).map(([k, ...v]) => `${specLabel(k.trim())}=${v.join("=").trim()}`).join(", ") };
+}
+function openProject(mode, p) {
+  drawer = { kind: "project", mode, file: p?.file || null, version: p?.version, dirty: false, armed: false, error: "",
+    form: { name: p?.name || "", notes: p?.notes || "", needs: (p?.needs?.length ? p.needs : [{}]).map(needToForm) } };
+  renderDrawer(); showDrawer("[name=pname]");
+}
+function showDrawer(focusSel) {
+  requestAnimationFrame(() => { $("#scrim").classList.add("open"); $("#drawer").classList.add("open"); setTimeout(() => $(`#drawer ${focusSel}`)?.focus(), 60); });
+}
+function syncProject() {
+  const form = $("#projForm"); if (!form || drawer?.kind !== "project") return;
+  drawer.form.name = form.querySelector("[name=pname]").value;
+  drawer.form.notes = form.querySelector("[name=pnotes]").value;
+  form.querySelectorAll(".need-card").forEach((card) => {
+    const f = drawer.form.needs[Number(card.dataset.ni)];
+    card.querySelectorAll("[data-nf]").forEach((el) => { f[el.dataset.nf] = el.type === "checkbox" ? el.checked : el.value; });
+  });
+}
+function itemOptionLabel(it) { return `${it._file === "filament" ? filamentTitle(it) : it.name} (${fmtNum(it.qty ?? 0)} ${unitLabel(unitOf(it))})`; }
+
+function renderProjectDrawer() {
+  const d = drawer, f = d.form;
+  const dl = (id, opts) => `<datalist id="${id}">${[...new Set(opts)].filter(Boolean).map((o) => `<option value="${esc(o)}">`).join("")}</datalist>`;
+  const inp = (nf, val, label, attrs = "") => `<label class="field"><span>${esc(label)}</span><input data-nf="${nf}" value="${esc(val ?? "")}" ${attrs}></label>`;
+  const itemSelect = (sel) => `<select data-nf="id"><option value="">${esc(t("pe.pick"))}</option>${FILES.map((file) => {
+    const its = S.items.filter((i) => i._file === file); if (!its.length) return "";
+    return `<optgroup label="${esc(fileLabel(file))}">${its.map((it) => `<option value="${esc(it.id)}" ${it.id === sel ? "selected" : ""}>${esc(itemOptionLabel(it))}</option>`).join("")}</optgroup>`;
+  }).join("")}</select>`;
+  const cards = f.needs.map((n, i) => {
+    const fil = n.file === "filament";
+    const matchFields = `
+      <div class="row2"><label class="field"><span>${esc(t("f.section"))}</span><select data-nf="file" data-rerender><option value="">${esc(t("pe.anySection"))}</option>
+        ${FILES.map((x) => `<option value="${x}" ${x === n.file ? "selected" : ""}>${esc(fileLabel(x))}</option>`).join("")}</select></label>
+        ${fil ? inp("material", n.material, t("f.material"), 'list="dl-mat"') : inp("category", n.category, t("f.category"), `list="dl-cat-${n.file || "all"}"`)}</div>
+      ${fil ? `<div class="row3">${inp("color", n.color, t("f.color"), 'list="dl-color"')}${inp("finish", n.finish, t("f.finish"), 'list="dl-finish"')}${inp("brand", n.brand, t("f.brand"))}</div>` : ""}
+      <div class="row2">${inp("tags", n.tags, t("pe.tags"), `placeholder="${esc(t("pe.tags.ph"))}"`)}${inp("specs", n.specs, t("pe.specs"), `placeholder="${esc(t("pe.specs.ph"))}"`)}</div>`;
+    return `<div class="need-card" data-ni="${i}">
+      <div class="need-top"><span class="need-no">${i + 1}</span>
+        <div class="seg" role="group"><button type="button" data-nmode="match" aria-pressed="${n.mode === "match"}">${esc(t("pe.mode.match"))}</button><button type="button" data-nmode="item" aria-pressed="${n.mode === "item"}">${esc(t("pe.mode.item"))}</button></div>
+        <span class="spacer"></span><button type="button" class="icon-btn" data-rmneed="${i}" aria-label="${esc(t("pe.remove"))}" title="${esc(t("pe.remove"))}">${icon("x")}</button></div>
+      <div class="row-need">${inp("name", n.name, t("pe.what"), `placeholder="${esc(t("pe.what.ph"))}"`)}${inp("qty", n.qty, t("f.qty"), 'type="number" min="0" step="any"')}${inp("unit", n.unit, t("f.unit"), `list="dl-unit" placeholder="${esc(unitLabel(fil ? "g" : "pcs"))}"`)}</div>
+      ${n.mode === "item" ? `<label class="field"><span>${esc(t("pe.item"))}</span>${itemSelect(n.id)}<small>${esc(t("pe.item.hint"))}</small></label>` : matchFields}
+      <label class="check"><input type="checkbox" data-nf="optional" ${n.optional ? "checked" : ""}><span>${esc(t("pe.optional"))}</span></label>
+      <details ${n.note || n.where || n.price || n.link || n.text ? "open" : ""}><summary>${esc(t("pe.more"))}</summary>
+        ${inp("note", n.note, t("f.notes"))}
+        ${n.mode === "match" ? inp("text", n.text, t("pe.text"), `placeholder="${esc(t("pe.text.ph"))}"`) : ""}
+        <div class="row3">${inp("where", n.where, t("pe.where"))}${inp("price", n.price, t("pe.price"))}${inp("link", n.link, t("pe.link"), 'type="url"')}</div>
+      </details></div>`;
+  }).join("");
+  $("#drawer").innerHTML = `
+    <div class="drawer-h">${icon("projects")}<h2>${esc(d.mode === "new" ? t("pe.new") : f.name || t("pe.edit"))}</h2>
+      <button class="icon-btn" data-act="close" aria-label="${esc(t("d.close"))}">${icon("x")}</button></div>
+    <form class="drawer-b" id="projForm" autocomplete="off" novalidate>
+      ${d.error ? `<div class="form-err">${esc(d.error)}</div>` : ""}
+      <label class="field"><span>${esc(t("pe.name"))} <em>*</em></span><input name="pname" value="${esc(f.name)}" placeholder="${esc(t("pe.name.ph"))}"></label>
+      <label class="field"><span>${esc(t("f.notes"))}</span><textarea name="pnotes" placeholder="${esc(t("pe.notes.ph"))}">${esc(f.notes)}</textarea></label>
+      <div class="section-t">${esc(t("pe.needs"))} · ${f.needs.length}</div>
+      <small class="muted" style="margin-top:-6px">${esc(t("pe.needs.hint"))}</small>
+      ${cards}
+      <button type="button" class="btn" data-act="add-need" style="align-self:flex-start">${icon("plus")}${esc(t("pe.add"))}</button>
+      ${dl("dl-mat", [...MATERIALS, ...S.items.map((i) => i.material)])}${dl("dl-color", vocabOptions(VOCAB.colors, S.items.map((i) => i.color)))}
+      ${dl("dl-finish", vocabOptions(VOCAB.finishes, []))}${dl("dl-unit", vocabOptions(VOCAB.units, []))}
+      ${dl("dl-cat-all", vocabOptions(ALL_CATS, S.items.map((i) => i.category)))}
+      ${FILES.map((file) => dl(`dl-cat-${file}`, vocabOptions(catTable(file), S.items.filter((i) => i._file === file).map((i) => i.category)))).join("")}
+    </form>
+    <div class="drawer-f">
+      ${d.mode === "edit" ? `<button class="btn danger ${d.armed ? "armed" : ""}" data-act="delete">${esc(d.armed ? t("d.confirm") : t("d.delete"))}</button>` : ""}
+      <span class="spacer"></span>
+      <button class="btn" data-act="close">${esc(t("d.cancel"))}</button>
+      <button class="btn primary" data-act="save" ${saving ? "disabled" : ""}>${esc(t("d.save"))}</button>
+    </div>`;
+}
+
+async function saveProjectDrawer() {
+  if (!drawer || saving) return;
+  syncProject();
+  const d = drawer;
+  const project = { name: d.form.name, notes: d.form.notes, needs: d.form.needs.map(formToNeed) };
+  saving = true; renderDrawerKeepScroll();
+  try {
+    const r = d.mode === "new" ? await api("POST", "/api/projects", { project })
+      : await api("PUT", "/api/projects/" + encodeURIComponent(d.file), { project, expect: d.version });
+    S = normalize(r.state); saving = false; closeDrawer(true);
+    toast(d.mode === "new" ? t("pe.created", { n: project.name }) : t("t.saved"));
+    go("#/projects/" + encodeURIComponent(r.file));
+  } catch (e) {
+    saving = false;
+    if (e.status === 409) { toast(t("t.conflict"), true); await loadState(true); }
+    if (drawer) drawer.error = e.status === 409 ? t("t.conflict") : t("t.error", { e: e.message });
+    renderDrawerKeepScroll();
+  }
+}
+async function deleteProjectDrawer() {
+  const d = drawer;
+  if (!d.armed) { d.armed = true; syncProject(); renderDrawerKeepScroll(); return; }
+  try {
+    const r = await api("DELETE", "/api/projects/" + encodeURIComponent(d.file), { expect: d.version });
+    S = normalize(r.state); toast(t("t.deleted", { n: d.form.name })); closeDrawer(true); go("#/projects");
+  } catch (e) { toast(e.status === 409 ? t("t.conflict") : t("t.error", { e: e.message }), true); await loadState(true); }
+}
+
+// ---------------------------------------------------------------- build (use parts from stock)
+function openBuild(p) {
+  const picks = [];
+  p.rows.forEach((r, ri) => r.from.forEach((f) => picks.push({ ri, id: f.id, name: f.name, take: f.take, unit: r.unit, need: r.need, on: !r.optional })));
+  drawer = { kind: "build", file: p.file, name: p.name, how: "deduct", picks, dirty: false };
+  renderDrawer(); showDrawer("[name=how]");
+}
+function renderBuildDrawer() {
+  const d = drawer;
+  const list = d.picks.length ? d.picks.map((pk, i) => `<label class="check build-row"><input type="checkbox" data-pick="${i}" ${pk.on ? "checked" : ""}>
+      <span class="grow"><b>${esc(pk.name)}</b><br><span class="muted">${esc(pk.need)}</span></span>
+      <span class="qty-ro">${d.how === "deduct" ? "−" : ""}${fmtNum(pk.take)} <small>${esc(unitLabel(pk.unit))}</small></span></label>`).join("")
+    : `<div class="empty-mini">${esc(t("bd.none"))}</div>`;
+  $("#drawer").innerHTML = `
+    <div class="drawer-h">${icon("tools")}<h2>${esc(t("bd.title", { n: d.name }))}</h2><button class="icon-btn" data-act="close" aria-label="${esc(t("d.close"))}">${icon("x")}</button></div>
+    <form class="drawer-b" id="buildForm" novalidate>
+      <p class="muted" style="margin:0">${esc(t("bd.intro"))}</p>
+      <label class="check"><input type="radio" name="how" value="deduct" ${d.how === "deduct" ? "checked" : ""}><span><b>${esc(t("bd.deduct"))}</b><br><span class="muted">${esc(t("bd.deduct.hint"))}</span></span></label>
+      <label class="check"><input type="radio" name="how" value="inuse" ${d.how === "inuse" ? "checked" : ""}><span><b>${esc(t("bd.inuse"))}</b><br><span class="muted">${esc(t("bd.inuse.hint", { p: d.name }))}</span></span></label>
+      <div class="section-t">${esc(t("bd.parts"))}</div>${list}
+    </form>
+    <div class="drawer-f"><span class="spacer"></span><button class="btn" data-act="close">${esc(t("d.cancel"))}</button>
+      <button class="btn primary" data-act="save" ${saving || !d.picks.some((p) => p.on) ? "disabled" : ""}>${esc(t("bd.confirm"))}</button></div>`;
+}
+async function confirmBuild() {
+  const d = drawer, on = d.picks.filter((p) => p.on);
+  if (!on.length || saving) return;
+  const changes = [];
+  if (d.how === "deduct") {
+    const sum = new Map(); for (const p of on) sum.set(p.id, (sum.get(p.id) || 0) + p.take);
+    for (const [id, take] of sum) changes.push({ id, delta: -take });
+  } else for (const id of new Set(on.map((p) => p.id))) changes.push({ id, set: { in_use: d.name } });
+  saving = true;
+  try { const r = await api("POST", "/api/stock/adjust", { changes }); S = normalize(r.state); saving = false; closeDrawer(true); renderShell(); toast(t(d.how === "deduct" ? "bd.done.deduct" : "bd.done.inuse", { n: changes.length })); }
+  catch (e) { saving = false; toast(t("t.error", { e: e.message }), true); await loadState(true); }
+}
+
+// Shopping-list row -> stock: raise an item you already have, or create a new one prefilled from the need.
+function restock(p, ri) {
+  const r = p.rows[ri], need = p.needs?.[ri] || {}, missing = Math.max(0, r.qty - r.got);
+  const have = r.from[0] && S.items.find((i) => i.id === r.from[0].id);
+  if (have) { openDrawer("edit", have); drawer.form.qty = Number(have.qty || 0) + missing; drawer.dirty = true; renderDrawer(); return; }
+  const m = need.match || {}, file = guessFile(m) || "electronics";
+  const pre = { _file: file, name: need.name || "", qty: missing, unit: need.unit && need.unit !== (file === "filament" ? "g" : "pcs") ? need.unit : undefined,
+    category: m.category, material: m.material, color: m.color, finish: m.finish, brand: m.brand, tags: m.tags, specs: m.specs };
+  if (need.id) pre.id = need.id;
+  openDrawer("new", null, pre);
+}
+
+// ---------------------------------------------------------------- settings
+function settingsView() {
+  const a = S.admin;
+  const row = (label, value, action = "") => `<div class="set-row"><div class="set-l">${esc(label)}</div><div class="set-v">${value}</div><div class="set-a">${action}</div></div>`;
+  const code = (s) => `<code class="path">${esc(s)}</code>`;
+  const skill = a ? { installed: ["b-ok", t("st.skill.ok")], missing: ["b-warn", t("st.skill.missing")], other: ["b-warn", t("st.skill.other")] }[a.skill] : null;
+  const val = ui.validate;
+  return `<div class="settings">
+    <section class="panel"><div class="panel-h"><h2>${esc(t("st.appearance"))}</h2></div>
+      ${row(t("lang"), `<div class="seg"><button data-lang="sv" aria-pressed="${lang === "sv"}">Svenska</button><button data-lang="en" aria-pressed="${lang === "en"}">English</button></div>`)}
+      ${row(t("theme"), `<div class="seg">${["auto", "light", "dark"].map((m) => `<button data-theme-set="${m}" aria-pressed="${theme === m}">${icon(m === "light" ? "sun" : m === "dark" ? "moon" : "auto")}${esc(t("theme." + m))}</button>`).join("")}</div>`)}
+    </section>
+    ${a ? `<section class="panel"><div class="panel-h"><h2>${esc(t("st.data"))}</h2></div>
+      ${row(t("st.dataDir"), code(a.dataDir) + `<small class="muted">${esc(t("st.dataDir.hint"))}</small>`, `<button class="btn sm" data-copy="${esc(a.dataDir)}">${icon("copy")}${esc(t("st.copy"))}</button>`)}
+      ${row(t("st.check"), val ? (val.errors.length ? `<div class="form-err">${val.errors.map(esc).join("<br>")}</div>` : `<span class="badge b-ok">${esc(t("st.check.ok", { n: val.count }))}</span>`) : `<span class="muted">${esc(t("st.check.hint"))}</span>`,
+        `<button class="btn sm" data-act="admin:validate">${esc(t("st.check.run"))}</button>`)}
+      ${row(t("st.snapshot"), code(a.snapshot) + `<small class="muted">${esc(t("st.snapshot.hint"))}</small>`, `<button class="btn sm" data-act="admin:snapshot">${esc(t("st.snapshot.run"))}</button>`)}
+    </section>
+    <section class="panel"><div class="panel-h"><h2>${esc(t("st.ai"))}</h2></div>
+      <div class="hint" style="padding-top:12px">${esc(t("st.ai.intro"))}</div>
+      ${row(t("st.skill"), `<span class="badge ${skill[0]}">${esc(skill[1])}</span> ${code(a.skillPath)}`, `<button class="btn sm ${a.skill === "installed" ? "" : "primary"}" data-act="admin:skill">${esc(a.skill === "installed" ? t("st.skill.update") : t("st.skill.install"))}</button>`)}
+    </section>` : `<section class="panel"><div class="hint">${esc(t("ro.banner"))} <code>node inv.mjs app</code></div></section>`}
+    <section class="panel"><div class="panel-h"><h2>${esc(t("st.keys"))}</h2></div>
+      ${row(t("st.key.search"), "<kbd>/</kbd>")}${row(t("st.key.new"), "<kbd>N</kbd>")}${row(t("st.key.save"), "<kbd>Ctrl</kbd> + <kbd>Enter</kbd>")}${row(t("st.key.close"), "<kbd>Esc</kbd>")}
+    </section>
+    ${a ? `<div class="muted" style="font-size:12px;padding:4px 2px">maker-inventory · Node ${esc(a.node)} · ${esc(a.toolDir)}</div>` : ""}
+  </div>`;
+}
+async function adminAction(what) {
+  try {
+    if (what === "validate") { ui.validate = await api("POST", "/api/admin/validate", {}); renderContent(); }
+    else if (what === "snapshot") { await api("POST", "/api/admin/snapshot", {}); toast(t("st.snapshot.done")); }
+    else if (what === "skill") { const r = await api("POST", "/api/admin/install-skill", {}); S = normalize(r.state); renderShell(); toast(t("st.skill.done")); }
+  } catch (e) { toast(t("t.error", { e: e.message }), true); }
+}
 
 // ---------------------------------------------------------------- live sync
 async function loadState(quiet) {
@@ -594,7 +835,21 @@ document.addEventListener("click", (e) => {
   if (stepBtn) { e.stopPropagation(); step(stepBtn.dataset.id, Number(stepBtn.dataset.step)); return; }
   if (tEl.closest("[data-stop]")) return;
   const langBtn = tEl.closest("[data-lang]");
-  if (langBtn) { lang = langBtn.dataset.lang; store.set("lang", lang); document.documentElement.lang = lang; renderShell(); if (drawer) { syncForm(); localizeForm(drawer.form, drawer.file); renderDrawerKeepScroll(); } return; }
+  if (langBtn) {
+    const prevLang = lang;
+    if (drawer?.kind === "project") syncProject();
+    lang = langBtn.dataset.lang; store.set("lang", lang); document.documentElement.lang = lang; renderShell();
+    if (drawer?.kind === "item") { syncForm(); localizeForm(drawer.form, drawer.file); }
+    if (drawer?.kind === "project" && prevLang !== lang) drawer.form.needs = drawer.form.needs.map((n) => ({ ...n, ...relabelNeed(n) }));
+    if (drawer) renderDrawerKeepScroll();
+    return;
+  }
+  const copyBtn = tEl.closest("[data-copy]");
+  if (copyBtn) { navigator.clipboard?.writeText(copyBtn.dataset.copy).then(() => toast(t("st.copied"))); return; }
+  const nmode = tEl.closest("[data-nmode]");
+  if (nmode) { syncProject(); const n = drawer.form.needs[Number(nmode.closest(".need-card").dataset.ni)]; n.mode = nmode.dataset.nmode; drawer.dirty = true; renderDrawerKeepScroll(); return; }
+  const rmNeed = tEl.closest("[data-rmneed]");
+  if (rmNeed) { syncProject(); drawer.form.needs.splice(Number(rmNeed.dataset.rmneed), 1); drawer.dirty = true; renderDrawerKeepScroll(); return; }
   const themeBtn = tEl.closest("[data-theme-set]");
   if (themeBtn) { theme = themeBtn.dataset.themeSet; store.set("theme", theme); applyTheme(); renderShell(); return; }
   const sortTh = tEl.closest("[data-sort]");
@@ -611,7 +866,15 @@ document.addEventListener("click", (e) => {
   if (tEl.id === "scrim") { closeDrawer(); return; }
   const act = tEl.closest("[data-act]")?.dataset.act;
   if (!act) return;
+  const curProject = () => S.projects.find((x) => x.file === route.project) || S.projects[0];
   if (act === "new") openDrawer("new");
+  else if (act === "new-project") openProject("new");
+  else if (act === "edit-project") openProject("edit", curProject());
+  else if (act === "build-project") openBuild(curProject());
+  else if (act === "example-project") api("POST", "/api/projects", { example: true }).then((r) => { S = normalize(r.state); go("#/projects/" + encodeURIComponent(r.file)); }, (e) => toast(t("t.error", { e: e.message }), true));
+  else if (act.startsWith("restock:")) restock(curProject(), Number(act.slice(8)));
+  else if (act === "add-need") { syncProject(); drawer.form.needs.push(needToForm({})); drawer.dirty = true; renderDrawerKeepScroll(); const cards = document.querySelectorAll(".need-card"); cards[cards.length - 1]?.scrollIntoView({ block: "nearest" }); cards[cards.length - 1]?.querySelector("[data-nf=name]")?.focus(); }
+  else if (act.startsWith("admin:")) adminAction(act.slice(6));
   else if (act === "close") closeDrawer();
   else if (act === "save") saveDrawer();
   else if (act === "delete") deleteCurrent();
@@ -629,6 +892,7 @@ function go(hash) {
 
 document.addEventListener("input", (e) => {
   if (e.target.id === "q") { query = e.target.value; if (route.page === "dashboard" || route.page === "file") { renderContent(); $("#app h1").textContent = route.page === "dashboard" ? (query ? t("results") : t("nav.dashboard")) : fileLabel(route.file); } return; }
+  if (drawer?.kind === "project" && e.target.closest("#projForm")) { drawer.dirty = true; drawer.armed = false; return; }
   if (!drawer || !e.target.closest("#itemForm")) return;
   drawer.dirty = true; drawer.armed = false;
   const n = e.target.name;
@@ -648,6 +912,21 @@ document.addEventListener("input", (e) => {
 });
 document.addEventListener("change", (e) => {
   if (e.target.id === "attn") { ui.attention = e.target.checked; renderContent(); return; }
+  if (drawer?.kind === "build") {
+    if (e.target.name === "how") drawer.how = e.target.value;
+    if (e.target.dataset.pick !== undefined) drawer.picks[Number(e.target.dataset.pick)].on = e.target.checked;
+    renderDrawerKeepScroll(); return;
+  }
+  if (drawer?.kind === "project" && e.target.closest("#projForm")) {
+    drawer.dirty = true; drawer.armed = false;
+    if (e.target.dataset.rerender !== undefined) { syncProject(); renderDrawerKeepScroll(); }
+    if (e.target.dataset.nf === "id" && e.target.value) {
+      const card = e.target.closest(".need-card"), nameEl = card.querySelector("[data-nf=name]");
+      const it = S.items.find((i) => i.id === e.target.value);
+      if (nameEl && !nameEl.value && it) nameEl.value = it._file === "filament" ? filamentTitle(it) : it.name;
+    }
+    return;
+  }
   if (drawer && e.target.name === "_file") { syncForm(); drawer.file = e.target.value; drawer.form._file = drawer.file; drawer.dirty = true; autoId(); renderDrawerKeepScroll(); return; }
   if (drawer && e.target.closest("#itemForm")) drawer.dirty = true;
 });
@@ -657,13 +936,13 @@ document.addEventListener("keydown", (e) => {
     if (v) { syncForm(); drawer.form.tags = [...(drawer.form.tags || []), ...v.split(/\s*,\s*/).filter(Boolean)]; drawer.dirty = true; renderDrawerKeepScroll(); $("#tagIn")?.focus(); }
     return;
   }
-  if (e.target.id === "tagIn" && e.key === "Backspace" && !e.target.value && drawer.form.tags?.length) { syncForm(); drawer.form.tags.pop(); renderDrawerKeepScroll(); $("#tagIn")?.focus(); return; }
+  if (e.target.id === "tagIn" && e.key === "Backspace" && !e.target.value && drawer?.form.tags?.length) { syncForm(); drawer.form.tags.pop(); renderDrawerKeepScroll(); $("#tagIn")?.focus(); return; }
   if (drawer && e.key === "Escape") { closeDrawer(); return; }
   if (drawer && e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveDrawer(); return; }
-  if (drawer && e.key === "Enter" && e.target.tagName === "INPUT" && e.target.closest("#itemForm")) { e.preventDefault(); return; }
+  if (drawer && e.key === "Enter" && e.target.tagName === "INPUT" && e.target.closest("#itemForm, #projForm, #buildForm")) { e.preventDefault(); return; }
   const typing = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName);
   if (!typing && e.key === "/") { e.preventDefault(); $("#q")?.focus(); }
-  if (!typing && LIVE && e.key.toLowerCase() === "n" && !drawer && !e.ctrlKey && !e.metaKey) { e.preventDefault(); openDrawer("new"); }
+  if (!typing && LIVE && e.key.toLowerCase() === "n" && !drawer && !e.ctrlKey && !e.metaKey && route.page !== "settings") { e.preventDefault(); route.page === "projects" ? openProject("new") : openDrawer("new"); }
   if (e.target.id === "q" && e.key === "Escape") { query = ""; e.target.value = ""; renderContent(); }
 });
 window.addEventListener("hashchange", () => { route = parseRoute(); ui.category = ""; if (route.page !== "file") ui.attention = false; renderShell(); });

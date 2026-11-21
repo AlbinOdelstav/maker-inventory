@@ -4,6 +4,13 @@ A maker inventory (filament, electronics, hardware, consumables, tools) kept as 
 read/updated by agents. Schema and commands: README.md. Personal notes, if any, are in
 `CLAUDE.local.md` (git-ignored).
 
+## Product rule: manual first
+
+Everything an agent can do here must also be doable by hand in the web app: creating, editing and
+deleting items and projects, stock changes after a build or purchase, every setting, and every CLI
+action (check, validate, snapshot, skill install). Asking an agent is a shortcut, never the only
+way. When you add an agent-facing capability, add its UI in the same change.
+
 ## Rules for agents
 
 - **The inventory files are the truth.** Never claim the user owns something that is not in

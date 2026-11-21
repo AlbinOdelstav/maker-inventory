@@ -77,6 +77,40 @@ try {
     assert.equal(green.status, "OK", "green PETG found via canonical color");
     for (const id of ["petg-green", "m3"]) assert.equal((await call("DELETE", "/api/items/" + id, {})).status, 200);
 
+    // projects: create (Swedish input), check, rename, build, delete
+    r = await call("POST", "/api/projects", { project: { name: "Lampa v1", notes: "test", needs: [
+      { name: "Kort", id: "uno", qty: 1 },
+      { name: "Hölje", match: { file: "filament", material: "PETG", color: "svart", tags: [], specs: {} }, qty: 100, unit: "g" },
+      { name: "Skruv", match: { category: "skruv", specs: { "gänga": "M3" } }, qty: 4, unit: "st", buy: { where: "", est_price: "" } },
+    ] } });
+    assert.equal(r.status, 201);
+    let pj = await r.json();
+    assert.equal(pj.file, "lampa-v1.yaml");
+    const ptxt = readFileSync(join(dir, "projects", "lampa-v1.yaml"), "utf8");
+    assert.match(ptxt, /color: black/); assert.match(ptxt, /category: screw/); assert.match(ptxt, /thread: M3/); assert.doesNotMatch(ptxt, /buy:/);
+    let proj = pj.state.projects.find((p) => p.file === "lampa-v1.yaml");
+    assert.deepEqual(proj.rows.map((x) => x.status), ["OK", "OK", "MISSING"]);
+    assert.equal(JSON.parse(run("check", "lampa-v1", "--json")).rows[1].status, "OK", "CLI reads app-made projects");
+    r = await call("PUT", "/api/projects/lampa-v1.yaml", { project: { name: "Lampa v2", needs: proj.needs }, expect: "stale" });
+    assert.equal(r.status, 409);
+    r = await call("PUT", "/api/projects/lampa-v1.yaml", { project: { name: "Lampa v2", needs: proj.needs }, expect: proj.version });
+    pj = await r.json(); assert.equal(pj.file, "lampa-v2.yaml");
+    assert.ok(!existsSync(join(dir, "projects", "lampa-v1.yaml")), "renamed file");
+    r = await call("POST", "/api/projects", { project: { name: "", needs: [{ name: "x" }] } });
+    assert.equal(r.status, 400, "name + need description required");
+    r = await call("POST", "/api/stock/adjust", { changes: [{ id: "petg-black", delta: -100 }, { id: "uno", set: { in_use: "Lampa v2" } }] });
+    assert.equal(r.status, 200);
+    const after = (await r.json()).state.items;
+    assert.equal(after.find((i) => i.id === "petg-black").qty, 400);
+    assert.equal(after.find((i) => i.id === "uno").in_use, "Lampa v2");
+    r = await call("POST", "/api/stock/adjust", { changes: [{ id: "uno", set: { qty: 99 } }] });
+    assert.equal(r.status, 400, "adjust can't set arbitrary fields");
+    r = await call("POST", "/api/projects", { example: true });
+    assert.equal((await r.json()).file, "plant-watering.yaml");
+    for (const f of ["lampa-v2.yaml", "plant-watering.yaml"]) assert.equal((await call("DELETE", "/api/projects/" + f, {})).status, 200);
+    assert.equal((await call("DELETE", "/api/projects/..%2Finventory%2Ftools.yaml", {})).status, 400, "no path traversal");
+    assert.equal((await (await call("POST", "/api/admin/validate", {})).json()).errors.length, 0);
+
     r = await call("POST", "/api/items", { file: "tools", item: { id: "multimeter", name: "dup", qty: 1 } });
     assert.equal(r.status, 400, "duplicate id refused");
     r = await call("PUT", "/api/items/uno", { file: "electronics", item: { id: "uno", name: "Uno", qty: 3 }, expect: { electronics: "stale" } });

@@ -6,12 +6,14 @@ import { readdirSync, readFileSync, existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
-import { DATA, PROJ_DIR, loadInventoryWithVersions, loadProjects, saveItem, deleteItem, ConflictError, InputError } from "./lib.mjs";
+import { DATA, ROOT, PROJ_DIR, SKILL_PATH, loadInventoryWithVersions, loadProjects, saveItem, deleteItem, saveProject, deleteProject,
+  copyExampleProject, adjustStock, validateAll, installSkill, skillStatus, ConflictError, InputError } from "./lib.mjs";
 import { renderApp } from "./html.mjs";
 
 function state() {
   const { items, versions } = loadInventoryWithVersions();
-  return { items, versions, projects: loadProjects(items), version: versionOf(versions), dataDir: DATA, generatedAt: new Date().toISOString() };
+  return { items, versions, projects: loadProjects(items), version: versionOf(versions), dataDir: DATA, generatedAt: new Date().toISOString(),
+    admin: { dataDir: DATA, toolDir: ROOT, snapshot: join(DATA, "overview.html"), skill: skillStatus(), skillPath: SKILL_PATH, node: process.version } };
 }
 
 function versionOf(versions) {
@@ -80,6 +82,48 @@ export function startServer({ port = 4310, open = true, host = "127.0.0.1", quie
           refreshSnapshot();
           return send(res, 200, { state: state() });
         }
+      }
+
+      const pm = url.pathname.match(/^\/api\/projects(?:\/([^/]+))?$/);
+      if (pm) {
+        const file = pm[1] ? decodeURIComponent(pm[1]) : null;
+        const body = await readJson(req);
+        if (req.method === "POST" && !file) {
+          const saved = body.example ? copyExampleProject() : saveProject({ project: body.project });
+          refreshSnapshot();
+          return send(res, 201, { file: saved, state: state() });
+        }
+        if (req.method === "PUT" && file) {
+          const saved = saveProject({ originalFile: file, project: body.project, expect: body.expect });
+          refreshSnapshot();
+          return send(res, 200, { file: saved, state: state() });
+        }
+        if (req.method === "DELETE" && file) {
+          deleteProject({ file, expect: body.expect });
+          refreshSnapshot();
+          return send(res, 200, { state: state() });
+        }
+      }
+
+      if (req.method === "POST" && url.pathname === "/api/stock/adjust") {
+        const body = await readJson(req);
+        adjustStock(body.changes);
+        refreshSnapshot();
+        return send(res, 200, { state: state() });
+      }
+      if (req.method === "POST" && url.pathname === "/api/admin/validate") {
+        await readJson(req);
+        const { items } = loadInventoryWithVersions();
+        return send(res, 200, { errors: validateAll(items), count: items.length });
+      }
+      if (req.method === "POST" && url.pathname === "/api/admin/snapshot") {
+        await readJson(req);
+        refreshSnapshot();
+        return send(res, 200, { path: join(DATA, "overview.html") });
+      }
+      if (req.method === "POST" && url.pathname === "/api/admin/install-skill") {
+        await readJson(req);
+        return send(res, 200, { path: installSkill(), state: state() });
       }
       send(res, 404, { error: "not found" });
     } catch (e) {

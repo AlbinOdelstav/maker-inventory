@@ -7,10 +7,15 @@ those files, and answer **"do I have everything for this idea, and what do I nee
 - **YAML files you (or an agent) edit.** Easy to diff, work offline, no database.
 - **`check`** compares a project's needs with your stock. It shows what you have, what is short
   and what is missing, writes a shopping list, and suggests substitutes you already own.
-- **A web app** (`node inv.mjs app`) to browse and edit the inventory yourself: a dashboard,
-  sortable tables per section, filament color swatches, a side panel to add, edit and delete
-  items, +/- buttons for quick stock changes, and project status with a shopping list.
-  It is available in English and Swedish, with light and dark themes.
+- **A web app** (`node inv.mjs app`) where you can do everything yourself. Asking an agent is
+  only a shortcut.
+  - **Items:** a dashboard, sortable tables per section and filament color swatches. Add, edit
+    and delete items in a side panel, and use +/- buttons for quick stock changes.
+  - **Projects:** create and edit projects and list what each one needs. The app shows what you
+    have and what to buy. You can add a bought part to stock straight from the shopping list,
+    and **mark a project as built**, which either subtracts the parts or marks them as in use.
+  - **Settings:** language (English/Swedish), theme, a data check, a snapshot rebuild and
+    installation of the agent skill.
 - **`overview.html`**, a read-only snapshot of the same app that you can open without a server.
 - **A Claude Code skill**, so agents in *any* project folder can check your stock.
 
@@ -124,6 +129,9 @@ needs:
 `match` keys: `category`, `material`, `color`, `finish`, `brand` and `file` must be equal.
 With `tags`, the item must have all of them. `text` is a substring of the name or id. With
 `specs`, each spec must be equal. `check` never counts the same item for two needs.
+
+You rarely need to write this by hand. The app's project editor writes the same format, with
+Swedish or English input stored as canonical values.
 
 ## Workflow with an agent
 
