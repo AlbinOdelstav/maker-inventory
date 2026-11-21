@@ -115,6 +115,39 @@ try {
     assert.equal(after.find((i) => i.id === "uno").in_use, "Lampa v2");
     r = await call("POST", "/api/stock/adjust", { changes: [{ id: "uno", set: { qty: 99 } }] });
     assert.equal(r.status, 400, "adjust can't set arbitrary fields");
+    // Planning: status, to-dos, links, pictures.
+    let p2 = pj.state.projects.find((p) => p.file === "lampa-v2.yaml");
+    r = await call("PUT", "/api/projects/lampa-v2.yaml", { project: { name: p2.name, needs: p2.needs, status: "building",
+      todos: [{ text: "Print the base" }, { text: "Solder", done: true }, { text: " " }], links: [{ title: "CAD", url: "https://example.com/cad" }] }, expect: p2.version });
+    assert.equal(r.status, 200);
+    p2 = (await r.json()).state.projects.find((p) => p.file === "lampa-v2.yaml");
+    assert.equal(p2.status, "building");
+    assert.deepEqual(p2.todos, [{ text: "Print the base" }, { text: "Solder", done: true }], "empty to-dos dropped");
+    r = await call("PUT", "/api/projects/lampa-v2.yaml", { project: { name: p2.name, needs: p2.needs }, expect: p2.version });
+    p2 = (await r.json()).state.projects.find((p) => p.file === "lampa-v2.yaml");
+    assert.equal(p2.todos.length, 2, "saving needs alone keeps the to-dos");
+    assert.equal(p2.links[0].url, "https://example.com/cad");
+    r = await call("PUT", "/api/projects/lampa-v2.yaml", { project: { name: p2.name, needs: p2.needs, links: [{ url: "javascript:alert(1)" }] }, expect: p2.version });
+    assert.equal(r.status, 400, "only http(s) links");
+    r = await call("PUT", "/api/projects/lampa-v2.yaml", { project: { name: p2.name, needs: p2.needs, status: "someday" }, expect: p2.version });
+    assert.equal(r.status, 400, "known statuses only");
+    const png = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+    r = await call("POST", "/api/projects/lampa-v2.yaml/images", { data: png, caption: "first", expect: p2.version });
+    assert.equal(r.status, 201);
+    const up = await r.json();
+    assert.match(up.image, /^media\/lampa-v2\/\d{14}\.png$/);
+    p2 = up.state.projects.find((p) => p.file === "lampa-v2.yaml");
+    assert.deepEqual(p2.images, [{ file: up.image, caption: "first" }]);
+    r = await fetch(base + "/projects/" + up.image);
+    assert.equal(r.status, 200); assert.equal(r.headers.get("content-type"), "image/png");
+    assert.equal((await fetch(base + "/projects/media/..%2F..%2Finventory%2Ftools.yaml")).status, 400, "no traversal via media");
+    r = await call("POST", "/api/projects/lampa-v2.yaml/images", { data: "data:text/html;base64,PGgxPg==", expect: p2.version });
+    assert.equal(r.status, 400, "pictures only");
+    r = await call("DELETE", "/api/projects/lampa-v2.yaml/images", { image: up.image, expect: p2.version });
+    assert.equal(r.status, 200);
+    assert.ok(!existsSync(join(dir, "projects", up.image)), "picture file deleted");
+    assert.equal((await r.json()).state.projects.find((p) => p.file === "lampa-v2.yaml").images.length, 0);
+
     r = await call("POST", "/api/projects", { example: true });
     assert.equal((await r.json()).file, "plant-watering.yaml");
     for (const f of ["lampa-v2.yaml", "plant-watering.yaml"]) assert.equal((await call("DELETE", "/api/projects/" + f, {})).status, 200);

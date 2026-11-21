@@ -1,5 +1,5 @@
 // Shared logic for the CLI (inv.mjs) and the web app server (server.mjs).
-import { readFileSync, readdirSync, existsSync, writeFileSync, renameSync, mkdirSync, copyFileSync, unlinkSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync, writeFileSync, renameSync, mkdirSync, copyFileSync, unlinkSync, rmdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, dirname, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -44,6 +44,7 @@ export function loadProjects(inv) {
     const text = readFileSync(join(PROJ_DIR, f), "utf8");
     const proj = YAML.parse(text) ?? {};
     return { file: f, name: proj.name ?? f, notes: proj.notes, needs: proj.needs ?? [], version: hash(text),
+      status: proj.status, todos: proj.todos ?? [], links: proj.links ?? [], images: proj.images ?? [],
       example: f.startsWith("_"), rows: computeCheck(inv, proj) };
   }).sort((a, b) => a.example - b.example);
 }
@@ -277,7 +278,7 @@ export function deleteItem({ id, expect = {} }) {
 }
 
 // ---------- projects ----------
-const PROJECT_HEADER = "# Project needs. Edited in the maker-inventory app or by hand; format: README.md \"Project file\".";
+const PROJECT_HEADER = "# Project: needs and planning. Edited in the maker-inventory app or by hand; format: README.md \"Project file\".";
 const NEED_ORDER = ["name", "id", "match", "qty", "unit", "optional", "note", "buy"];
 const MATCH_ORDER = ["file", "category", "material", "color", "finish", "brand", "tags", "specs", "text"];
 const orderKeys = (o, order) => { const r = {}; for (const k of order) if (k in o) r[k] = o[k]; for (const k of Object.keys(o)) if (!(k in r)) r[k] = o[k]; return r; };
@@ -323,7 +324,93 @@ export function projectErrors(p) {
   return errs;
 }
 
+// ---------- project planning: status, to-dos, links, pictures ----------
+export const PROJECT_STATUSES = ["idea", "planning", "building", "done", "paused"];
+const PLAN_FIELDS = ["status", "todos", "links", "images"];
+const IMAGE_TYPES = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" };
+export const IMAGE_MAX_BYTES = 8 * 1024 * 1024;
+// Pictures live in projects/media/<folder>/<file>; the project YAML stores that path relative to projects/.
+const IMAGE_PATH = /^media\/[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9._-]*\.(png|jpe?g|webp|gif)$/;
+export function mediaFile(rel) {
+  if (!IMAGE_PATH.test(rel ?? "") || rel.includes("..")) throw new InputError(`bad picture path: ${rel}`);
+  return join(PROJ_DIR, rel);
+}
+const str = (v) => String(v ?? "").trim();
+
+// Validate and tidy the planning fields that are present; leaves out empty lists.
+function cleanPlan(raw) {
+  const out = {};
+  if (raw.status !== undefined && str(raw.status)) {
+    if (!PROJECT_STATUSES.includes(str(raw.status))) throw new InputError(`status must be one of ${PROJECT_STATUSES.join(", ")}`);
+    out.status = str(raw.status);
+  }
+  const list = (v, key) => [].concat(v ?? []).map((x) => (typeof x === "string" ? { [key]: x } : x ?? {})).filter((x) => str(x[key]));
+  if (raw.todos !== undefined) out.todos = list(raw.todos, "text").map((t) => (t.done ? { text: str(t.text), done: true } : { text: str(t.text) }));
+  if (raw.links !== undefined) out.links = list(raw.links, "url").map((l) => {
+    if (!/^https?:\/\/\S+$/i.test(str(l.url))) throw new InputError(`link must start with http:// or https://: ${str(l.url)}`);
+    return str(l.title) ? { title: str(l.title), url: str(l.url) } : { url: str(l.url) };
+  });
+  if (raw.images !== undefined) out.images = list(raw.images, "file").map((i) => {
+    mediaFile(str(i.file));
+    return str(i.caption) ? { file: str(i.file), caption: str(i.caption) } : { file: str(i.file) };
+  });
+  return out;
+}
+
+function readProject(file, expect) {
+  const p = projPath(file);
+  if (!existsSync(p)) throw new ConflictError(`project ${file} no longer exists`);
+  const text = readFileSync(p, "utf8");
+  if (expect && hash(text) !== expect) throw new ConflictError(`${file} was changed elsewhere`);
+  return YAML.parse(text) ?? {};
+}
+
+function writeProjectFile(file, project) {
+  const clean = { ...project };
+  for (const k of ["todos", "links", "images"]) if (Array.isArray(clean[k]) && !clean[k].length) delete clean[k];
+  if (!clean.status) delete clean.status;
+  const doc = new YAML.Document(orderKeys(clean, ["name", "status", "notes", "todos", "links", "images", "needs"]));
+  YAML.visit(doc, { Pair(_, pair) {
+    const k = pair.key?.value;
+    if (["match", "buy", "tags", "specs"].includes(k) && pair.value) pair.value.flow = true;
+    if (["todos", "links", "images"].includes(k) && pair.value?.items) for (const m of pair.value.items) m.flow = true;
+  } });
+  const out = projPath(file);
+  writeFileSync(`${out}.tmp`, `${PROJECT_HEADER}\n\n${doc.toString({ lineWidth: 0 })}`);
+  renameSync(`${out}.tmp`, out);
+}
+
+// Save an uploaded picture (a data: URL from the app) and add it to the project.
+export function addProjectImage({ file, data, caption, expect }) {
+  const proj = readProject(file, expect);
+  const m = /^data:(image\/[a-z+]+);base64,([A-Za-z0-9+/=]+)$/.exec(String(data ?? ""));
+  if (!m || !IMAGE_TYPES[m[1]]) throw new InputError("pictures must be PNG, JPG, WebP or GIF");
+  const bytes = Buffer.from(m[2], "base64");
+  if (bytes.length > IMAGE_MAX_BYTES) throw new InputError("picture is larger than 8 MB");
+  const folder = file.replace(/\.ya?ml$/i, "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+/, "") || "project";
+  mkdirSync(join(PROJ_DIR, "media", folder), { recursive: true });
+  const stamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
+  const ext = IMAGE_TYPES[m[1]];
+  let rel = `media/${folder}/${stamp}.${ext}`;
+  for (let i = 2; existsSync(join(PROJ_DIR, rel)); i++) rel = `media/${folder}/${stamp}-${i}.${ext}`;
+  writeFileSync(mediaFile(rel), bytes);
+  writeProjectFile(file, { ...proj, ...cleanPlan({ images: [...(proj.images ?? []), { file: rel, caption }] }) });
+  return rel;
+}
+
+// Remove a picture from the project and delete its file.
+export function deleteProjectImage({ file, image, expect }) {
+  const proj = readProject(file, expect);
+  const p = mediaFile(image);
+  const images = (proj.images ?? []).filter((i) => (typeof i === "string" ? i : i.file) !== image);
+  writeProjectFile(file, { ...proj, ...cleanPlan({ images }) });
+  if (existsSync(p)) unlinkSync(p);
+  try { rmdirSync(dirname(p)); } catch { /* folder not empty */ }
+}
+
 // Create or update a project. Renaming the project renames its file (unless it is an example).
+// Planning fields the caller leaves out (status, todos, links, images) keep their saved values,
+// so the needs editor and an agent editing needs never wipe the to-do list or pictures.
 export function saveProject({ originalFile, project, expect }) {
   const clean = { name: String(project.name ?? "").trim() };
   if (String(project.notes ?? "").trim()) clean.notes = String(project.notes).trim();
@@ -333,30 +420,25 @@ export function saveProject({ originalFile, project, expect }) {
   mkdirSync(PROJ_DIR, { recursive: true });
 
   let file = originalFile;
-  if (originalFile) {
-    const p = projPath(originalFile);
-    if (!existsSync(p)) throw new ConflictError(`project ${originalFile} no longer exists`);
-    if (expect && hash(readFileSync(p, "utf8")) !== expect) throw new ConflictError(`${originalFile} was changed elsewhere`);
-  }
+  const saved = originalFile ? readProject(originalFile, expect) : {};
+  Object.assign(clean, cleanPlan(Object.fromEntries(PLAN_FIELDS.map((k) => [k, project[k] !== undefined ? project[k] : saved[k]]))));
   const wanted = projectFileName(clean.name);
   if (!originalFile || (!originalFile.startsWith("_") && wanted !== originalFile)) {
     file = wanted;
     for (let i = 2; existsSync(join(PROJ_DIR, file)) && file !== originalFile; i++) file = wanted.replace(/\.yaml$/, `-${i}.yaml`);
   }
-  const doc = new YAML.Document(clean);
-  YAML.visit(doc, { Pair(_, pair) { if (["match", "buy", "tags", "specs"].includes(pair.key?.value) && pair.value) pair.value.flow = true; } });
-  const out = projPath(file);
-  writeFileSync(`${out}.tmp`, `${PROJECT_HEADER}\n\n${doc.toString({ lineWidth: 0 })}`);
-  renameSync(`${out}.tmp`, out);
+  writeProjectFile(file, clean);
   if (originalFile && originalFile !== file) unlinkSync(projPath(originalFile));
   return file;
 }
 
+// Deleting a project also deletes its pictures.
 export function deleteProject({ file, expect }) {
-  const p = projPath(file);
-  if (!existsSync(p)) throw new ConflictError(`project ${file} no longer exists`);
-  if (expect && hash(readFileSync(p, "utf8")) !== expect) throw new ConflictError(`${file} was changed elsewhere`);
-  unlinkSync(p);
+  const proj = readProject(file, expect);
+  unlinkSync(projPath(file));
+  for (const i of proj.images ?? []) {
+    try { const p = mediaFile(typeof i === "string" ? i : i.file); if (existsSync(p)) unlinkSync(p); rmdirSync(dirname(p)); } catch { /* keep going */ }
+  }
 }
 
 export function copyExampleProject() {

@@ -7,7 +7,10 @@ import { join } from "node:path";
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { DATA, ROOT, PROJ_DIR, SKILL_PATH, loadInventoryWithVersions, loadProjects, saveItem, deleteItem, saveProject, deleteProject,
-  copyExampleProject, adjustStock, validateAll, installSkill, skillStatus, ConflictError, InputError } from "./lib.mjs";
+  copyExampleProject, adjustStock, validateAll, installSkill, skillStatus, ConflictError, InputError,
+  addProjectImage, deleteProjectImage, mediaFile, IMAGE_MAX_BYTES } from "./lib.mjs";
+
+const IMAGE_MIME = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", gif: "image/gif" };
 import { renderApp } from "./html.mjs";
 
 function state() {
@@ -18,7 +21,7 @@ function state() {
 
 function versionOf(versions) {
   const h = createHash("sha1").update(JSON.stringify(versions));
-  if (existsSync(PROJ_DIR)) for (const f of readdirSync(PROJ_DIR).sort()) h.update(f).update(readFileSync(join(PROJ_DIR, f)));
+  if (existsSync(PROJ_DIR)) for (const f of readdirSync(PROJ_DIR).filter((f) => /\.ya?ml$/.test(f)).sort()) h.update(f).update(readFileSync(join(PROJ_DIR, f)));
   return h.digest("hex").slice(0, 12);
 }
 
@@ -34,9 +37,9 @@ const send = (res, code, body, type = "application/json; charset=utf-8") => {
   res.end(typeof body === "string" ? body : JSON.stringify(body));
 };
 
-async function readJson(req) {
+async function readJson(req, limit = 1e6) {
   let size = 0; const chunks = [];
-  for await (const c of req) { size += c.length; if (size > 1e6) throw new InputError("body too large"); chunks.push(c); }
+  for await (const c of req) { size += c.length; if (size > limit) throw new InputError("body too large"); chunks.push(c); }
   try { return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}"); } catch { throw new InputError("invalid JSON"); }
 }
 
@@ -79,6 +82,31 @@ export function startServer({ port = 4310, open = true, host = "127.0.0.1", quie
         }
         if (req.method === "DELETE" && id) {
           deleteItem({ id, expect: body.expect });
+          refreshSnapshot();
+          return send(res, 200, { state: state() });
+        }
+      }
+
+      // Project pictures: served from projects/media (the same relative path overview.html uses).
+      if (req.method === "GET" && url.pathname.startsWith("/projects/media/")) {
+        const rel = decodeURIComponent(url.pathname.slice("/projects/".length));
+        const p = mediaFile(rel);
+        if (!existsSync(p)) return send(res, 404, { error: "not found" });
+        res.writeHead(200, { "content-type": IMAGE_MIME[rel.split(".").pop()], "cache-control": "private, max-age=3600", "x-content-type-options": "nosniff" });
+        return res.end(readFileSync(p));
+      }
+      const im = url.pathname.match(/^\/api\/projects\/([^/]+)\/images$/);
+      if (im) {
+        const file = decodeURIComponent(im[1]);
+        // base64 grows the file by a third; leave room for the JSON around it.
+        const body = await readJson(req, Math.ceil(IMAGE_MAX_BYTES * 1.4) + 4096);
+        if (req.method === "POST") {
+          const image = addProjectImage({ file, data: body.data, caption: body.caption, expect: body.expect });
+          refreshSnapshot();
+          return send(res, 201, { image, state: state() });
+        }
+        if (req.method === "DELETE") {
+          deleteProjectImage({ file, image: body.image, expect: body.expect });
           refreshSnapshot();
           return send(res, 200, { state: state() });
         }

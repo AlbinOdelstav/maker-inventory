@@ -22,6 +22,7 @@ const I18N = {
     "proj.hint": "Projects are YAML files in {dir}. Ask an agent: “check if I have everything for …”, or copy {ex}.",
     "proj.ready": "{a}/{b} ready", "proj.short": "{n} short", "proj.missing": "{n} missing", "proj.example": "example",
     "proj.need": "Need", "proj.qty": "Qty", "proj.have": "Have", "proj.from": "From stock", "proj.notes": "Notes",
+    "proj.needsTitle": "What it needs", "ps.label": "Status", "ps.none": "No status", "ps.idea": "Idea", "ps.planning": "Planning", "ps.building": "Building", "ps.done": "Done", "ps.paused": "Paused", "pl.todo": "To do", "pl.todo.ph": "Add a task and press Enter", "pl.todo.none": "No tasks yet.", "pl.links": "Links", "pl.link.title": "Title (optional)", "pl.links.none": "No links yet: the CAD model, a guide, a shop page …", "pl.badUrl": "Links must start with http:// or https://", "pl.add": "Add", "pl.remove": "Remove", "pl.images": "Pictures", "pl.images.add": "Add pictures", "pl.images.none": "Drop pictures here, paste one with Ctrl+V or click Add pictures. PNG, JPG, WebP or GIF up to 8 MB.", "pl.images.empty": "No pictures.", "pl.images.big": "{n} is larger than 8 MB", "pl.images.type": "{n} is not a PNG, JPG, WebP or GIF", "pl.images.added": "Pictures added: {n}", "pl.caption": "Caption", "pl.caption.ph": "Add a caption", "pl.delete": "Delete picture", "pl.confirm": "Click again to delete", "pl.prev": "Previous", "pl.next": "Next",
     "proj.shop": "Shopping list", "proj.copy": "Copy as Markdown", "proj.copied": "Shopping list copied", "proj.nothing": "Nothing to buy. You have everything.",
     "proj.optional": "optional", "proj.altHead": "Similar in stock · {why}", "proj.altToggle": "{n} similar", "proj.altMissing": "no {key}", "why.other color": "other color", "why.other specs": "other sizes",
     "why.same category": "same category", "why.other finish/brand": "other finish/brand", "proj.inuse": "in use in {p}",
@@ -57,6 +58,7 @@ const I18N = {
     "proj.hint": "Projekt är YAML-filer i {dir}. Fråga en agent: ”kolla om jag har allt för …”, eller kopiera {ex}.",
     "proj.ready": "{a}/{b} klart", "proj.short": "{n} räcker inte", "proj.missing": "{n} saknas", "proj.example": "exempel",
     "proj.need": "Behov", "proj.qty": "Antal", "proj.have": "Hemma", "proj.from": "Från lagret", "proj.notes": "Noteringar",
+    "proj.needsTitle": "Vad som behövs", "ps.label": "Status", "ps.none": "Ingen status", "ps.idea": "Idé", "ps.planning": "Planering", "ps.building": "Bygger", "ps.done": "Klar", "ps.paused": "Pausad", "pl.todo": "Att göra", "pl.todo.ph": "Skriv en uppgift och tryck Enter", "pl.todo.none": "Inga uppgifter än.", "pl.links": "Länkar", "pl.link.title": "Titel (valfri)", "pl.links.none": "Inga länkar än: CAD-modellen, en guide, en butikssida …", "pl.badUrl": "Länkar måste börja med http:// eller https://", "pl.add": "Lägg till", "pl.remove": "Ta bort", "pl.images": "Bilder", "pl.images.add": "Lägg till bilder", "pl.images.none": "Släpp bilder här, klistra in en med Ctrl+V eller klicka Lägg till bilder. PNG, JPG, WebP eller GIF upp till 8 MB.", "pl.images.empty": "Inga bilder.", "pl.images.big": "{n} är större än 8 MB", "pl.images.type": "{n} är inte PNG, JPG, WebP eller GIF", "pl.images.added": "Bilder tillagda: {n}", "pl.caption": "Bildtext", "pl.caption.ph": "Skriv en bildtext", "pl.delete": "Ta bort bilden", "pl.confirm": "Klicka igen för att ta bort", "pl.prev": "Föregående", "pl.next": "Nästa",
     "proj.shop": "Inköpslista", "proj.copy": "Kopiera som Markdown", "proj.copied": "Inköpslistan kopierad", "proj.nothing": "Inget att köpa. Du har allt.",
     "proj.optional": "valfri", "proj.altHead": "Liknande i lager · {why}", "proj.altToggle": "{n} liknande", "proj.altMissing": "saknar {key}", "why.other color": "annan färg", "why.other specs": "andra mått",
     "why.same category": "samma kategori", "why.other finish/brand": "annan finish/märke", "proj.inuse": "sitter i {p}",
@@ -128,7 +130,7 @@ applyTheme();
 let S = normalize(BOOT.data || { items: [], projects: [] });
 let route = parseRoute();
 let query = "";
-const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, project: null, altsOpen: new Set() };
+const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, project: null, altsOpen: new Set(), lightbox: null, lbArmed: false };
 let drawer = null; // { mode: "new"|"edit"|"view", originalId, file, form, dirty, armed }
 let saving = false;
 
@@ -419,7 +421,7 @@ function projectsView() {
   const list = S.projects.map((p) => {
     const s = projStats(p);
     return `<div class="list-row" data-act="nav:projects/${esc(encodeURIComponent(p.file))}" aria-current="${p === cur}"><div class="grow">
-      <div class="title">${esc(p.name)}</div>${progBar(s)}<div class="sub" style="margin-top:4px">${esc(t("proj.ready", { a: s.ok, b: p.rows.length }))}${p.example ? " · " + esc(t("proj.example")) : ""}</div></div></div>`;
+      <div class="title">${esc(p.name)}${p.status ? " " + statusBadge(p.status) : ""}</div>${progBar(s)}<div class="sub" style="margin-top:4px">${esc(t("proj.ready", { a: s.ok, b: p.rows.length }))}${p.example ? " · " + esc(t("proj.example")) : ""}</div></div></div>`;
   }).join("");
   const why = (w) => t("why." + w);
   const rows = cur.rows.map((r, ri) => {
@@ -437,15 +439,101 @@ function projectsView() {
   return `<div class="proj-layout">
     <section class="panel proj-list"><div class="panel-h"><h2>${esc(t("proj.title"))}</h2><span class="muted">${S.projects.length}</span></div><div class="panel-b">${list}</div></section>
     <div>
-      <section class="panel"><div class="panel-h"><div style="min-width:0"><h2>${esc(cur.name)}</h2>${cur.notes ? `<div class="muted" style="font-size:12.5px;margin-top:2px">${esc(cur.notes)}</div>` : ""}</div>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">${progBar(projStats(cur)).replace('class="prog"', 'class="prog" style="width:110px"')}
+      <section class="panel proj-head"><div class="panel-h"><div style="min-width:0"><h2>${esc(cur.name)}</h2>${cur.notes ? `<div class="muted" style="font-size:12.5px;margin-top:2px">${esc(cur.notes)}</div>` : ""}</div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">${statusControl(cur)}
         ${LIVE ? `<button class="btn sm" data-act="edit-project">${icon("edit")}${esc(t("proj.edit"))}</button>
-          <button class="btn sm" data-act="build-project" ${canBuild ? "" : "disabled"} title="${esc(t("proj.build.hint"))}">${icon("check")}${esc(t("proj.build"))}</button>` : ""}</div></div>
+          <button class="btn sm" data-act="build-project" ${canBuild ? "" : "disabled"} title="${esc(t("proj.build.hint"))}">${icon("check")}${esc(t("proj.build"))}</button>` : ""}</div></div></section>
+      ${planPanels(cur)}
+      <section class="panel full"><div class="panel-h"><h2>${esc(t("proj.needsTitle"))}</h2>${progBar(projStats(cur)).replace('class="prog"', 'class="prog" style="width:110px"')}</div>
         ${cur.rows.length ? `<div style="overflow-x:auto"><table class="proj-table"><thead><tr><th></th><th>${esc(t("proj.need"))}</th><th class="num">${esc(t("proj.qty"))}</th><th class="num">${esc(t("proj.have"))}</th><th class="hide-sm">${esc(t("proj.from"))}</th><th class="hide-sm">${esc(t("proj.notes"))}</th></tr></thead><tbody>${rows}</tbody></table></div>`
           : `<div class="empty-mini">${esc(t("proj.noNeeds"))}</div>`}</section>
       <section class="panel full"><div class="panel-h"><h2>${esc(t("proj.shop"))}</h2>${buyIdx.length ? `<button class="btn sm" data-act="copy-shop">${icon("copy")}${esc(t("proj.copy"))}</button>` : ""}</div><div class="shop">${shop}</div></section>
     </div></div>`;
 }
+// ---------------------------------------------------------------- project planning
+const PROJECT_STATUSES = ["idea", "planning", "building", "done", "paused"];
+const statusBadge = (s) => `<span class="badge ps ps-${esc(s)}">${esc(t("ps." + s))}</span>`;
+const imgSrc = (img) => (LIVE ? "/projects/" : "projects/") + img.file;
+function statusControl(p) {
+  if (!LIVE || p.example) return p.status ? statusBadge(p.status) : "";
+  return `<select class="status-select ps-${esc(p.status || "none")}" data-status aria-label="${esc(t("ps.label"))}">
+    <option value="">${esc(t("ps.none"))}</option>${PROJECT_STATUSES.map((s) => `<option value="${s}" ${p.status === s ? "selected" : ""}>${esc(t("ps." + s))}</option>`).join("")}</select>`;
+}
+function planPanels(p) {
+  const edit = LIVE && !p.example;
+  const done = p.todos.filter((x) => x.done).length;
+  const todos = p.todos.map((x, i) => `<li class="${x.done ? "done" : ""}"><label><input type="checkbox" data-todo="${i}" ${x.done ? "checked" : ""} ${edit ? "" : "disabled"}><span>${esc(x.text)}</span></label>
+    ${edit ? `<button class="icon-btn xs" data-rmtodo="${i}" aria-label="${esc(t("pl.remove"))}" title="${esc(t("pl.remove"))}">${icon("x")}</button>` : ""}</li>`).join("");
+  const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
+  const links = p.links.map((l, i) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.title || host(l.url) || l.url)}</a><span class="muted">${esc(l.title ? host(l.url) : "")}</span>
+    ${edit ? `<button class="icon-btn xs" data-rmlink="${i}" aria-label="${esc(t("pl.remove"))}" title="${esc(t("pl.remove"))}">${icon("x")}</button>` : ""}</li>`).join("");
+  const pics = p.images.map((img, i) => `<figure><button type="button" data-img="${i}" aria-label="${esc(img.caption || t("pl.images"))}"><img src="${esc(imgSrc(img))}" alt="${esc(img.caption || "")}" loading="lazy"></button>${img.caption ? `<figcaption>${esc(img.caption)}</figcaption>` : ""}</figure>`).join("");
+  return `<div class="plan-grid">
+    <section class="panel"><div class="panel-h"><h2>${esc(t("pl.todo"))}</h2>${p.todos.length ? `<span class="muted">${done}/${p.todos.length}</span>` : ""}</div>
+      ${p.todos.length ? `<div class="prog todo-prog"><i style="width:${(done / p.todos.length) * 100}%"></i></div>` : ""}
+      ${todos ? `<ul class="todo">${todos}</ul>` : `<div class="empty-mini">${esc(t("pl.todo.none"))}</div>`}
+      ${edit ? `<form class="plan-add" data-addtodo><input name="text" placeholder="${esc(t("pl.todo.ph"))}" autocomplete="off"><button class="btn sm">${icon("plus")}${esc(t("pl.add"))}</button></form>` : ""}</section>
+    <section class="panel"><div class="panel-h"><h2>${esc(t("pl.links"))}</h2>${p.links.length ? `<span class="muted">${p.links.length}</span>` : ""}</div>
+      ${links ? `<ul class="links">${links}</ul>` : `<div class="empty-mini">${esc(t("pl.links.none"))}</div>`}
+      ${edit ? `<form class="plan-add" data-addlink><input name="title" placeholder="${esc(t("pl.link.title"))}" autocomplete="off" style="max-width:38%"><input name="url" type="url" placeholder="https://…" autocomplete="off"><button class="btn sm">${icon("plus")}${esc(t("pl.add"))}</button></form>` : ""}</section>
+  </div>
+  <section class="panel full gallery-panel" ${edit ? "data-drop" : ""}><div class="panel-h"><h2>${esc(t("pl.images"))}</h2>
+    ${edit ? `<label class="btn sm">${icon("plus")}${esc(t("pl.images.add"))}<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden data-upload></label>` : p.images.length ? `<span class="muted">${p.images.length}</span>` : ""}</div>
+    ${pics ? `<div class="gallery">${pics}</div>` : `<div class="empty-mini">${esc(edit ? t("pl.images.none") : t("pl.images.empty"))}</div>`}</section>`;
+}
+function lightboxHtml(p, i) {
+  const img = p.images[i]; if (!img) return "";
+  const edit = LIVE && !p.example, n = p.images.length;
+  return `<div class="lightbox" data-lb role="dialog" aria-modal="true" aria-label="${esc(t("pl.images"))}">
+    <div class="lb-top"><span>${i + 1} / ${n}</span><span class="spacer"></span>
+      ${edit ? `<button class="btn sm danger ${ui.lbArmed ? "armed" : ""}" data-lbdel>${esc(ui.lbArmed ? t("pl.confirm") : t("pl.delete"))}</button>` : ""}
+      <button class="icon-btn" data-lbclose aria-label="${esc(t("d.close"))}">${icon("x")}</button></div>
+    <div class="lb-stage">${n > 1 ? `<button class="lb-nav" data-lbgo="-1" aria-label="${esc(t("pl.prev"))}">‹</button>` : ""}
+      <img src="${esc(imgSrc(img))}" alt="${esc(img.caption || "")}">
+      ${n > 1 ? `<button class="lb-nav" data-lbgo="1" aria-label="${esc(t("pl.next"))}">›</button>` : ""}</div>
+    <div class="lb-cap">${edit ? `<input data-caption value="${esc(img.caption || "")}" placeholder="${esc(t("pl.caption.ph"))}" aria-label="${esc(t("pl.caption"))}">` : esc(img.caption || "")}</div></div>`;
+}
+function renderLightbox() {
+  document.querySelector(".lightbox")?.remove();
+  const p = curProj();
+  if (ui.lightbox == null || !p || !p.images[ui.lightbox]) { ui.lightbox = null; return; }
+  document.body.insertAdjacentHTML("beforeend", lightboxHtml(p, ui.lightbox));
+}
+const curProj = () => route.page === "projects" ? (S.projects.find((x) => x.file === route.project) || S.projects[0]) : null;
+
+// Save planning fields; the server keeps needs as they are and refuses if the file changed meanwhile.
+async function savePlan(p, patch) {
+  try {
+    const r = await api("PUT", "/api/projects/" + encodeURIComponent(p.file), { project: { name: p.name, notes: p.notes, needs: p.needs, ...patch }, expect: p.version });
+    S = normalize(r.state); renderContent(); renderLightbox(); return true;
+  } catch (e) {
+    toast(e.status === 409 ? t("t.conflict") : t("t.error", { e: e.message }), true);
+    if (e.status === 409) await loadState(true);
+    return false;
+  }
+}
+async function uploadImages(files) {
+  const okType = ["image/png", "image/jpeg", "image/webp", "image/gif"];
+  let added = 0;
+  for (const f of files) {
+    if (!okType.includes(f.type)) { toast(t("pl.images.type", { n: f.name || "?" }), true); continue; }
+    if (f.size > 8 * 1024 * 1024) { toast(t("pl.images.big", { n: f.name || "?" }), true); continue; }
+    const p = curProj(); if (!p) return;
+    const data = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
+    try { const r = await api("POST", "/api/projects/" + encodeURIComponent(p.file) + "/images", { data, expect: p.version }); S = normalize(r.state); added++; }
+    catch (e) { toast(e.status === 409 ? t("t.conflict") : t("t.error", { e: e.message }), true); if (e.status === 409) await loadState(true); break; }
+  }
+  if (added) { renderContent(); toast(t("pl.images.added", { n: added })); }
+}
+async function deleteImage(p, i) {
+  try {
+    const r = await api("DELETE", "/api/projects/" + encodeURIComponent(p.file) + "/images", { image: p.images[i].file, expect: p.version });
+    S = normalize(r.state); ui.lbArmed = false;
+    const np = curProj(); ui.lightbox = np && np.images.length ? Math.min(i, np.images.length - 1) : null;
+    renderContent(); renderLightbox();
+  } catch (e) { toast(e.status === 409 ? t("t.conflict") : t("t.error", { e: e.message }), true); if (e.status === 409) await loadState(true); }
+}
+
 function shoppingMarkdown(p) {
   return `## ${t("proj.shop")}: ${p.name}\n\n` + p.rows.filter((r) => r.status !== "OK")
     .map((r) => `- [ ] ${r.need}: ${r.qty - r.got} ${unitLabel(r.unit)}${r.optional ? ` (${t("proj.optional")})` : ""}${r.buy?.where ? ` – ${r.buy.where}` : ""}`).join("\n");
@@ -894,6 +982,21 @@ document.addEventListener("click", (e) => {
   if (tEl.closest("#tagsBox")) { $("#tagIn")?.focus(); }
   const altBtn = tEl.closest("[data-alts]");
   if (altBtn) { const k = altBtn.dataset.alts; ui.altsOpen.has(k) ? ui.altsOpen.delete(k) : ui.altsOpen.add(k); renderContent(); return; }
+  // project planning
+  const pp = curProj();
+  const rmTodo = tEl.closest("[data-rmtodo]");
+  if (rmTodo && pp) { savePlan(pp, { todos: pp.todos.filter((_, i) => i !== Number(rmTodo.dataset.rmtodo)) }); return; }
+  const rmLink = tEl.closest("[data-rmlink]");
+  if (rmLink && pp) { savePlan(pp, { links: pp.links.filter((_, i) => i !== Number(rmLink.dataset.rmlink)) }); return; }
+  const imgBtn = tEl.closest("[data-img]");
+  if (imgBtn) { ui.lightbox = Number(imgBtn.dataset.img); ui.lbArmed = false; renderLightbox(); document.querySelector(".lightbox [data-lbclose]")?.focus(); return; }
+  if (tEl.closest(".lightbox")) {
+    const go1 = tEl.closest("[data-lbgo]");
+    if (go1 && pp) { ui.lightbox = (ui.lightbox + Number(go1.dataset.lbgo) + pp.images.length) % pp.images.length; ui.lbArmed = false; renderLightbox(); return; }
+    if (tEl.closest("[data-lbdel]") && pp) { if (!ui.lbArmed) { ui.lbArmed = true; renderLightbox(); } else deleteImage(pp, ui.lightbox); return; }
+    if (tEl.closest("[data-lbclose]") || tEl.matches(".lightbox, .lb-stage")) { ui.lightbox = null; ui.lbArmed = false; renderLightbox(); }
+    return;
+  }
   const open = tEl.closest("[data-open]");
   if (open && !tEl.closest(".drawer")) { e.preventDefault(); const it = S.items.find((i) => i.id === open.dataset.open); if (it) openDrawer(LIVE ? "edit" : "view", it); return; }
   if (tEl.id === "scrim") { closeDrawer(); return; }
@@ -944,6 +1047,11 @@ document.addEventListener("input", (e) => {
 });
 document.addEventListener("change", (e) => {
   if (e.target.id === "attn") { ui.attention = e.target.checked; renderContent(); return; }
+  const pp = curProj();
+  if (pp && e.target.dataset.todo !== undefined) { const i = Number(e.target.dataset.todo); savePlan(pp, { todos: pp.todos.map((x, j) => (j === i ? { ...x, done: e.target.checked } : x)) }); return; }
+  if (pp && e.target.dataset.status !== undefined) { savePlan(pp, { status: e.target.value }); return; }
+  if (pp && e.target.dataset.upload !== undefined) { const files = [...e.target.files]; e.target.value = ""; uploadImages(files); return; }
+  if (pp && e.target.dataset.caption !== undefined) { const i = ui.lightbox; savePlan(pp, { images: pp.images.map((x, j) => (j === i ? { ...x, caption: e.target.value } : x)) }); return; }
   if (drawer?.kind === "build") {
     if (e.target.name === "how") drawer.how = e.target.value;
     if (e.target.dataset.pick !== undefined) drawer.picks[Number(e.target.dataset.pick)].on = e.target.checked;
@@ -962,7 +1070,38 @@ document.addEventListener("change", (e) => {
   if (drawer && e.target.name === "_file") { syncForm(); drawer.file = e.target.value; drawer.form._file = drawer.file; drawer.dirty = true; autoId(); renderDrawerKeepScroll(); return; }
   if (drawer && e.target.closest("#itemForm")) drawer.dirty = true;
 });
+// Add a to-do or a link from the small forms under each list.
+document.addEventListener("submit", (e) => {
+  const f = e.target, pp = curProj();
+  if (!pp || !f.matches("[data-addtodo], [data-addlink]")) return;
+  e.preventDefault();
+  if (f.matches("[data-addtodo]")) {
+    const text = f.text.value.trim(); if (!text) return;
+    savePlan(pp, { todos: [...pp.todos, { text }] }).then((ok) => { if (ok) $("[data-addtodo] input")?.focus(); });
+  } else {
+    const url = f.url.value.trim(), title = f.title.value.trim(); if (!url) return;
+    if (!/^https?:\/\/\S+$/i.test(url)) { toast(t("pl.badUrl"), true); return; }
+    savePlan(pp, { links: [...pp.links, { title, url }] });
+  }
+});
+// Pictures: drop files on the pictures panel, or paste one anywhere on a project page.
+document.addEventListener("dragover", (e) => { const z = e.target.closest?.("[data-drop]"); if (z && [...(e.dataTransfer?.types || [])].includes("Files")) { e.preventDefault(); z.classList.add("drag"); } });
+document.addEventListener("dragleave", (e) => { const z = e.target.closest?.("[data-drop]"); if (z && !z.contains(e.relatedTarget)) z.classList.remove("drag"); });
+document.addEventListener("drop", (e) => { const z = e.target.closest?.("[data-drop]"); if (!z) return; e.preventDefault(); z.classList.remove("drag"); uploadImages([...(e.dataTransfer?.files || [])]); });
+document.addEventListener("paste", (e) => {
+  const pp = curProj();
+  if (!LIVE || !pp || pp.example || drawer || /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+  const files = [...(e.clipboardData?.files || [])].filter((f) => f.type.startsWith("image/"));
+  if (files.length) { e.preventDefault(); uploadImages(files); }
+});
 document.addEventListener("keydown", (e) => {
+  if (ui.lightbox != null && document.querySelector(".lightbox")) {
+    if (e.key === "Escape") { ui.lightbox = null; ui.lbArmed = false; renderLightbox(); return; }
+    if (e.target.dataset?.caption !== undefined) { if (e.key === "Enter") e.target.blur(); return; }
+    const n = curProj()?.images.length || 0;
+    if (n > 1 && (e.key === "ArrowRight" || e.key === "ArrowLeft")) { ui.lightbox = (ui.lightbox + (e.key === "ArrowRight" ? 1 : -1) + n) % n; ui.lbArmed = false; renderLightbox(); }
+    return;
+  }
   if (e.target.id === "tagIn" && (e.key === "Enter" || e.key === ",")) {
     e.preventDefault(); const v = e.target.value.trim().replace(/,$/, "");
     if (v) { syncForm(); drawer.form.tags = [...(drawer.form.tags || []), ...v.split(/\s*,\s*/).filter(Boolean)]; drawer.dirty = true; renderDrawerKeepScroll(); $("#tagIn")?.focus(); }
@@ -977,7 +1116,7 @@ document.addEventListener("keydown", (e) => {
   if (!typing && LIVE && e.key.toLowerCase() === "n" && !drawer && !e.ctrlKey && !e.metaKey && route.page !== "settings") { e.preventDefault(); route.page === "projects" ? openProject("new") : openDrawer("new"); }
   if (e.target.id === "q" && e.key === "Escape") { query = ""; e.target.value = ""; renderContent(); }
 });
-window.addEventListener("hashchange", () => { route = parseRoute(); ui.category = ""; if (route.page !== "file") ui.attention = false; renderShell(); });
+window.addEventListener("hashchange", () => { ui.lightbox = null; renderLightbox(); route = parseRoute(); ui.category = ""; if (route.page !== "file") ui.attention = false; renderShell(); });
 window.addEventListener("beforeunload", (e) => { if (drawer?.dirty) { e.preventDefault(); e.returnValue = ""; } });
 
 // ---------------------------------------------------------------- boot

@@ -14,6 +14,9 @@ those files, and answer **"do I have everything for this idea, and what do I nee
   - **Projects:** create and edit projects and list what each one needs. The app shows what you
     have and what to buy. You can add a bought part to stock straight from the shopping list,
     and **mark a project as built**, which either subtracts the parts or marks them as in use.
+  - **Planning:** each project has a status (idea, planning, building, done, paused), a to-do
+    list, links (CAD model, guides, shops) and pictures. Add pictures with a button, by dropping
+    them on the page or by pasting with Ctrl+V.
   - **Settings:** language (English/Swedish), theme, a data check, a snapshot rebuild and
     installation of the agent skill.
 - **`overview.html`**, a read-only snapshot of the same app that you can open without a server.
@@ -125,6 +128,23 @@ needs:
     unit: g
     buy: { where: local shop, est_price: 20 USD }
 ```
+
+Planning fields are optional:
+
+```yaml
+status: building          # idea | planning | building | done | paused
+todos:
+  - { text: Print the enclosure, done: true }
+  - { text: Solder the pump driver }
+links:
+  - { title: CAD model, url: https://example.com/model }
+images:
+  - { file: media/plant-watering/20261121193000.jpg, caption: First test fit }
+```
+
+Pictures are stored in `projects/media/<project>/` (git-ignored with the rest of `projects/`).
+The app adds and removes them; deleting a project deletes its pictures. Saving a project
+without these fields keeps the ones already in the file.
 
 `match` keys: `category`, `material`, `color`, `finish`, `brand` and `file` must be equal.
 With `tags`, the item must have all of them. `text` is a substring of the name or id. With

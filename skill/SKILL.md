@@ -36,6 +36,11 @@ used, or set `in_use: <project>`.
 Projects you write show up in the app's Projects page, where the user can also create and edit
 them, add bought parts to stock and mark a project as built.
 
+A project file can also hold planning: `status` (idea | planning | building | done | paused),
+`todos` (`{ text, done }`), `links` (`{ title, url }`, http/https only) and `images` (added in the
+app). When the user asks to plan a project, write the to-dos there, and tick them off when they
+say a step is done. Keep the existing entries when you edit a project file.
+
 The user can also edit stock in the web app (`node {{TOOL_DIR}}/inv.mjs app`, http://localhost:4310),
 so re-read a YAML file right before you edit it. If they want to look at or edit the inventory
 themselves, point them to the app.
