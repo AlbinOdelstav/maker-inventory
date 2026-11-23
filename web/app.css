@@ -376,3 +376,13 @@ kbd { font: 12px ui-monospace, Consolas, monospace; border: 1px solid var(--line
 .cad-more { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; }
 .cad-more summary { cursor: pointer; color: var(--ink-2); font-weight: 500; }
 .cad-more p { margin: 4px 0 2px; color: var(--muted); line-height: 1.45; }
+.cad-src .badge { margin-bottom: 2px; }
+.cad-where { font-size: 11.5px; color: var(--ink-2); line-height: 1.35; }
+.cad-where a, .cad-sources a { color: var(--accent); text-decoration: none; word-break: break-all; }
+.cad-where a:hover, .cad-sources a:hover { text-decoration: underline; }
+.cad-ref { color: var(--muted); font-variant-numeric: tabular-nums; }
+.cad-nosrc { color: var(--warn); font-size: 11.5px; }
+.cad-sub { font-size: 12px; font-weight: 600; color: var(--ink-2); margin-bottom: 4px; }
+.cad-sources, .cad-legend { font-size: 12.5px; }
+.cad-sources ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.cad-legend { display: flex; flex-direction: column; gap: 3px; color: var(--ink-2); }

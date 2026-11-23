@@ -158,7 +158,7 @@ try {
 
     // CAD component links: the inventory only stores the id; dimensions are read from the library.
     mkdirSync(cadDir, { recursive: true });
-    writeFileSync(join(cadDir, "uno-r3.yaml"), "id: uno-r3\nname: Uno R3\ninventory_ids: [uno, sg90]\nsources: { eagle: board file }\nconfirm: [hole spacing]\nframe: origin at a corner\ngroups: { holes: Fästhål }\ndims:\n  pcb_l: {v: 68.58, src: DRAWING, unc: 0.2, ref: eagle}\n  pcb_t: 1.6\n  hole_d: {v: 3.2, label: {en: Hole diameter, sv: Håldiameter}, group: holes}\n");
+    writeFileSync(join(cadDir, "uno-r3.yaml"), "id: uno-r3\nname: Uno R3\ninventory_ids: [uno, sg90]\nsources:\n  eagle: \"board file, https://example.com/uno.brd, read 2026-11-23\"\n  ds: {title: Datasheet, url: https://example.com/ds.pdf, read: 2026-11-23}\n  bad: {title: Evil, url: \"javascript:alert(1)\"}\nconfirm: [hole spacing]\nframe: origin at a corner\ngroups: { holes: Fästhål }\ndims:\n  pcb_l: {v: 68.58, src: DRAWING, unc: 0.2, ref: eagle}\n  pcb_t: 1.6\n  hole_d: {v: 3.2, label: {en: Hole diameter, sv: Håldiameter}, group: holes, url: https://example.com/hole}\n");
     writeFileSync(join(cadDir, "broken.yaml"), "dims: [unclosed\n");
     let cs = await (await call("GET", "/api/state")).json();
     const uno = cs.items.find((i) => i.id === "uno");
@@ -166,7 +166,12 @@ try {
     assert.equal(r.status, 200);
     cs = (await r.json()).state;
     assert.match(readFileSync(join(dir, "inventory", "electronics.yaml"), "utf8"), /cad_component: uno-r3/);
-    assert.deepEqual(cs.cad.components["uno-r3"].dims[0], { name: "pcb_l", v: 68.58, src: "DRAWING", unc: 0.2, ref: "eagle", note: null, label: null, group: null });
+    assert.deepEqual(cs.cad.components["uno-r3"].dims[0], { name: "pcb_l", v: 68.58, src: "DRAWING", unc: 0.2, ref: "eagle", url: null, note: null, label: null, group: null });
+    const srcs = cs.cad.components["uno-r3"].sources;
+    assert.equal(srcs.eagle.url, "https://example.com/uno.brd", "a link inside a plain-text source is found");
+    assert.deepEqual(srcs.ds, { key: "ds", title: "Datasheet", url: "https://example.com/ds.pdf", read: "2026-11-23" });
+    assert.equal(srcs.bad.url, null, "only http(s) links");
+    assert.equal(cs.cad.components["uno-r3"].dims[2].url, "https://example.com/hole", "a value can link to its own source");
     assert.equal(cs.cad.components["uno-r3"].dims[1].v, 1.6, "bare numbers are values without a source");
     assert.deepEqual(cs.cad.components["uno-r3"].dims[2].label, { en: "Hole diameter", sv: "Håldiameter" }, "labels pass through in both languages");
     assert.equal(cs.cad.components["uno-r3"].dims[2].group, "holes");

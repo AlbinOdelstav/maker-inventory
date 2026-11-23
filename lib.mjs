@@ -164,6 +164,18 @@ export function itemErrors(it, file) {
 export const CAD_LIB = resolve(process.env.MAKER_CAD_LIBRARY ?? join(homedir(), ".claude", "skills", "cad-validation", "cadkit", "library", "components"));
 const cadFiles = () => (existsSync(CAD_LIB) ? readdirSync(CAD_LIB).filter((f) => /\.ya?ml$/i.test(f)).sort() : []);
 
+// Only http(s) links are ever shown as links.
+const httpUrl = (u) => (typeof u === "string" && /^https?:\/\/\S+$/i.test(u.trim()) ? u.trim() : null);
+// A source is a string ("Arduino board file, https://…, read 2026-11-23") or { title, url, read }.
+function cadSource(key, v) {
+  if (v && typeof v === "object") {
+    return { key, title: String(v.title ?? v.name ?? v.text ?? key), url: httpUrl(v.url ?? v.link), read: v.read ?? v.accessed ?? v.date ?? null };
+  }
+  const s = String(v ?? "");
+  const url = httpUrl((s.match(/https?:\/\/[^\s,;)]+/i) ?? [])[0]);
+  return { key, title: s || key, url, read: null };
+}
+
 export function loadCadLibrary() {
   const components = {};
   for (const f of cadFiles()) {
@@ -176,11 +188,12 @@ export function loadCadLibrary() {
       components[id] = {
         id, file: f, name: text(doc.name) ?? id, notes: text(doc.notes), frame: text(doc.frame), unit: doc.unit ?? "mm",
         inventory_ids: [].concat(doc.inventory_ids ?? []).map(String),
-        sources: doc.sources ?? {}, confirm: [].concat(doc.confirm ?? []).map(String),
+        sources: Object.fromEntries(Object.entries(doc.sources ?? {}).map(([k, v]) => [k, cadSource(k, v)])),
+        confirm: [].concat(doc.confirm ?? []).map(String),
         groups: Object.fromEntries(Object.entries(doc.groups ?? {}).map(([k, v]) => [k, text(v)])),
         dims: Object.entries(doc.dims ?? {}).map(([name, d]) => (d && typeof d === "object"
-          ? { name, v: num(d.v), src: d.src ?? null, unc: num(d.unc), ref: d.ref ?? null, note: d.note ?? null, label: text(d.label), group: d.group ?? null }
-          : { name, v: num(d), src: null, unc: null, ref: null, note: null, label: null, group: null })),
+          ? { name, v: num(d.v), src: d.src ?? null, unc: num(d.unc), ref: d.ref ?? null, url: httpUrl(d.url), note: d.note ?? null, label: text(d.label), group: d.group ?? null }
+          : { name, v: num(d), src: null, unc: null, ref: null, url: null, note: null, label: null, group: null })),
       };
     } catch (e) {
       components[id] = { id, file: f, name: id, error: String(e.message ?? e).split("\n")[0], inventory_ids: [], dims: [], sources: {}, confirm: [] };

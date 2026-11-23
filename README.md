@@ -129,15 +129,20 @@ app shows the dimensions read-only on the item.
   inventory_ids: [arduino-uno]       # items that should link here
   frame: "Origin = board corner by the USB jack, X along the long edge"   # what x/y/z mean
   unit: mm                           # default
-  sources: { eagle: "official board file" }
+  sources:
+    eagle: { title: "Official board file", url: "https://example.com/board.brd", read: 2026-11-23 }
   groups: { pcb: { en: Circuit board, sv: Kretskort } }
   dims:
     pcb_l: { v: 68.58, src: DRAWING, unc: 0.2, ref: eagle, note: "board outline",
              label: { en: Length, sv: Längd }, group: pcb }
+    usb_h: { v: 11.0, src: COMMUNITY, unc: 0.6, url: "https://example.com/forum-post" }
   confirm: ["hole spacing"]          # what to measure on your own part if a check asks
   ```
 
   `src` is one of MEASURED, DRAWING, DATASHEET, STEP, DISTRIBUTOR, COMMUNITY, SCALED or ASSUMED.
+  It says what kind of source a value has; `ref` (a key in `sources`) or `url` says which one.
+  The app links to it, and marks values that are not MEASURED and have no source to check.
+  A source can also be a plain string; a link inside it is found. Only http(s) links are shown.
   `label` and `group` (a string, or `{ en, sv }`) are what the app shows. Without them it reads
   script-style names itself: `pcb_l` is "Circuit board → Length", `h1_x` is "Hole 1 → X position",
   `usb_x0` is "USB jack → Starts at X". Other keys in the file are kept for CAD tools and ignored.

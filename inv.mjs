@@ -94,7 +94,15 @@ function cad() {
   const inv = requireInventory();
   const lib = loadCadLibrary();
   console.log(`CAD library: ${lib.dir}${lib.exists ? "" : "  (folder not found; set MAKER_CAD_LIBRARY)"}`);
-  console.log(`${Object.keys(lib.components).length} component file(s)\n`);
+  console.log(`${Object.keys(lib.components).length} component file(s)`);
+  // Can each value be checked? A value needs a source with a link (or its own url) unless it was measured.
+  for (const c of Object.values(lib.components)) {
+    if (c.error) { console.log(`  ${c.file}: unreadable (${c.error})`); continue; }
+    const noSrc = c.dims.filter((d) => d.src !== "MEASURED" && !d.url && !(d.ref && c.sources[d.ref])).length;
+    const noLink = Object.values(c.sources).filter((s) => !s.url).map((s) => s.key);
+    console.log(`  ${c.file}: ${c.dims.length} dims` + (noSrc ? `, ${noSrc} without a source` : "") + (noLink.length ? `, source(s) without a link: ${noLink.join(", ")}` : ""));
+  }
+  console.log("");
   const linked = inv.filter((it) => it.cad_component && lib.components[it.cad_component]);
   const broken = inv.filter((it) => it.cad_component && !lib.components[it.cad_component]);
   const unlinked = inv.filter((it) => !it.cad_component && CAD_FILES.includes(it._file));
