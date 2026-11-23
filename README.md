@@ -120,8 +120,12 @@ file per part type, where every dimension has a value, a source and an uncertain
 does not copy those numbers. An item only links to its file with `cad_component: <id>`, and the
 app shows the dimensions read-only on the item.
 
-- The library folder is `~/.claude/skills/cad-validation/cadkit/library/components/` by default.
-  Set `MAKER_CAD_LIBRARY` to use another one.
+- The library folder is looked up in this order:
+  1. the `MAKER_CAD_LIBRARY` environment variable,
+  2. a `cad_library: <path>` line in `~/.cadkit/config.yaml`,
+  3. the newest installed cadkit plugin,
+     `~/.claude/plugins/cache/cadkit/cadkit/<version>/skills/cad-validation/cadkit/library/components/`,
+  4. the old pre-plugin location `~/.claude/skills/cad-validation/cadkit/library/components/`.
 - A file is `<id>.yaml`:
 
   ```yaml

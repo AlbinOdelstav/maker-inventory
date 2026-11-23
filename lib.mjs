@@ -161,7 +161,39 @@ export function itemErrors(it, file) {
 // ---------- CAD component library (read-only) ----------
 // One YAML per bought-part type with dimensions and where each came from. Kept outside the inventory
 // so dimensions have one source of truth; items only link to it with `cad_component: <id>`.
-export const CAD_LIB = resolve(process.env.MAKER_CAD_LIBRARY ?? join(homedir(), ".claude", "skills", "cad-validation", "cadkit", "library", "components"));
+const CAD_SUB = ["skills", "cad-validation", "cadkit", "library", "components"];
+const expandHome = (p) => (p === "~" ? homedir() : /^~[\\/]/.test(p) ? join(homedir(), p.slice(2)) : p);
+
+// `cad_library: <path>` in ~/.cadkit/config.yaml (flat key: value).
+function cadConfigLibrary() {
+  try {
+    const text = readFileSync(join(homedir(), ".cadkit", "config.yaml"), "utf8");
+    const m = text.match(/^cad_library:[ \t]*(.+?)[ \t]*$/m);
+    if (!m) return null;
+    const v = m[1].replace(/\s+#.*$/, "").replace(/^(["'])(.*)\1$/, "$2");
+    return v ? resolve(expandHome(v)) : null;
+  } catch { return null; }
+}
+
+// Newest installed cadkit plugin version in the Claude Code plugin cache.
+function cadPluginLibrary() {
+  const base = join(homedir(), ".claude", "plugins", "cache", "cadkit", "cadkit");
+  try {
+    const cmp = (a, b) => a.localeCompare(b, undefined, { numeric: true });
+    const versions = readdirSync(base).sort(cmp).reverse();
+    for (const v of versions) {
+      const dir = join(base, v, ...CAD_SUB);
+      if (existsSync(dir)) return dir;
+    }
+  } catch { /* no plugin cache */ }
+  return null;
+}
+
+// Lookup order: MAKER_CAD_LIBRARY, cad_library in ~/.cadkit/config.yaml,
+// newest installed plugin version, then the pre-plugin skills path.
+export const CAD_LIB = resolve(
+  process.env.MAKER_CAD_LIBRARY ? expandHome(process.env.MAKER_CAD_LIBRARY)
+    : cadConfigLibrary() ?? cadPluginLibrary() ?? join(homedir(), ".claude", ...CAD_SUB));
 const cadFiles = () => (existsSync(CAD_LIB) ? readdirSync(CAD_LIB).filter((f) => /\.ya?ml$/i.test(f)).sort() : []);
 
 // Only http(s) links are ever shown as links.
