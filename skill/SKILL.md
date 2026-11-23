@@ -45,6 +45,13 @@ The user can also edit stock in the web app (`node {{TOOL_DIR}}/inv.mjs app`, ht
 so re-read a YAML file right before you edit it. If they want to look at or edit the inventory
 themselves, point them to the app.
 
+## CAD dimensions
+
+Items can link to a CAD dimension file with `cad_component: <id>` (`node {{TOOL_DIR}}/inv.mjs cad`
+prints the library folder and what is linked). Never copy dimensions into the inventory YAML:
+read them from the library file, which records each value's source and uncertainty. When a
+library file lists an item in `inventory_ids`, set that item's `cad_component` to match.
+
 ## Never
 
 - Claim they own something that is not in the files.

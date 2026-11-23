@@ -68,6 +68,7 @@ node inv.mjs list filament        # by file or category
 node inv.mjs low                  # below min_qty + unverified items
 node inv.mjs validate             # after every change (also rebuilds overview.html)
 node inv.mjs html                 # rebuild overview.html only
+node inv.mjs cad                  # CAD dimension links: linked, broken, missing
 ```
 
 `<project>` is a file in `projects/` (with or without `.yaml`), an example name such as
@@ -105,11 +106,45 @@ test/smoke.mjs       npm test
 | `material`, `color`, `finish`, `brand` | filament | color as a name or `#hex` |
 | `tags` | recommended | keywords: voltage, protocol, form factor (`5v`, `i2c`, `micro-servo`) |
 | `specs` | – | free key/value, e.g. `{ thread: M3, length: 12 }` |
+| `cad_component` | – | id of a file in the CAD component library (see below), e.g. `arduino-uno-r3` |
 | `min_qty` | – | warning threshold for `low` and the overview |
 | `location` | – | where it is |
 | `in_use` | – | built into a project (counts as owned, but flagged) |
 | `verified` | – | `false` = not checked in the drawer yet |
 | `source`, `notes` | – | free text |
+
+## CAD dimensions
+
+If you design enclosures around bought parts, you can keep a library of their dimensions: one YAML
+file per part type, where every dimension has a value, a source and an uncertainty. The inventory
+does not copy those numbers. An item only links to its file with `cad_component: <id>`, and the
+app shows the dimensions read-only on the item.
+
+- The library folder is `~/.claude/skills/cad-validation/cadkit/library/components/` by default.
+  Set `MAKER_CAD_LIBRARY` to use another one.
+- A file is `<id>.yaml`:
+
+  ```yaml
+  name: Arduino Uno R3
+  inventory_ids: [arduino-uno]       # items that should link here
+  frame: "Origin = board corner by the USB jack, X along the long edge"   # what x/y/z mean
+  unit: mm                           # default
+  sources: { eagle: "official board file" }
+  groups: { pcb: { en: Circuit board, sv: Kretskort } }
+  dims:
+    pcb_l: { v: 68.58, src: DRAWING, unc: 0.2, ref: eagle, note: "board outline",
+             label: { en: Length, sv: Längd }, group: pcb }
+  confirm: ["hole spacing"]          # what to measure on your own part if a check asks
+  ```
+
+  `src` is one of MEASURED, DRAWING, DATASHEET, STEP, DISTRIBUTOR, COMMUNITY, SCALED or ASSUMED.
+  `label` and `group` (a string, or `{ en, sv }`) are what the app shows. Without them it reads
+  script-style names itself: `pcb_l` is "Circuit board → Length", `h1_x` is "Hole 1 → X position",
+  `usb_x0` is "USB jack → Starts at X". Other keys in the file are kept for CAD tools and ignored.
+- `node inv.mjs cad` lists linked items, broken links, and electronics/hardware items with no
+  CAD dimensions yet. `validate` warns about broken links and about library files that list an
+  item which doesn't link back. In the app, see **Settings → CAD library** and the
+  **No CAD dimensions** tab under Needs attention.
 
 ## Project file
 

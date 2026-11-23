@@ -8,19 +8,22 @@ import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { DATA, ROOT, PROJ_DIR, SKILL_PATH, loadInventoryWithVersions, loadProjects, saveItem, deleteItem, saveProject, deleteProject,
   copyExampleProject, adjustStock, validateAll, installSkill, skillStatus, ConflictError, InputError,
-  addProjectImage, deleteProjectImage, mediaFile, IMAGE_MAX_BYTES } from "./lib.mjs";
+  addProjectImage, deleteProjectImage, mediaFile, IMAGE_MAX_BYTES, loadCadLibrary, cadLibraryVersion, cadWarnings } from "./lib.mjs";
 
 const IMAGE_MIME = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", gif: "image/gif" };
 import { renderApp } from "./html.mjs";
 
 function state() {
   const { items, versions } = loadInventoryWithVersions();
-  return { items, versions, projects: loadProjects(items), version: versionOf(versions), dataDir: DATA, generatedAt: new Date().toISOString(),
-    admin: { dataDir: DATA, toolDir: ROOT, snapshot: join(DATA, "overview.html"), skill: skillStatus(), skillPath: SKILL_PATH, node: process.version } };
+  const cad = loadCadLibrary();
+  return { items, versions, projects: loadProjects(items), cad, version: versionOf(versions), dataDir: DATA, generatedAt: new Date().toISOString(),
+    admin: { dataDir: DATA, toolDir: ROOT, snapshot: join(DATA, "overview.html"), skill: skillStatus(), skillPath: SKILL_PATH, node: process.version,
+      cadWarnings: cadWarnings(items, cad) } };
 }
 
+// Changes to inventory, projects or the CAD library all make the open page reload.
 function versionOf(versions) {
-  const h = createHash("sha1").update(JSON.stringify(versions));
+  const h = createHash("sha1").update(JSON.stringify(versions)).update(cadLibraryVersion());
   if (existsSync(PROJ_DIR)) for (const f of readdirSync(PROJ_DIR).filter((f) => /\.ya?ml$/.test(f)).sort()) h.update(f).update(readFileSync(join(PROJ_DIR, f)));
   return h.digest("hex").slice(0, 12);
 }
@@ -28,7 +31,7 @@ function versionOf(versions) {
 function refreshSnapshot() {
   try {
     const s = state();
-    writeFileSync(join(DATA, "overview.html"), renderApp({ snapshot: { items: s.items, projects: s.projects, generatedAt: s.generatedAt } }));
+    writeFileSync(join(DATA, "overview.html"), renderApp({ snapshot: { items: s.items, projects: s.projects, cad: s.cad, generatedAt: s.generatedAt } }));
   } catch { /* the snapshot is a convenience; never fail a save over it */ }
 }
 

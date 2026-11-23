@@ -154,7 +154,58 @@ export function itemErrors(it, file) {
   if (it.qty === undefined || it.qty === "" || isNaN(Number(it.qty)) || Number(it.qty) < 0) errs.push("qty must be a number >= 0");
   if (it.min_qty !== undefined && (isNaN(Number(it.min_qty)) || Number(it.min_qty) < 0)) errs.push("min_qty must be a number >= 0");
   if (file === "filament" && (!it.material || !it.color)) errs.push("filament needs material and color");
+  if (it.cad_component !== undefined && !/^[a-z0-9][a-z0-9._-]*$/.test(String(it.cad_component))) errs.push("cad_component must be a library id (kebab-case)");
   return errs;
+}
+
+// ---------- CAD component library (read-only) ----------
+// One YAML per bought-part type with dimensions and where each came from. Kept outside the inventory
+// so dimensions have one source of truth; items only link to it with `cad_component: <id>`.
+export const CAD_LIB = resolve(process.env.MAKER_CAD_LIBRARY ?? join(homedir(), ".claude", "skills", "cad-validation", "cadkit", "library", "components"));
+const cadFiles = () => (existsSync(CAD_LIB) ? readdirSync(CAD_LIB).filter((f) => /\.ya?ml$/i.test(f)).sort() : []);
+
+export function loadCadLibrary() {
+  const components = {};
+  for (const f of cadFiles()) {
+    const id = f.replace(/\.ya?ml$/i, "");
+    try {
+      const doc = YAML.parse(readFileSync(join(CAD_LIB, f), "utf8")) ?? {};
+      const num = (v) => (v === undefined || v === null || v === "" || isNaN(Number(v)) ? v ?? null : Number(v));
+      // label/group texts may be a string or { en, sv }; the app picks the user's language.
+      const text = (v) => (v && typeof v === "object" ? v : v == null || v === "" ? null : String(v));
+      components[id] = {
+        id, file: f, name: text(doc.name) ?? id, notes: text(doc.notes), frame: text(doc.frame), unit: doc.unit ?? "mm",
+        inventory_ids: [].concat(doc.inventory_ids ?? []).map(String),
+        sources: doc.sources ?? {}, confirm: [].concat(doc.confirm ?? []).map(String),
+        groups: Object.fromEntries(Object.entries(doc.groups ?? {}).map(([k, v]) => [k, text(v)])),
+        dims: Object.entries(doc.dims ?? {}).map(([name, d]) => (d && typeof d === "object"
+          ? { name, v: num(d.v), src: d.src ?? null, unc: num(d.unc), ref: d.ref ?? null, note: d.note ?? null, label: text(d.label), group: d.group ?? null }
+          : { name, v: num(d), src: null, unc: null, ref: null, note: null, label: null, group: null })),
+      };
+    } catch (e) {
+      components[id] = { id, file: f, name: id, error: String(e.message ?? e).split("\n")[0], inventory_ids: [], dims: [], sources: {}, confirm: [] };
+    }
+  }
+  return { dir: CAD_LIB, exists: existsSync(CAD_LIB), components };
+}
+export const cadLibraryVersion = () => hash(cadFiles().map((f) => f + readFileSync(join(CAD_LIB, f), "utf8")).join("\n"));
+
+// Kinds of stock that usually have a shape worth describing (screws and wire don't need a file each).
+export const CAD_FILES = ["electronics", "hardware"];
+
+// Warnings, not errors: broken links, and library files that name an item that doesn't link back.
+export function cadWarnings(inv, lib = loadCadLibrary()) {
+  const out = [];
+  for (const it of inv) if (it.cad_component && !lib.components[it.cad_component])
+    out.push(`${it._file}.yaml:${it.id}: cad_component "${it.cad_component}" has no file in ${lib.dir}`);
+  for (const c of Object.values(lib.components)) {
+    if (c.error) { out.push(`${c.file}: could not be read (${c.error})`); continue; }
+    for (const id of c.inventory_ids) {
+      const it = inv.find((i) => i.id === id);
+      if (it && it.cad_component !== c.id) out.push(`${it._file}.yaml:${id}: listed in ${c.file} but has ${it.cad_component ? `cad_component "${it.cad_component}"` : "no cad_component"}`);
+    }
+  }
+  return out;
 }
 
 export function validateAll(inv) {
@@ -171,7 +222,7 @@ export function validateAll(inv) {
 
 // ---------- writing ----------
 const FIELD_ORDER = ["id", "name", "category", "material", "color", "finish", "brand", "qty", "unit", "spools",
-  "min_qty", "tags", "specs", "location", "in_use", "verified", "source", "notes"];
+  "min_qty", "tags", "specs", "cad_component", "location", "in_use", "verified", "source", "notes"];
 
 // Clean an item coming from the UI: drop empty values and internal fields, coerce numbers, stable key order.
 export function cleanItem(raw, file) {

@@ -10,12 +10,14 @@
 //   validate                        schema check (+ regenerates overview.html)
 //   html                            regenerate overview.html, a read-only snapshot of the app
 //   install-skill                   install the Claude Code skill to ~/.claude/skills/inventory
+//   cad                             CAD component links: linked, unlinked electronics/hardware, broken
 
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
-import { ROOT, DATA, INV_DIR, PROJ_DIR, norm, unitOf, inventoryExists, loadInventory, loadProjects, computeCheck, validateAll, initData, installSkill } from "./lib.mjs";
+import { ROOT, DATA, INV_DIR, PROJ_DIR, norm, unitOf, inventoryExists, loadInventory, loadProjects, computeCheck, validateAll, initData, installSkill,
+  loadCadLibrary, cadWarnings, CAD_FILES } from "./lib.mjs";
 import { renderApp } from "./html.mjs";
 
 function requireInventory() {
@@ -81,14 +83,35 @@ function find(words) {
 function validate() {
   const inv = requireInventory();
   const errs = validateAll(inv);
+  const warns = cadWarnings(inv);
   if (errs.length) { console.log(errs.join("\n")); process.exitCode = 1; }
   else { console.log(`OK: ${inv.length} items, no errors.`); writeHtml(); }
+  if (warns.length) console.log(`\n⚠ CAD links (warnings, not errors):\n${warns.map((w) => `  ${w}`).join("\n")}`);
+}
+
+// Which stock rows link to a CAD dimension file, which could, and which links are broken.
+function cad() {
+  const inv = requireInventory();
+  const lib = loadCadLibrary();
+  console.log(`CAD library: ${lib.dir}${lib.exists ? "" : "  (folder not found; set MAKER_CAD_LIBRARY)"}`);
+  console.log(`${Object.keys(lib.components).length} component file(s)\n`);
+  const linked = inv.filter((it) => it.cad_component && lib.components[it.cad_component]);
+  const broken = inv.filter((it) => it.cad_component && !lib.components[it.cad_component]);
+  const unlinked = inv.filter((it) => !it.cad_component && CAD_FILES.includes(it._file));
+  const suggest = (it) => Object.values(lib.components).find((c) => c.inventory_ids.includes(it.id))?.id;
+  console.log("## Linked");
+  for (const it of linked) console.log(`${it.id.padEnd(30)} -> ${it.cad_component} (${lib.components[it.cad_component].dims.length} dims)`);
+  if (!linked.length) console.log("(none)");
+  if (broken.length) { console.log("\n## Broken (no such file)"); for (const it of broken) console.log(`${it.id.padEnd(30)} -> ${it.cad_component}`); }
+  console.log(`\n## No CAD dimensions yet (${CAD_FILES.join(", ")})`);
+  for (const it of unlinked) { const s = suggest(it); console.log(`${it.id.padEnd(30)} ${it.name}${s ? `   <- listed in ${s}.yaml: add cad_component: ${s}` : ""}`); }
+  if (!unlinked.length) console.log("(none)");
 }
 
 function writeHtml() {
   const inv = requireInventory();
   const out = join(DATA, "overview.html");
-  writeFileSync(out, renderApp({ snapshot: { items: inv, projects: loadProjects(inv), generatedAt: new Date().toISOString() } }));
+  writeFileSync(out, renderApp({ snapshot: { items: inv, projects: loadProjects(inv), cad: loadCadLibrary(), generatedAt: new Date().toISOString() } }));
   console.log(`Overview: ${out}`);
 }
 
@@ -132,6 +155,7 @@ switch (cmd) {
   case "validate": validate(); break;
   case "html": writeHtml(); break;
   case "install-skill": console.log(`Installed: ${installSkill()}`); break;
+  case "cad": cad(); break;
   default:
-    console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(1, 13).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));
+    console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(1, 14).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));
 }

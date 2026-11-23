@@ -23,6 +23,7 @@ const I18N = {
     "proj.ready": "{a}/{b} ready", "proj.short": "{n} short", "proj.missing": "{n} missing", "proj.example": "example",
     "proj.need": "Need", "proj.qty": "Qty", "proj.have": "Have", "proj.from": "From stock", "proj.notes": "Notes",
     "proj.needsTitle": "What it needs", "ps.label": "Status", "ps.none": "No status", "ps.idea": "Idea", "ps.planning": "Planning", "ps.building": "Building", "ps.done": "Done", "ps.paused": "Paused", "pl.todo": "To do", "pl.todo.ph": "Add a task and press Enter", "pl.todo.none": "No tasks yet.", "pl.links": "Links", "pl.link.title": "Title (optional)", "pl.links.none": "No links yet: the CAD model, a guide, a shop page …", "pl.badUrl": "Links must start with http:// or https://", "pl.add": "Add", "pl.remove": "Remove", "pl.images": "Pictures", "pl.images.add": "Add pictures", "pl.images.none": "Drop pictures here, paste one with Ctrl+V or click Add pictures. PNG, JPG, WebP or GIF up to 8 MB.", "pl.images.empty": "No pictures.", "pl.images.big": "{n} is larger than 8 MB", "pl.images.type": "{n} is not a PNG, JPG, WebP or GIF", "pl.images.added": "Pictures added: {n}", "pl.caption": "Caption", "pl.caption.ph": "Add a caption", "pl.delete": "Delete picture", "pl.confirm": "Click again to delete", "pl.prev": "Previous", "pl.next": "Next",
+    "f.cad": "CAD component", "f.cad.hint": "Id of a file in the CAD library. The dimensions below are read from it.", "cad.title": "CAD dimensions", "cad.none": "No CAD dimensions yet.", "cad.nofile": "There is no {id}.yaml in {dir}.", "cad.suggest": "{id}.yaml lists this item.", "cad.use": "Link it", "cad.dim": "Dimension", "cad.value": "Value", "cad.src": "Source", "cad.ref": "Ref", "cad.confirm": "Measure on your own part if a check asks:", "cad.count": "{n} dimensions · {file}", "cad.readonly": "Read-only here. Edit the library file to change them.", "cad.error": "Could not read {file}: {e}", "cad.missing": "No CAD dimensions", "cad.frame": "Coordinate system", "cad.about": "About these values", "cad.other": "Other", "src.MEASURED": "Measured on the real part", "src.DRAWING": "From a dimensioned drawing or board file", "src.DATASHEET": "From the datasheet", "src.STEP": "From a manufacturer 3D model", "src.DISTRIBUTOR": "From a shop or distributor page", "src.COMMUNITY": "Common value from the community, not verified", "src.SCALED": "Measured off a picture", "src.ASSUMED": "Guess", "st.cad": "CAD library", "st.cad.hint": "Dimension files for bought parts, linked from items with cad_component. Set MAKER_CAD_LIBRARY to use another folder.", "st.cad.count": "{n} component files · {l} linked items", "st.cad.warn": "{n} warnings", "st.cad.nodir": "Folder not found", "st.cad.show": "Items without CAD dimensions",
     "proj.shop": "Shopping list", "proj.copy": "Copy as Markdown", "proj.copied": "Shopping list copied", "proj.nothing": "Nothing to buy. You have everything.",
     "proj.optional": "optional", "proj.altHead": "Similar in stock · {why}", "proj.altToggle": "{n} similar", "proj.altMissing": "no {key}", "why.other color": "other color", "why.other specs": "other sizes",
     "why.same category": "same category", "why.other finish/brand": "other finish/brand", "proj.inuse": "in use in {p}",
@@ -59,6 +60,7 @@ const I18N = {
     "proj.ready": "{a}/{b} klart", "proj.short": "{n} räcker inte", "proj.missing": "{n} saknas", "proj.example": "exempel",
     "proj.need": "Behov", "proj.qty": "Antal", "proj.have": "Hemma", "proj.from": "Från lagret", "proj.notes": "Noteringar",
     "proj.needsTitle": "Vad som behövs", "ps.label": "Status", "ps.none": "Ingen status", "ps.idea": "Idé", "ps.planning": "Planering", "ps.building": "Bygger", "ps.done": "Klar", "ps.paused": "Pausad", "pl.todo": "Att göra", "pl.todo.ph": "Skriv en uppgift och tryck Enter", "pl.todo.none": "Inga uppgifter än.", "pl.links": "Länkar", "pl.link.title": "Titel (valfri)", "pl.links.none": "Inga länkar än: CAD-modellen, en guide, en butikssida …", "pl.badUrl": "Länkar måste börja med http:// eller https://", "pl.add": "Lägg till", "pl.remove": "Ta bort", "pl.images": "Bilder", "pl.images.add": "Lägg till bilder", "pl.images.none": "Släpp bilder här, klistra in en med Ctrl+V eller klicka Lägg till bilder. PNG, JPG, WebP eller GIF upp till 8 MB.", "pl.images.empty": "Inga bilder.", "pl.images.big": "{n} är större än 8 MB", "pl.images.type": "{n} är inte PNG, JPG, WebP eller GIF", "pl.images.added": "Bilder tillagda: {n}", "pl.caption": "Bildtext", "pl.caption.ph": "Skriv en bildtext", "pl.delete": "Ta bort bilden", "pl.confirm": "Klicka igen för att ta bort", "pl.prev": "Föregående", "pl.next": "Nästa",
+    "f.cad": "CAD-komponent", "f.cad.hint": "Id för en fil i CAD-biblioteket. Måtten nedan läses därifrån.", "cad.title": "CAD-mått", "cad.none": "Inga CAD-mått än.", "cad.nofile": "Det finns ingen {id}.yaml i {dir}.", "cad.suggest": "{id}.yaml nämner den här artikeln.", "cad.use": "Koppla", "cad.dim": "Mått", "cad.value": "Värde", "cad.src": "Källa", "cad.ref": "Ref", "cad.confirm": "Mät på ditt eget exemplar om en kontroll frågar efter det:", "cad.count": "{n} mått · {file}", "cad.readonly": "Skrivskyddat här. Ändra i biblioteksfilen för att ändra dem.", "cad.error": "Kunde inte läsa {file}: {e}", "cad.missing": "Utan CAD-mått", "cad.frame": "Koordinatsystem", "cad.about": "Om värdena", "cad.other": "Övrigt", "src.MEASURED": "Uppmätt på den riktiga delen", "src.DRAWING": "Från en måttsatt ritning eller kortfil", "src.DATASHEET": "Från databladet", "src.STEP": "Från tillverkarens 3D-modell", "src.DISTRIBUTOR": "Från en butiks- eller återförsäljarsida", "src.COMMUNITY": "Vanligt värde från andra, inte kontrollerat", "src.SCALED": "Uppmätt på en bild", "src.ASSUMED": "Gissning", "st.cad": "CAD-bibliotek", "st.cad.hint": "Måttfiler för köpta delar, som artiklar kopplas till med cad_component. Sätt MAKER_CAD_LIBRARY för att använda en annan mapp.", "st.cad.count": "{n} komponentfiler · {l} kopplade artiklar", "st.cad.warn": "{n} varningar", "st.cad.nodir": "Mappen finns inte", "st.cad.show": "Artiklar utan CAD-mått",
     "proj.shop": "Inköpslista", "proj.copy": "Kopiera som Markdown", "proj.copied": "Inköpslistan kopierad", "proj.nothing": "Inget att köpa. Du har allt.",
     "proj.optional": "valfri", "proj.altHead": "Liknande i lager · {why}", "proj.altToggle": "{n} liknande", "proj.altMissing": "saknar {key}", "why.other color": "annan färg", "why.other specs": "andra mått",
     "why.same category": "samma kategori", "why.other finish/brand": "annan finish/märke", "proj.inuse": "sitter i {p}",
@@ -134,14 +136,14 @@ const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, proj
 let drawer = null; // { mode: "new"|"edit"|"view", originalId, file, form, dirty, armed }
 let saving = false;
 
-function normalize(d) { return { items: d.items || [], projects: d.projects || [], versions: d.versions || {}, version: d.version, generatedAt: d.generatedAt, dataDir: d.dataDir, admin: d.admin }; }
+function normalize(d) { return { items: d.items || [], projects: d.projects || [], versions: d.versions || {}, cad: d.cad || { components: {} }, version: d.version, generatedAt: d.generatedAt, dataDir: d.dataDir, admin: d.admin }; }
 function parseRoute() {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
   const [page, arg] = h.split("/");
   if (FILES.includes(page)) return { page: "file", file: page };
   if (page === "projects") return { page: "projects", project: arg || null };
   if (page === "settings") return { page: "settings" };
-  if (page === "attention") return { page: "attention", kind: ["low", "unverified"].includes(arg) ? arg : "all" };
+  if (page === "attention") return { page: "attention", kind: ["low", "unverified", "nocad"].includes(arg) ? arg : "all" };
   return { page: "dashboard" };
 }
 
@@ -379,13 +381,15 @@ function fileView(file) {
 // Items that need a look, across every section: below min, not verified, or built into something.
 function attentionItems(kind) {
   if (kind === "low") return S.items.filter(isLow);
+  if (kind === "nocad") return S.items.filter((i) => CAD_FILES.includes(i._file) && !(i.cad_component && S.cad.components[i.cad_component]));
   if (kind === "unverified") return S.items.filter((i) => i.verified === false);
   return [...S.items.filter(isLow), ...S.items.filter((i) => i.verified === false && !isLow(i)), ...S.items.filter((i) => i.in_use && !isLow(i) && i.verified !== false)];
 }
-const attnTitle = (kind) => kind === "low" ? t("kpi.low") : kind === "unverified" ? t("kpi.unverified") : t("attn.title");
+const CAD_FILES = ["electronics", "hardware"];
+const attnTitle = (kind) => kind === "low" ? t("kpi.low") : kind === "unverified" ? t("kpi.unverified") : kind === "nocad" ? t("cad.missing") : t("attn.title");
 function attentionView(kind) {
   const list = attentionItems(kind);
-  const tabs = ["all", "unverified", "low"].map((k) => `<button class="chip" data-act="nav:attention${k === "all" ? "" : "/" + k}" aria-pressed="${k === kind}">${esc(attnTitle(k))} <span class="muted">${attentionItems(k).length}</span></button>`).join("");
+  const tabs = ["all", "unverified", "low", "nocad"].map((k) => `<button class="chip" data-act="nav:attention${k === "all" ? "" : "/" + k}" aria-pressed="${k === kind}">${esc(attnTitle(k))} <span class="muted">${attentionItems(k).length}</span></button>`).join("");
   return `<div class="toolbar">${tabs}</div>` + (list.length ? itemTable(list, null, true) + `<div class="table-foot" style="border:0;background:transparent">${esc(t("count", { n: list.length, total: S.items.length }))}</div>`
     : `<div class="empty-mini">${esc(t("attn.none"))}</div>`);
 }
@@ -607,6 +611,7 @@ function renderItemDrawer() {
         `<div class="r"><input data-spec-k="${i}" placeholder="${esc(t("f.spec.key"))}" list="dl-spec" value="${esc(k)}" ${dis}><input data-spec-v="${i}" placeholder="${esc(t("f.spec.val"))}" value="${esc(v)}" ${dis}>
         ${ro || (!k && !v) ? "<span></span>" : `<button type="button" class="icon-btn" data-rmspec="${i}" aria-label="${esc(t("a.remove"))}">${icon("x")}</button>`}</div>`).join("")}</div></div>
       ${datalist("dl-spec", vocabOptions(VOCAB.specKeys, []))}
+      ${fil ? "" : `${field("cad_component", t("f.cad"), 'list="dl-cad" class="mono" spellcheck="false"', t("f.cad.hint"))}${datalist("dl-cad", Object.keys(S.cad.components))}${cadPanel(f, d)}`}
       <label class="field"><span>${esc(t("f.notes"))}</span><textarea name="notes" ${dis}>${esc(f.notes ?? "")}</textarea></label>
       ${field("source", t("f.source"))}
     </form>
@@ -618,6 +623,68 @@ function renderItemDrawer() {
     </div>`;
 }
 
+// Dimensions of the linked CAD component, read-only: they live in the library, not in the inventory.
+const SRC_CLASS = { MEASURED: "b-ok", DRAWING: "b-info", DATASHEET: "b-info", STEP: "b-info", DISTRIBUTOR: "b-warn", COMMUNITY: "b-warn", SCALED: "b-bad", ASSUMED: "b-bad" };
+function cadPanel(f, d) {
+  const id = String(f.cad_component || "").trim();
+  const c = id ? S.cad.components[id] : null;
+  const box = (inner) => `<div class="field"><span>${esc(t("cad.title"))}</span><div class="cad-box">${inner}</div></div>`;
+  if (!c) {
+    const sug = !id && Object.values(S.cad.components).find((x) => (x.inventory_ids || []).includes(d.originalId || f.id));
+    return box(`<div class="muted">${esc(t("cad.none"))}${id ? " " + esc(t("cad.nofile", { id, dir: S.cad.dir || "" })) : ""}</div>
+      ${sug ? `<div class="cad-sug">${esc(t("cad.suggest", { id: sug.id }))}${LIVE ? ` <button type="button" class="btn sm" data-cadlink="${esc(sug.id)}">${esc(t("cad.use"))}</button>` : ""}</div>` : ""}`);
+  }
+  if (c.error) return box(`<div class="form-err">${esc(t("cad.error", { file: c.file, e: c.error }))}</div>`);
+  const fmt = (v) => (typeof v === "number" ? fmtNum(v) : esc(v ?? "–"));
+  const unit = c.unit ? " " + c.unit : "";
+  const groups = [];
+  for (const x of c.dims) {
+    const h = cadHuman(x, c);
+    (groups.find((g) => g.key === h.group) || (groups.push({ key: h.group, title: h.groupTitle, rows: [] }), groups.at(-1))).rows.push({ x, label: h.label });
+  }
+  groups.sort((a, b) => (a.key === "_other") - (b.key === "_other"));
+  const rows = groups.map((g) => `<tr class="cad-grp"><th colspan="5">${esc(g.title)}</th></tr>` + g.rows.map(({ x, label }) => `<tr>
+    <td><div class="cad-label">${esc(label)}</div><div class="cad-code mono">${esc(x.name)}</div>${x.note ? `<div class="cad-note">${esc(x.note)}</div>` : ""}</td>
+    <td class="num"><b>${fmt(x.v)}</b>${typeof x.v === "number" ? `<small>${esc(unit)}</small>` : ""}</td>
+    <td>${x.src ? `<span class="badge ${SRC_CLASS[x.src] || "b-info"}" title="${esc(t("src." + x.src) === "src." + x.src ? x.src : t("src." + x.src))}">${esc(x.src)}</span>` : "–"}</td>
+    <td class="num">${x.unc != null ? "±" + fmt(x.unc) : "–"}</td><td title="${esc(c.sources?.[x.ref] || "")}">${esc(x.ref || "")}</td></tr>`).join("")).join("");
+  const more = [c.frame && `<details><summary>${esc(t("cad.frame"))}</summary><p>${esc(cadText(c.frame))}</p></details>`,
+    c.notes && `<details><summary>${esc(t("cad.about"))}</summary><p>${esc(cadText(c.notes))}</p></details>`].filter(Boolean).join("");
+  return box(`<div class="cad-head"><b>${esc(cadText(c.name))}</b><span class="muted">${esc(t("cad.count", { n: c.dims.length, file: c.file }))}</span></div>
+    ${more ? `<div class="cad-more">${more}</div>` : ""}
+    <div class="cad-scroll"><table class="cad-dims"><thead><tr><th>${esc(t("cad.dim"))}</th><th class="num">${esc(t("cad.value"))}</th><th>${esc(t("cad.src"))}</th><th class="num">±</th><th>${esc(t("cad.ref"))}</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${c.confirm?.length ? `<div class="cad-confirm">${esc(t("cad.confirm"))}<ul>${c.confirm.map((q) => `<li>${esc(q)}</li>`).join("")}</ul></div>` : ""}
+    <small class="muted">${esc(t("cad.readonly"))}</small>`);
+}
+// Library texts can be a string or { en, sv }.
+const cadText = (v) => (v && typeof v === "object" ? v[lang] ?? v.en ?? Object.values(v)[0] ?? "" : v ?? "");
+// Readable names for script-style dimension names (pcb_l, h1_x, usb_x0 …) when the library gives no
+// label/group: the last part says what is measured, the rest which feature it belongs to.
+const CAD_WHAT = {
+  l: ["Length", "Längd"], len: ["Length", "Längd"], w: ["Width", "Bredd"], t: ["Thickness", "Tjocklek"], h: ["Height", "Höjd"],
+  d: ["Diameter", "Diameter"], od: ["Outer diameter", "Ytterdiameter"], r: ["Radius", "Radie"],
+  x: ["X position", "Läge X"], y: ["Y position", "Läge Y"], z: ["Z position", "Läge Z"],
+  x0: ["Starts at X", "Börjar vid X"], x1: ["Ends at X", "Slutar vid X"], y0: ["Starts at Y", "Börjar vid Y"], y1: ["Ends at Y", "Slutar vid Y"],
+  z0: ["Starts at Z", "Börjar vid Z"], z1: ["Ends at Z", "Slutar vid Z"],
+};
+const CAD_PART = {
+  pcb: ["Circuit board", "Kretskort"], hole: ["Mounting holes", "Monteringshål"], usb: ["USB jack", "USB-uttag"], dc: ["DC power jack", "DC-uttag"],
+  hdr: ["Pin headers", "Stiftlister"], usb_plug: ["USB cable plug", "USB-kabelns kontakt"], dc_plug: ["DC cable plug", "DC-kabelns kontakt"],
+  under: ["Clearance under the board", "Utrymme under kortet"], standoff_free: ["Free space around standoffs", "Fritt utrymme runt distanser"],
+  body: ["Body", "Kropp"], shaft: ["Shaft", "Axel"], gearbox: ["Gearbox", "Växellåda"], horn: ["Servo horn", "Servoarm"], tab: ["Mounting tab", "Fästöra"],
+  motor: ["Motor", "Motor"], wheel: ["Wheel", "Hjul"], cable: ["Cable", "Kabel"],
+};
+const pickLang = (pair) => pair[lang === "sv" ? 1 : 0];
+function cadHuman(x, c) {
+  const parts = x.name.split("_");
+  const what = parts.length > 1 && CAD_WHAT[parts.at(-1)] ? parts.pop() : null;
+  const key = parts.join("_");
+  const partName = (k) => { const m = /^h(\d+)$/.exec(k); return m ? (lang === "sv" ? `Hål ${m[1]}` : `Hole ${m[1]}`) : CAD_PART[k] ? pickLang(CAD_PART[k]) : k.replace(/_/g, " "); };
+  const group = x.group ?? (what ? key : "_other");
+  const groupTitle = x.group ? (cadText(c.groups?.[x.group]) || partName(x.group)) : what ? partName(key) : t("cad.other");
+  const label = x.label ? cadText(x.label) : what ? pickLang(CAD_WHAT[what]) : partName(key);
+  return { group, groupTitle, label };
+}
 function readSpecs() {
   const specs = {};
   document.querySelectorAll("[data-spec-k]").forEach((k) => {
@@ -899,6 +966,8 @@ function settingsView() {
       ${row(t("st.dataDir"), code(a.dataDir) + `<small class="muted">${esc(t("st.dataDir.hint"))}</small>`, `<button class="btn sm" data-copy="${esc(a.dataDir)}">${icon("copy")}${esc(t("st.copy"))}</button>`)}
       ${row(t("st.check"), val ? (val.errors.length ? `<div class="form-err">${val.errors.map(esc).join("<br>")}</div>` : `<span class="badge b-ok">${esc(t("st.check.ok", { n: val.count }))}</span>`) : `<span class="muted">${esc(t("st.check.hint"))}</span>`,
         `<button class="btn sm" data-act="admin:validate">${esc(t("st.check.run"))}</button>`)}
+      ${row(t("st.cad"), (S.cad.dir ? code(S.cad.dir) : "") + `<small class="muted">${S.cad.exists === false ? `<span class="badge b-warn">${esc(t("st.cad.nodir"))}</span> ` : ""}${esc(t("st.cad.count", { n: Object.keys(S.cad.components).length, l: S.items.filter((i) => i.cad_component && S.cad.components[i.cad_component]).length }))}${a.cadWarnings?.length ? ` · <span class="badge b-warn" title="${esc(a.cadWarnings.join("\n"))}">${esc(t("st.cad.warn", { n: a.cadWarnings.length }))}</span>` : ""}</small><small class="muted">${esc(t("st.cad.hint"))}</small>`,
+        `<button class="btn sm" data-act="nav:attention/nocad">${esc(t("st.cad.show"))}</button>`)}
       ${row(t("st.snapshot"), code(a.snapshot) + `<small class="muted">${esc(t("st.snapshot.hint"))}</small>`, `<button class="btn sm" data-act="admin:snapshot">${esc(t("st.snapshot.run"))}</button>`)}
     </section>
     <section class="panel"><div class="panel-h"><h2>${esc(t("st.ai"))}</h2></div>
@@ -980,6 +1049,8 @@ document.addEventListener("click", (e) => {
   const rmSpec = tEl.closest("[data-rmspec]");
   if (rmSpec) { syncForm(); const k = $(`[data-spec-k="${rmSpec.dataset.rmspec}"]`).value.trim(); delete drawer.form.specs[k]; drawer.dirty = true; renderDrawerKeepScroll(); return; }
   if (tEl.closest("#tagsBox")) { $("#tagIn")?.focus(); }
+  const cadBtn = tEl.closest("[data-cadlink]");
+  if (cadBtn && drawer?.kind === "item") { syncForm(); drawer.form.cad_component = cadBtn.dataset.cadlink; drawer.dirty = true; renderDrawerKeepScroll(); return; }
   const altBtn = tEl.closest("[data-alts]");
   if (altBtn) { const k = altBtn.dataset.alts; ui.altsOpen.has(k) ? ui.altsOpen.delete(k) : ui.altsOpen.add(k); renderContent(); return; }
   // project planning
@@ -1069,6 +1140,7 @@ document.addEventListener("change", (e) => {
   }
   if (drawer && e.target.name === "_file") { syncForm(); drawer.file = e.target.value; drawer.form._file = drawer.file; drawer.dirty = true; autoId(); renderDrawerKeepScroll(); return; }
   if (drawer && e.target.closest("#itemForm")) drawer.dirty = true;
+  if (drawer?.kind === "item" && e.target.name === "cad_component") { syncForm(); renderDrawerKeepScroll(); }
 });
 // Add a to-do or a link from the small forms under each list.
 document.addEventListener("submit", (e) => {

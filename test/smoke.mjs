@@ -1,6 +1,6 @@
 // Smoke test: runs the CLI against a throwaway data dir. Run with `npm test`.
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, writeFileSync, readFileSync, existsSync, rmSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
@@ -8,7 +8,9 @@ import assert from "node:assert/strict";
 
 const CLI = join(dirname(fileURLToPath(import.meta.url)), "..", "inv.mjs");
 const dir = mkdtempSync(join(tmpdir(), "maker-inv-"));
-const run = (...a) => execFileSync(process.execPath, [CLI, ...a], { env: { ...process.env, MAKER_INVENTORY_DIR: dir }, encoding: "utf8" });
+const cadDir = join(dir, "cadlib");
+const ENV = { ...process.env, MAKER_INVENTORY_DIR: dir, MAKER_CAD_LIBRARY: cadDir };
+const run = (...a) => execFileSync(process.execPath, [CLI, ...a], { env: ENV, encoding: "utf8" });
 
 try {
   // Alternatives: same thread and closest length first, other threads dropped.
@@ -58,7 +60,7 @@ try {
 
   // web app API (server runs in a child process with the same throwaway data dir)
   const { spawn } = await import("node:child_process");
-  const srv = spawn(process.execPath, [CLI, "app", "--no-open", "--port", "0"], { env: { ...process.env, MAKER_INVENTORY_DIR: dir } });
+  const srv = spawn(process.execPath, [CLI, "app", "--no-open", "--port", "0"], { env: ENV });
   const base = await new Promise((ok, fail) => {
     srv.stdout.on("data", (d) => { const m = String(d).match(/http:\/\/localhost:\d+/); if (m) ok(m[0]); });
     srv.on("exit", () => fail(new Error("server exited"))); setTimeout(() => fail(new Error("server timeout")), 5000);
@@ -153,6 +155,39 @@ try {
     for (const f of ["lampa-v2.yaml", "plant-watering.yaml"]) assert.equal((await call("DELETE", "/api/projects/" + f, {})).status, 200);
     assert.equal((await call("DELETE", "/api/projects/..%2Finventory%2Ftools.yaml", {})).status, 400, "no path traversal");
     assert.equal((await (await call("POST", "/api/admin/validate", {})).json()).errors.length, 0);
+
+    // CAD component links: the inventory only stores the id; dimensions are read from the library.
+    mkdirSync(cadDir, { recursive: true });
+    writeFileSync(join(cadDir, "uno-r3.yaml"), "id: uno-r3\nname: Uno R3\ninventory_ids: [uno, sg90]\nsources: { eagle: board file }\nconfirm: [hole spacing]\nframe: origin at a corner\ngroups: { holes: Fästhål }\ndims:\n  pcb_l: {v: 68.58, src: DRAWING, unc: 0.2, ref: eagle}\n  pcb_t: 1.6\n  hole_d: {v: 3.2, label: {en: Hole diameter, sv: Håldiameter}, group: holes}\n");
+    writeFileSync(join(cadDir, "broken.yaml"), "dims: [unclosed\n");
+    let cs = await (await call("GET", "/api/state")).json();
+    const uno = cs.items.find((i) => i.id === "uno");
+    r = await call("PUT", "/api/items/uno", { file: "electronics", item: { ...uno, cad_component: "uno-r3" }, expect: { electronics: cs.versions.electronics } });
+    assert.equal(r.status, 200);
+    cs = (await r.json()).state;
+    assert.match(readFileSync(join(dir, "inventory", "electronics.yaml"), "utf8"), /cad_component: uno-r3/);
+    assert.deepEqual(cs.cad.components["uno-r3"].dims[0], { name: "pcb_l", v: 68.58, src: "DRAWING", unc: 0.2, ref: "eagle", note: null, label: null, group: null });
+    assert.equal(cs.cad.components["uno-r3"].dims[1].v, 1.6, "bare numbers are values without a source");
+    assert.deepEqual(cs.cad.components["uno-r3"].dims[2].label, { en: "Hole diameter", sv: "Håldiameter" }, "labels pass through in both languages");
+    assert.equal(cs.cad.components["uno-r3"].dims[2].group, "holes");
+    assert.equal(cs.cad.components["uno-r3"].groups.holes, "Fästhål");
+    assert.equal(cs.cad.components["uno-r3"].frame, "origin at a corner");
+    assert.ok(cs.cad.components.broken.error, "a bad library file is reported, not fatal");
+    assert.ok(cs.admin.cadWarnings.some((w) => /sg90: listed in uno-r3.yaml/.test(w)), "library names an item that does not link back");
+    r = await call("PUT", "/api/items/uno", { file: "electronics", item: { ...uno, cad_component: "Not An Id!" }, expect: { electronics: cs.versions.electronics } });
+    assert.equal(r.status, 400, "cad_component must look like an id");
+    writeFileSync(join(cadDir, "extra.yaml"), "dims: {}\n");
+    assert.notEqual((await (await call("GET", "/api/version")).json()).version, cs.version, "library changes reload the page");
+    const sgItem = cs.items.find((i) => i.id === "sg90");
+    r = await call("PUT", "/api/items/sg90", { file: "electronics", item: { ...sgItem, cad_component: "nope" }, expect: { electronics: cs.versions.electronics } });
+    assert.equal(r.status, 200);
+    const vout = run("validate");
+    assert.match(vout, /OK: /, "broken links are warnings, not errors");
+    assert.match(vout, /sg90: cad_component "nope" has no file/);
+    const cadOut = run("cad");
+    assert.match(cadOut, /uno\s+-> uno-r3 \(3 dims\)/);
+    assert.match(cadOut, /## Broken[\s\S]*sg90\s+-> nope/);
+    assert.match(cadOut, /## No CAD dimensions yet[\s\S]*l298n/);
 
     r = await call("POST", "/api/items", { file: "tools", item: { id: "multimeter", name: "dup", qty: 1 } });
     assert.equal(r.status, 400, "duplicate id refused");
