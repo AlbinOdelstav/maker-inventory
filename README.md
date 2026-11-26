@@ -85,6 +85,7 @@ node inv.mjs check <project> --json
 node inv.mjs find petg red        # search; all words must match
 node inv.mjs list filament        # by file or category
 node inv.mjs low                  # below min_qty + unverified items
+node inv.mjs adjust uno +2         # stock change: bought +n, used up -n (same safe write as the app)
 node inv.mjs validate             # after every change (also rebuilds overview.html)
 node inv.mjs html                 # rebuild overview.html only
 node inv.mjs cad                  # CAD dimension links: linked, broken, missing

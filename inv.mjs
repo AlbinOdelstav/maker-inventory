@@ -9,6 +9,7 @@
 //   find <text...>                  search name, id, tags, specs, material, color
 //   list [category|file]            list items (e.g. list servo, list filament)
 //   low                             items below min_qty, and unverified items
+//   adjust <id> <+n|-n> [--json]    change an item's stock (bought +n, used up -n); same safe write as the app
 //   validate                        schema check (+ regenerates overview.html)
 //   html                            regenerate overview.html, a read-only snapshot of the app
 //   install-skill                   install the Claude Code skill to ~/.claude/skills/inventory
@@ -19,7 +20,7 @@ import { join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
 import { ROOT, DATA, INV_DIR, PROJ_DIR, norm, unitOf, inventoryExists, loadInventory, loadProjects, computeCheck, validateAll, initData, installSkill,
-  loadCadLibrary, cadWarnings, CAD_FILES } from "./lib.mjs";
+  loadCadLibrary, cadWarnings, CAD_FILES, adjustStock } from "./lib.mjs";
 import { renderApp } from "./html.mjs";
 
 function requireInventory() {
@@ -167,6 +168,18 @@ Find "Maker Inventory" in the Start menu; right-click it to pin it to the taskba
   case "list": {
     const inv = requireInventory();
     show(pos[0] ? inv.filter((it) => it._file === norm(pos[0]) || norm(it.category) === norm(pos[0])) : inv);
+    break;
+  }
+  case "adjust": {
+    const [id, d] = [pos[0], args.find((a, i) => i > 0 && /^[+-]?\d+(\.\d+)?$/.test(a))];
+    if (!id || d === undefined) { console.error("usage: adjust <id> <+n|-n>   e.g. adjust sg90-servo +2"); process.exit(2); }
+    const inv = requireInventory();
+    const it = inv.find((i) => i.id === id);
+    if (!it) { console.error(`no item "${id}" (find it with: find <text>; a new part is added in the app or by the agent skill)`); process.exit(1); }
+    try { adjustStock([{ id, delta: Number(d) }]); } catch (e) { console.error(e.message); process.exit(1); }
+    const after = loadInventory().find((i) => i.id === id);
+    if (flags.includes("--json")) console.log(JSON.stringify({ id, before: it.qty, after: after.qty, unit: unitOf(after) }));
+    else console.log(`${id}: ${it.qty} -> ${after.qty} ${unitOf(after)}`);
     break;
   }
   case "low": {
