@@ -12,12 +12,13 @@ import { DATA, ROOT, PROJ_DIR, SKILL_PATH, loadInventoryWithVersions, loadProjec
 
 const IMAGE_MIME = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", gif: "image/gif" };
 import { renderApp } from "./html.mjs";
+import { desktopStatus, installDesktop, uninstallDesktop } from "./desktop.mjs";
 
 function state() {
   const { items, versions } = loadInventoryWithVersions();
   const cad = loadCadLibrary();
   return { items, versions, projects: loadProjects(items), cad, version: versionOf(versions), dataDir: DATA, generatedAt: new Date().toISOString(),
-    admin: { dataDir: DATA, toolDir: ROOT, snapshot: join(DATA, "overview.html"), skill: skillStatus(), skillPath: SKILL_PATH, node: process.version,
+    admin: { dataDir: DATA, toolDir: ROOT, snapshot: join(DATA, "overview.html"), skill: skillStatus(), skillPath: SKILL_PATH, desktop: desktopStatus(), node: process.version,
       cadWarnings: cadWarnings(items, cad) } };
 }
 
@@ -155,6 +156,11 @@ export function startServer({ port = 4310, open = true, host = "127.0.0.1", quie
       if (req.method === "POST" && url.pathname === "/api/admin/install-skill") {
         await readJson(req);
         return send(res, 200, { path: installSkill(), state: state() });
+      }
+      if (req.method === "POST" && url.pathname === "/api/admin/desktop") {
+        const body = await readJson(req);
+        const path = body.remove ? uninstallDesktop() : installDesktop();
+        return send(res, 200, { path, state: state() });
       }
       send(res, 404, { error: "not found" });
     } catch (e) {
