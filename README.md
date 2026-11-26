@@ -19,6 +19,8 @@ those files, and answer **"do I have everything for this idea, and what do I nee
     them on the page or by pasting with Ctrl+V.
   - **Settings:** language (English/Swedish), theme, a data check, a snapshot rebuild and
     installation of the agent skill.
+- **A desktop window** (`node inv.mjs desktop`): the same app in a window of its own, started
+  from the Start menu like any program. No new dependencies, because it uses Edge (or Chrome) in app mode.
 - **`overview.html`**, a read-only snapshot of the same app that you can open without a server.
 - **A Claude Code skill**, so agents in *any* project folder can check your stock.
 
@@ -37,6 +39,21 @@ The app writes straight to the YAML files, so you and your agents share one sour
   nothing else.
 
 Shortcuts: `/` search, `N` new item, `Ctrl+Enter` save, `Esc` close.
+
+### As a desktop app (Windows)
+
+```sh
+node inv.mjs install-desktop          # adds "Maker Inventory" to the Start menu
+node inv.mjs install-desktop --remove
+node inv.mjs desktop                  # opens the window directly
+```
+
+The shortcut starts the server without a console window and opens the app in Edge's app mode,
+with its own window and taskbar icon and no tabs or address bar. Right-click it in the Start menu to pin it
+to the taskbar. When you close the window, the server stops too. If `node inv.mjs app` is already
+running, the window uses that server and leaves it running. The window has its own browser profile, so it
+remembers its size and position, in `%LOCALAPPDATA%maker-inventory` (with the icon and a
+`desktop.log` for errors). You can also install it from **Settings → Desktop app**.
 
 When the app saves, it rewrites the YAML file in a consistent layout. The comment block at the
 top of each file is kept. Comments between items are not.
@@ -61,6 +78,8 @@ are in `.gitignore`. To keep your data somewhere else (a private repo or a synce
 
 ```sh
 node inv.mjs app                  # web app: browse, add, edit, delete
+node inv.mjs desktop              # the app in its own window (server stops when it closes)
+node inv.mjs install-desktop      # Start menu shortcut for that window (Windows; --remove to undo)
 node inv.mjs check <project>      # have / short / missing + shopping list (markdown)
 node inv.mjs check <project> --json
 node inv.mjs find petg red        # search; all words must match
@@ -90,6 +109,7 @@ skill/SKILL.md       Claude Code skill template (installed by install-skill)
 inv.mjs              the CLI
 lib.mjs              shared logic: loading, matching, checks, validation, safe writes
 server.mjs           the local web app server (JSON API on 127.0.0.1)
+desktop.mjs          desktop window launcher and Start menu shortcut
 html.mjs, web/       the app page (vanilla JS/CSS, no build step), live or as a snapshot
 test/smoke.mjs       npm test
 ```

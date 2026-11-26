@@ -3,6 +3,8 @@
 //
 //   init                            create your (git-ignored) inventory/ and projects/ from the templates
 //   app [--port N] [--no-open]      start the web app (add / edit / delete items) on http://localhost:4310
+//   desktop [--port N]              open the app in its own window; the server stops when you close it
+//   install-desktop [--remove]      add (or remove) a Start menu shortcut for the desktop window (Windows)
 //   check <project> [--json]        compare a project's needs with the inventory -> have / short / missing + shopping list
 //   find <text...>                  search name, id, tags, specs, material, color
 //   list [category|file]            list items (e.g. list servo, list filament)
@@ -142,6 +144,19 @@ switch (cmd) {
     if (!inventoryExists()) { initData(); console.log(`Created an empty inventory in ${INV_DIR}`); }
     const { startServer } = await import("./server.mjs");
     startServer({ port: Number(flagVal("--port") ?? process.env.PORT ?? 4310), open: !flags.includes("--no-open") });
+    break;
+  }
+  case "desktop": {
+    if (!inventoryExists()) initData();
+    const { runDesktop } = await import("./desktop.mjs");
+    await runDesktop({ port: Number(flagVal("--port") ?? process.env.PORT ?? 4310) });
+    break;
+  }
+  case "install-desktop": {
+    const { installDesktop, uninstallDesktop } = await import("./desktop.mjs");
+    if (flags.includes("--remove")) console.log(`Removed: ${uninstallDesktop()}`);
+    else console.log(`Shortcut: ${installDesktop()}
+Find "Maker Inventory" in the Start menu; right-click it to pin it to the taskbar.`);
     break;
   }
   case "check":
