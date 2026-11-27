@@ -49,8 +49,13 @@ node inv.mjs desktop                  # opens the window directly
 ```
 
 The shortcut starts the server without a console window and opens the app in Edge's app mode,
-with its own window and taskbar icon and no tabs or address bar. Right-click it in the Start menu to pin it
-to the taskbar. When you close the window, the server stops too. If `node inv.mjs app` is already
+with its own window and taskbar icon and no tabs or address bar. Pin it from the Start menu
+(right-click → Pin to taskbar) or right-click the open window in the taskbar. Both pin Maker Inventory,
+not Edge: the shortcut and the window share the app's own taskbar identity (AppUserModelID
+`MakerInventory.Desktop`), and the window carries the command, name and icon to use when pinned.
+If an older pin opens plain Edge or shows a blank icon, unpin it, run `node inv.mjs install-desktop`
+again, start Maker Inventory from the Start menu and pin it again. When you close the window, the
+server stops too. If `node inv.mjs app` is already
 running, the window uses that server and leaves it running. The window has its own browser profile, so it
 remembers its size and position, in `%LOCALAPPDATA%maker-inventory` (with the icon and a
 `desktop.log` for errors). You can also install it from **Settings → Desktop app**.
