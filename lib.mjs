@@ -528,6 +528,80 @@ export function saveProject({ originalFile, project, expect }) {
   return file;
 }
 
+// Find a project file from what a person or agent would type: file name (with or without .yaml),
+// project name, or a unique part of either.
+export function findProjectFile(query) {
+  if (!existsSync(PROJ_DIR)) return null;
+  const files = readdirSync(PROJ_DIR).filter((f) => /\.ya?ml$/.test(f));
+  const q = norm(query).replace(/\.ya?ml$/, "");
+  const named = files.map((f) => ({ f, base: f.replace(/\.ya?ml$/, "").toLowerCase(), name: norm((YAML.parse(readFileSync(join(PROJ_DIR, f), "utf8")) ?? {}).name) }));
+  const exact = named.filter((x) => x.base === q || x.name === q);
+  if (exact.length === 1) return exact[0].f;
+  const part = named.filter((x) => x.base.includes(q) || x.name.includes(q));
+  if (part.length === 1) return part[0].f;
+  if (part.length > 1) throw new InputError(`"${query}" matches several projects: ${part.map((x) => x.f).join(", ")}`);
+  return null;
+}
+
+// Apply a small change list to a project's planning (used by agents after a work session):
+//   { status, notes_append, todos: { done, undo, remove, add, edit: [{ ref, text }] }, links: { add: [{ title, url }], remove } }
+// A ref is a 1-based number, the exact text, or a part of the text that matches only one entry.
+// Returns what changed; with dryRun nothing is written.
+export function updateProjectPlan({ file, patch, expect, dryRun = false }) {
+  const proj = readProject(file, expect);
+  const todos = (proj.todos ?? []).map((t) => (typeof t === "string" ? { text: t } : { ...t }));
+  const links = (proj.links ?? []).map((l) => (typeof l === "string" ? { url: l } : { ...l }));
+  const changes = [];
+  const find = (list, ref, key, what) => {
+    if (typeof ref === "number" || /^\d+$/.test(String(ref))) {
+      const i = Number(ref) - 1;
+      if (!list[i]) throw new InputError(`${what} ${ref} does not exist (there are ${list.length})`);
+      return i;
+    }
+    const r = norm(ref);
+    const exact = list.findIndex((x) => norm(x[key]) === r);
+    if (exact >= 0) return exact;
+    const hits = list.map((x, i) => [x, i]).filter(([x]) => norm(x[key]).includes(r) || (key === "url" && norm(x.title).includes(r)));
+    if (hits.length === 1) return hits[0][1];
+    throw new InputError(hits.length ? `"${ref}" matches ${hits.length} ${what}s; use the number` : `no ${what} matches "${ref}"`);
+  };
+  const p = patch ?? {};
+  // Resolve every ref against the list as it was, so numbers don't shift while we work.
+  const t = p.todos ?? {};
+  for (const ref of t.done ?? []) { const i = find(todos, ref, "text", "to-do"); if (!todos[i].done) { todos[i].done = true; changes.push(`done: ${todos[i].text}`); } }
+  for (const ref of t.undo ?? []) { const i = find(todos, ref, "text", "to-do"); if (todos[i].done) { delete todos[i].done; changes.push(`not done: ${todos[i].text}`); } }
+  for (const { ref, text } of t.edit ?? []) { const i = find(todos, ref, "text", "to-do"); if (String(text ?? "").trim() && todos[i].text !== text.trim()) { changes.push(`edit: ${todos[i].text} -> ${text.trim()}`); todos[i].text = text.trim(); } }
+  const dropTodos = new Set((t.remove ?? []).map((ref) => find(todos, ref, "text", "to-do")));
+  for (const i of dropTodos) changes.push(`remove: ${todos[i].text}`);
+  const keptTodos = todos.filter((_, i) => !dropTodos.has(i));
+  for (const text of t.add ?? []) {
+    const s = String(text ?? "").trim();
+    if (!s) continue;
+    if (keptTodos.some((x) => norm(x.text) === norm(s))) { changes.push(`already listed: ${s}`); continue; }
+    keptTodos.push({ text: s }); changes.push(`add: ${s}`);
+  }
+  const l = p.links ?? {};
+  const dropLinks = new Set((l.remove ?? []).map((ref) => find(links, ref, "url", "link")));
+  for (const i of dropLinks) changes.push(`remove link: ${links[i].title || links[i].url}`);
+  const keptLinks = links.filter((_, i) => !dropLinks.has(i));
+  for (const link of l.add ?? []) {
+    const add = typeof link === "string" ? { url: link } : link;
+    if (keptLinks.some((x) => norm(x.url) === norm(add.url))) { changes.push(`link already there: ${add.url}`); continue; }
+    keptLinks.push(add); changes.push(`add link: ${add.title ? add.title + " – " : ""}${add.url}`);
+  }
+  let status = proj.status;
+  if (p.status !== undefined && p.status !== status) { status = p.status || undefined; changes.push(`status: ${proj.status ?? "none"} -> ${p.status || "none"}`); }
+  let notes = proj.notes;
+  if (String(p.notes_append ?? "").trim()) { notes = [notes, String(p.notes_append).trim()].filter(Boolean).join("\n"); changes.push(`notes: + ${String(p.notes_append).trim()}`); }
+  const real = changes.filter((c) => !/^(already listed|link already there)/.test(c));
+  if (!dryRun && real.length) {
+    // saveProject validates everything (status, http links) and refuses if the file changed meanwhile.
+    const project = { name: proj.name, notes, needs: proj.needs ?? [], status: status ?? "", todos: keptTodos, links: keptLinks };
+    saveProject({ originalFile: file, project, expect: expect ?? hash(readFileSync(projPath(file), "utf8")) });
+  }
+  return { file, changes, written: !dryRun && real.length > 0 };
+}
+
 // Deleting a project also deletes its pictures.
 export function deleteProject({ file, expect }) {
   const proj = readProject(file, expect);
@@ -583,16 +657,64 @@ export function initData() {
   return created;
 }
 
-export const SKILL_PATH = join(homedir(), ".claude", "skills", "inventory", "SKILL.md");
+// Claude Code skills shipped with the tool: the template in skill/ -> ~/.claude/skills/<name>/SKILL.md,
+// with the tool and data folders filled in.
+const SKILLS_DIR = join(homedir(), ".claude", "skills");
+const SKILLS = [["inventory", "SKILL.md"], ["sync-project", "sync-project.md"]];
+export const SKILL_PATH = join(SKILLS_DIR, "inventory", "SKILL.md");
 export function installSkill() {
-  mkdirSync(dirname(SKILL_PATH), { recursive: true });
-  const body = readFileSync(join(ROOT, "skill", "SKILL.md"), "utf8")
-    .replaceAll("{{TOOL_DIR}}", ROOT.replaceAll("\\", "/"))
-    .replaceAll("{{DATA_DIR}}", DATA.replaceAll("\\", "/"));
-  writeFileSync(SKILL_PATH, body);
-  return SKILL_PATH;
+  const out = [];
+  for (const [name, template] of SKILLS) {
+    const path = join(SKILLS_DIR, name, "SKILL.md");
+    mkdirSync(dirname(path), { recursive: true });
+    const body = readFileSync(join(ROOT, "skill", template), "utf8")
+      .replaceAll("{{TOOL_DIR}}", ROOT.replaceAll("\\", "/"))
+      .replaceAll("{{DATA_DIR}}", DATA.replaceAll("\\", "/"));
+    writeFileSync(path, body);
+    out.push(path);
+  }
+  return out.join(", ");
+}
+// The sync reminder is a Claude Code Stop hook in ~/.claude/settings.json, next to any hooks the user
+// already has. Installing merges it in (after a backup); removing takes out only this one.
+export const CLAUDE_SETTINGS = join(homedir(), ".claude", "settings.json");
+const HOOK_SCRIPT = join(ROOT, "hooks", "sync-reminder.mjs");
+const isOurHook = (h) => String(h?.command ?? "").includes("sync-reminder.mjs");
+function readSettings() {
+  if (!existsSync(CLAUDE_SETTINGS)) return {};
+  try { return JSON.parse(readFileSync(CLAUDE_SETTINGS, "utf8")); }
+  catch (e) { throw new InputError(`${CLAUDE_SETTINGS} is not valid JSON (${e.message}); fix it first`); }
+}
+function writeSettings(s) {
+  mkdirSync(dirname(CLAUDE_SETTINGS), { recursive: true });
+  if (existsSync(CLAUDE_SETTINGS)) copyFileSync(CLAUDE_SETTINGS, `${CLAUDE_SETTINGS}.bak-maker-inventory`);
+  writeFileSync(CLAUDE_SETTINGS, JSON.stringify(s, null, 2) + "\n");
+}
+function withoutOurHook(s) {
+  const stop = (s.hooks?.Stop ?? []).map((g) => ({ ...g, hooks: (g.hooks ?? []).filter((h) => !isOurHook(h)) })).filter((g) => g.hooks.length);
+  const hooks = { ...(s.hooks ?? {}), Stop: stop };
+  if (!stop.length) delete hooks.Stop;
+  return { ...s, hooks };
+}
+export function hookStatus() {
+  try { return (readSettings().hooks?.Stop ?? []).some((g) => (g.hooks ?? []).some(isOurHook)) ? "installed" : "missing"; }
+  catch { return "missing"; }
+}
+export function installHook() {
+  const s = withoutOurHook(readSettings());
+  const env = process.env.MAKER_INVENTORY_DIR ? `MAKER_INVENTORY_DIR="${process.env.MAKER_INVENTORY_DIR.replaceAll("\\", "/")}" ` : "";
+  const command = `${env}node "${HOOK_SCRIPT.replaceAll("\\", "/")}"`;
+  s.hooks = { ...(s.hooks ?? {}), Stop: [...(s.hooks?.Stop ?? []), { hooks: [{ type: "command", command, timeout: 15 }] }] };
+  writeSettings(s);
+  return CLAUDE_SETTINGS;
+}
+export function uninstallHook() {
+  const s = readSettings();
+  if (hookStatus() === "installed") writeSettings(withoutOurHook(s));
+  return CLAUDE_SETTINGS;
 }
 export function skillStatus() {
-  if (!existsSync(SKILL_PATH)) return "missing";
-  return readFileSync(SKILL_PATH, "utf8").includes(DATA.replaceAll("\\", "/")) ? "installed" : "other";
+  const paths = SKILLS.map(([name]) => join(SKILLS_DIR, name, "SKILL.md"));
+  if (!paths.every((p) => existsSync(p))) return "missing";
+  return paths.every((p) => readFileSync(p, "utf8").includes(DATA.replaceAll("\\", "/"))) ? "installed" : "other";
 }

@@ -8,7 +8,8 @@ import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { DATA, ROOT, PROJ_DIR, SKILL_PATH, loadInventoryWithVersions, loadProjects, saveItem, deleteItem, saveProject, deleteProject,
   copyExampleProject, adjustStock, validateAll, installSkill, skillStatus, ConflictError, InputError,
-  addProjectImage, deleteProjectImage, mediaFile, IMAGE_MAX_BYTES, loadCadLibrary, cadLibraryVersion, cadWarnings } from "./lib.mjs";
+  addProjectImage, deleteProjectImage, mediaFile, IMAGE_MAX_BYTES, loadCadLibrary, cadLibraryVersion, cadWarnings,
+  hookStatus, installHook, uninstallHook, CLAUDE_SETTINGS } from "./lib.mjs";
 
 const IMAGE_MIME = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", gif: "image/gif" };
 import { renderApp } from "./html.mjs";
@@ -18,7 +19,7 @@ function state() {
   const { items, versions } = loadInventoryWithVersions();
   const cad = loadCadLibrary();
   return { items, versions, projects: loadProjects(items), cad, version: versionOf(versions), dataDir: DATA, generatedAt: new Date().toISOString(),
-    admin: { dataDir: DATA, toolDir: ROOT, snapshot: join(DATA, "overview.html"), skill: skillStatus(), skillPath: SKILL_PATH, desktop: desktopStatus(), node: process.version,
+    admin: { dataDir: DATA, toolDir: ROOT, snapshot: join(DATA, "overview.html"), skill: skillStatus(), skillPath: SKILL_PATH, hook: hookStatus(), hookPath: CLAUDE_SETTINGS, desktop: desktopStatus(), node: process.version,
       cadWarnings: cadWarnings(items, cad) } };
 }
 
@@ -156,6 +157,11 @@ export function startServer({ port = 4310, open = true, host = "127.0.0.1", quie
       if (req.method === "POST" && url.pathname === "/api/admin/install-skill") {
         await readJson(req);
         return send(res, 200, { path: installSkill(), state: state() });
+      }
+      if (req.method === "POST" && url.pathname === "/api/admin/hook") {
+        const body = await readJson(req);
+        const path = body.remove ? uninstallHook() : installHook();
+        return send(res, 200, { path, state: state() });
       }
       if (req.method === "POST" && url.pathname === "/api/admin/desktop") {
         const body = await readJson(req);

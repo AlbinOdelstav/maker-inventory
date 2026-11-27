@@ -14,13 +14,16 @@
 //   html                            regenerate overview.html, a read-only snapshot of the app
 //   install-skill                   install the Claude Code skill to ~/.claude/skills/inventory
 //   cad                             CAD component links: linked, unlinked electronics/hardware, broken
+//   project [<project>] [--json]    list projects, or one project's status, to-dos, links and needs at a glance
+//   project-update <project> <json|-> [--dry-run]   tick/add/edit to-dos, add links, set status (see README)
+//   install-hook [--remove]         Claude Code hook that reminds the agent to run /sync-project after progress
 
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
 import { ROOT, DATA, INV_DIR, PROJ_DIR, norm, unitOf, inventoryExists, loadInventory, loadProjects, computeCheck, validateAll, initData, installSkill,
-  loadCadLibrary, cadWarnings, CAD_FILES, adjustStock } from "./lib.mjs";
+  loadCadLibrary, cadWarnings, CAD_FILES, adjustStock, findProjectFile, updateProjectPlan, installHook, uninstallHook } from "./lib.mjs";
 import { renderApp } from "./html.mjs";
 
 function requireInventory() {
@@ -126,6 +129,58 @@ function writeHtml() {
   console.log(`Overview: ${out}`);
 }
 
+// ---------- projects at a glance (for people and for the sync-project skill) ----------
+function projectFileOrExit(q) {
+  let f;
+  try { f = findProjectFile(q); } catch (e) { console.error(e.message); process.exit(2); }
+  if (!f) { console.error(`No project matches "${q}". Projects: ${loadProjects(loadInventory()).map((p) => p.file).join(", ") || "(none)"}`); process.exit(2); }
+  return f;
+}
+
+function projectShow(q, asJson) {
+  const projects = loadProjects(requireInventory());
+  if (!q) {
+    if (asJson) return console.log(JSON.stringify(projects.map((p) => ({ file: p.file, name: p.name, status: p.status ?? null }))));
+    for (const p of projects) console.log(`${p.file.padEnd(32)} ${p.name}${p.status ? `  [${p.status}]` : ""}`);
+    if (!projects.length) console.log("(no projects)");
+    return;
+  }
+  const p = projects.find((x) => x.file === projectFileOrExit(q));
+  const count = (s) => p.rows.filter((r) => r.status === s).length;
+  if (asJson) {
+    return console.log(JSON.stringify({ file: p.file, name: p.name, status: p.status ?? null, notes: p.notes ?? null, version: p.version,
+      todos: p.todos.map((t, i) => ({ n: i + 1, text: t.text, done: !!t.done })), links: p.links.map((l, i) => ({ n: i + 1, ...l })),
+      images: p.images.length, needs: { ok: count("OK"), short: count("SHORT"), missing: count("MISSING"),
+        open: p.rows.filter((r) => r.status !== "OK").map((r) => ({ need: r.need, qty: r.qty, have: r.got, unit: r.unit, optional: r.optional })) } }, null, 2));
+  }
+  console.log(`# ${p.name}  (${p.file})${p.status ? `  [${p.status}]` : ""}`);
+  if (p.notes) console.log(`\n${p.notes}`);
+  const done = p.todos.filter((t) => t.done).length;
+  console.log(`\n## To do (${done}/${p.todos.length} done)`);
+  p.todos.forEach((t, i) => console.log(`${String(i + 1).padStart(3)}. [${t.done ? "x" : " "}] ${t.text}`));
+  if (!p.todos.length) console.log("(none)");
+  console.log(`\n## Links`);
+  p.links.forEach((l, i) => console.log(`${String(i + 1).padStart(3)}. ${l.title ? `${l.title} – ` : ""}${l.url}`));
+  if (!p.links.length) console.log("(none)");
+  console.log(`\n## Needs: ${count("OK")} in stock, ${count("SHORT")} short, ${count("MISSING")} missing (details: check ${p.file.replace(/\.ya?ml$/, "")})`);
+  if (p.images.length) console.log(`\n${p.images.length} picture(s)`);
+}
+
+async function projectUpdate(q, src, dryRun) {
+  if (!q || !src) { console.error('usage: project-update <project> <json|-> [--dry-run]\n  e.g. project-update vending \'{"todos":{"done":[3],"add":["Order springs"]},"links":{"add":[{"title":"Datasheet","url":"https://…"}]}}\''); process.exit(2); }
+  const file = projectFileOrExit(q);
+  let text = src;
+  if (src === "-") { text = ""; for await (const c of process.stdin) text += c; }
+  else if (existsSync(src)) text = readFileSync(src, "utf8");
+  let patch;
+  try { patch = JSON.parse(text); } catch (e) { console.error(`not valid JSON: ${e.message}`); process.exit(2); }
+  try {
+    const r = updateProjectPlan({ file, patch, dryRun });
+    console.log(r.changes.length ? r.changes.map((c) => `${dryRun ? "would " : ""}${c}`).join("\n") : "nothing to change");
+    if (r.written) console.log(`saved ${file}`);
+  } catch (e) { console.error(e.message); process.exit(1); }
+}
+
 function init() {
   const created = initData();
   for (const f of created) console.log(`created: ${f}`);
@@ -192,6 +247,14 @@ Find "Maker Inventory" in the Start menu; right-click it to pin it to the taskba
   case "html": writeHtml(); break;
   case "install-skill": console.log(`Installed: ${installSkill()}`); break;
   case "cad": cad(); break;
-  default:
-    console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(1, 14).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));
+  case "install-hook":
+    try { console.log(flags.includes("--remove") ? `Removed the sync reminder from ${uninstallHook()}` : `Sync reminder added to ${installHook()} (backup: settings.json.bak-maker-inventory). Restart Claude Code sessions to load it.`); }
+    catch (e) { console.error(e.message); process.exit(1); }
+    break;
+  case "project": projectShow(pos[0], flags.includes("--json")); break;
+  case "project-update": await projectUpdate(pos[0], pos[1], flags.includes("--dry-run")); break;
+  default: {
+    const src = readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n");
+    console.log(src.slice(1, src.findIndex((l, i) => i > 3 && !l.startsWith("//"))).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));
+  }
 }

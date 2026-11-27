@@ -72,7 +72,8 @@ git clone https://github.com/AlbinOdelstav/maker-inventory.git
 cd maker-inventory
 npm install
 node inv.mjs init            # creates inventory/ and projects/ (git-ignored, your data)
-node inv.mjs install-skill   # optional: Claude Code skill in ~/.claude/skills/inventory
+node inv.mjs install-skill   # optional: Claude Code skills "inventory" and "sync-project"
+node inv.mjs install-hook    # optional: reminder to sync a project after a work session
 ```
 
 Your data stays out of git: `inventory/`, `projects/`, `overview.html` and `CLAUDE.local.md`
@@ -94,6 +95,19 @@ node inv.mjs adjust uno +2         # stock change: bought +n, used up -n (same s
 node inv.mjs validate             # after every change (also rebuilds overview.html)
 node inv.mjs html                 # rebuild overview.html only
 node inv.mjs cad                  # CAD dimension links: linked, broken, missing
+node inv.mjs project [<project>]  # list projects, or one project's status, numbered to-dos, links, needs
+node inv.mjs project-update <project> '<json>' [--dry-run]   # tick/add/edit to-dos, links, status
+node inv.mjs install-hook [--remove]   # Claude Code sync reminder (see "Workflow with an agent")
+```
+
+`project-update` takes a small change list; to-dos and links are referred to by number (from
+`project`), exact text, or a part of the text that matches only one:
+
+```json
+{ "todos": { "done": [3, "print the base"], "undo": [], "add": ["Order springs"], "remove": [],
+             "edit": [{ "ref": 4, "text": "Solder the LEDs" }] },
+  "links": { "add": [{ "title": "Datasheet", "url": "https://…" }], "remove": [] },
+  "status": "building", "notes_append": "2026-11-27: chose white LEDs" }
 ```
 
 `<project>` is a file in `projects/` (with or without `.yaml`), an example name such as
@@ -111,7 +125,8 @@ inventory/           your stock, one file per kind (created by init, git-ignored
 projects/            what each project needs (git-ignored)
 templates/inventory/ empty files with schema comments (copied by init)
 examples/projects/   example project file
-skill/SKILL.md       Claude Code skill template (installed by install-skill)
+skill/               Claude Code skill templates: inventory, sync-project (installed by install-skill)
+hooks/               sync-reminder.mjs, the Claude Code Stop hook (installed by install-hook)
 inv.mjs              the CLI
 lib.mjs              shared logic: loading, matching, checks, validation, safe writes
 server.mjs           the local web app server (JSON API on 127.0.0.1)
@@ -232,6 +247,20 @@ Swedish or English input stored as canonical values.
 3. **Finished a build or print.** Subtract what was used (filament grams, screws), or set `in_use`.
 4. **Unverified items.** Check items with `verified: false` in the drawer, then set them to
    `true` or remove them.
+5. **After a work session.** Run `/sync-project` in that session. The agent reads the session
+   and proposes the changes to the project: to-dos done and new, parts bought or used, links,
+   status, needs. Each change says what in the session it rests on. Nothing is written before you
+   say yes.
+
+**Sync reminder.** `node inv.mjs install-hook` (or Settings → AI agents → Sync reminder) adds a
+Claude Code Stop hook to `~/.claude/settings.json`, next to your other hooks (a backup is kept
+as `settings.json.bak-maker-inventory`). When a session in a project's folder makes progress
+(you mention buying or finishing something, or files change), the agent offers to run
+`/sync-project`. A folder belongs to a project when one of its folder names is the project's file
+or name (`…/Cad/vending-machine/v15` → `vending-machine.yaml`), or the project's notes mention
+it. It speaks at most every 30 minutes per session, not after a sync, and never in other folders.
+`install-hook --remove` takes it out. If a setup script rewrites your `settings.json`, run
+`install-hook` again.
 
 ## License
 

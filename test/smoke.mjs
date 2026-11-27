@@ -150,6 +150,53 @@ try {
     assert.ok(!existsSync(join(dir, "projects", up.image)), "picture file deleted");
     assert.equal((await r.json()).state.projects.find((p) => p.file === "lampa-v2.yaml").images.length, 0);
 
+    // CLI for agents: project overview and project-update (what /sync-project uses).
+    assert.match(run("project"), /lampa-v2\.yaml\s+Lampa v2\s+\[building\]/);
+    const pj1 = JSON.parse(run("project", "lampa", "--json"));
+    assert.deepEqual(pj1.todos.map((x) => [x.n, x.done]), [[1, false], [2, true]]);
+    const upd = (json, ...extra) => run("project-update", "lampa", json, ...extra);
+    assert.match(upd(JSON.stringify({ todos: { done: [1], add: ["Paint it"] } }), "--dry-run"), /would done: Print the base\nwould add: Paint it/);
+    assert.equal(JSON.parse(run("project", "lampa", "--json")).todos.length, 2, "dry run writes nothing");
+    const out1 = upd(JSON.stringify({ todos: { done: ["print"], undo: [2], add: ["Paint it", "paint it"], edit: [{ ref: 2, text: "Solder the LEDs" }] },
+      links: { add: [{ title: "Guide", url: "https://example.com/guide" }, "https://example.com/cad"] }, status: "done", notes_append: "2026-11-27: white LEDs" }));
+    assert.match(out1, /done: Print the base/); assert.match(out1, /add: Paint it/); assert.match(out1, /already listed: paint it/);
+    assert.match(out1, /link already there: https:\/\/example.com\/cad/); assert.match(out1, /status: building -> done/);
+    const pj2 = JSON.parse(run("project", "lampa", "--json"));
+    assert.deepEqual(pj2.todos.map((x) => [x.text, x.done]), [["Print the base", true], ["Solder the LEDs", false], ["Paint it", false]]);
+    assert.equal(pj2.links.length, 2); assert.equal(pj2.status, "done"); assert.equal(pj2.notes, "2026-11-27: white LEDs");
+    assert.equal(pj2.needs.ok + pj2.needs.short + pj2.needs.missing, proj.needs.length, "needs are kept");
+    upd(JSON.stringify({ todos: { remove: ["paint"] }, links: { remove: ["guide"] }, status: "" }));
+    const pj3 = JSON.parse(run("project", "lampa", "--json"));
+    assert.equal(pj3.todos.length, 2); assert.equal(pj3.links.length, 1); assert.equal(pj3.status, null);
+    const fails = (json) => { try { upd(json); return false; } catch { return true; } };
+    assert.ok(fails(JSON.stringify({ todos: { done: [9] } })), "unknown to-do number");
+    assert.ok(fails(JSON.stringify({ links: { add: ["javascript:alert(1)"] } })), "http(s) links only");
+    assert.ok(fails(JSON.stringify({ status: "someday" })), "known statuses only");
+
+    // The sync reminder hook: settings.json is merged, never overwritten, and the hook only speaks
+    // for sessions in a project's folder that made progress.
+    const home = join(dir, "home");
+    mkdirSync(join(home, ".claude"), { recursive: true });
+    const settingsFile = join(home, ".claude", "settings.json");
+    writeFileSync(settingsFile, JSON.stringify({ model: "x", hooks: { Stop: [{ hooks: [{ type: "command", command: "notify" }] }] } }));
+    const runHome = (...a) => execFileSync(process.execPath, [CLI, ...a], { env: { ...ENV, USERPROFILE: home, HOME: home }, encoding: "utf8" });
+    runHome("install-hook"); runHome("install-hook");
+    let settings = JSON.parse(readFileSync(settingsFile, "utf8"));
+    assert.equal(settings.model, "x", "other settings kept");
+    assert.deepEqual(settings.hooks.Stop.map((g) => g.hooks[0].command.includes("sync-reminder") ? "ours" : g.hooks[0].command), ["notify", "ours"], "installed once, next to the existing hook");
+    assert.ok(existsSync(settingsFile + ".bak-maker-inventory"), "backup written");
+    runHome("install-hook", "--remove");
+    settings = JSON.parse(readFileSync(settingsFile, "utf8"));
+    assert.deepEqual(settings.hooks.Stop.map((g) => g.hooks[0].command), ["notify"], "remove leaves other hooks alone");
+    const hookScript = join(dirname(CLI), "hooks", "sync-reminder.mjs");
+    const transcript = join(dir, "t.jsonl");
+    writeFileSync(transcript, JSON.stringify({ type: "user", message: { content: "köpte lysdioderna idag" } }) + "\n");
+    const run1 = Date.now(); // the hook remembers sessions in the temp folder; keep test sessions unique
+    const hook = (cwd, sid) => execFileSync(process.execPath, [hookScript], { env: ENV, encoding: "utf8", input: JSON.stringify({ session_id: `${sid}-${run1}`, transcript_path: transcript, cwd }) });
+    assert.match(JSON.parse(hook(join(dir, "cad", "lampa-v2", "v3"), "s1")).reason, /sync-project/, "reminds in the project's folder");
+    assert.equal(hook(join(dir, "cad", "lampa-v2", "v3"), "s1"), "", "not again within 30 minutes");
+    assert.equal(hook(join(dir, "elsewhere"), "s2"), "", "quiet outside project folders");
+
     r = await call("POST", "/api/projects", { example: true });
     assert.equal((await r.json()).file, "plant-watering.yaml");
     for (const f of ["lampa-v2.yaml", "plant-watering.yaml"]) assert.equal((await call("DELETE", "/api/projects/" + f, {})).status, 200);
