@@ -206,6 +206,38 @@ try {
     assert.match(JSON.parse(hook(join(dir, "cad", "lampa-v2", "v3"), "s1")).reason, /sync-project/, "reminds in the project's folder");
     assert.equal(hook(join(dir, "cad", "lampa-v2", "v3"), "s1"), "", "not again within 30 minutes");
     assert.equal(hook(join(dir, "elsewhere"), "s2"), "", "quiet outside project folders");
+    // A project's folder: set by project-update, shown by project, and how the hook finds sessions.
+    const pf = join(dir, "workshop", "lamp-cad");
+    assert.match(upd(JSON.stringify({ folder: pf })), /folder: none -> /);
+    assert.equal(JSON.parse(run("project", "lampa", "--json")).folder, pf);
+    assert.match(JSON.parse(hook(join(pf, "v2"), "s3")).reason, /Lampa v2/, "a session inside the project folder belongs to it");
+    assert.equal(JSON.parse(run("project", "lampa", "--json")).todos.length, 2, "folder change kept the to-dos");
+
+    // Printed parts from a build report's PRINT LIST, counted up and kept across a re-import.
+    const report = join(dir, "build_report.txt");
+    writeFileSync(report, "FASTENERS\n  ok\n\nPRINT LIST\n  PART                 QTY  SIZE mm                 EACH g   TOTAL g\n  Base                   1    120 x  80 x   20       40        40 \n  Cell_A                 4     71 x  187 x   65       80       320 \n  [PASS] every STL is printable\n  TOTAL                  5\n");
+    assert.match(run("prints-import", "lampa", report), /2 printed parts/);
+    assert.match(upd(JSON.stringify({ prints: { printed: [{ ref: "cell", n: 3 }, { ref: 1, n: 5 }] } })), /printed: Cell_A 0 -> 3 of 4\nprinted: Base 0 -> 1 of 1/);
+    writeFileSync(report, readFileSync(report, "utf8").replace("Cell_A                 4", "Cell_A                 2").replace("  [PASS]", "  Lid                    1     60 x  60 x    3        9         9 \n  [PASS]"));
+    const reimp = run("prints-import", "lampa");
+    assert.match(reimp, /qty: Cell_A 4 -> 2/); assert.match(reimp, /new: Lid/);
+    let pp = (await (await call("GET", "/api/state")).json()).projects.find((x) => x.file === "lampa-v2.yaml");
+    assert.deepEqual(pp.prints.map((x) => [x.part, x.qty, x.done]), [["Base", 1, 1], ["Cell_A", 2, 2], ["Lid", 1, 0]], "counts kept, clamped to the new qty");
+    assert.equal(pp.print_report, report);
+
+    // Drawings: an SVG the project lists, labels linked to needs; the server only hands out listed .svg files.
+    const svg = join(dir, "schema.svg");
+    writeFileSync(svg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><rect x="5" y="5" width="40" height="20"/><text x="10" y="18">Kort</text><script>alert(1)</script></svg>');
+    assert.match(upd(JSON.stringify({ drawings: { add: [{ title: "Schema", file: svg }], map: [{ drawing: 1, label: "Kort", need: "kort" }] } })), /add drawing: Schema\nlink: "Kort" in Schema -> need 1 \(Kort\)/);
+    pp = (await (await call("GET", "/api/state")).json()).projects.find((x) => x.file === "lampa-v2.yaml");
+    assert.deepEqual(pp.drawings[0].parts, [{ label: "Kort", need: 1 }]);
+    r = await call("GET", "/api/projects/lampa-v2.yaml/drawings/0");
+    assert.equal(r.status, 200); assert.equal(r.headers.get("content-type"), "text/plain; charset=utf-8", "served as text; the page sanitizes it");
+    assert.match(await r.text(), /<text x="10" y="18">Kort<\/text>/);
+    assert.equal((await call("GET", "/api/projects/lampa-v2.yaml/drawings/5")).status, 400, "only listed drawings");
+    assert.ok(fails(JSON.stringify({ drawings: { add: [{ file: join(dir, "inventory", "tools.yaml") }] } })), "drawings must be .svg");
+    upd(JSON.stringify({ drawings: { unmap: [{ drawing: "schema", label: "kort" }], remove: [] } }));
+    assert.equal((await (await call("GET", "/api/state")).json()).projects.find((x) => x.file === "lampa-v2.yaml").drawings[0].parts, undefined, "unlinked");
 
     r = await call("POST", "/api/projects", { example: true });
     assert.equal((await r.json()).file, "plant-watering.yaml");

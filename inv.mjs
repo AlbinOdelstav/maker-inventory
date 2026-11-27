@@ -17,13 +17,14 @@
 //   project [<project>] [--json]    list projects, or one project's status, to-dos, links and needs at a glance
 //   project-update <project> <json|-> [--dry-run]   tick/add/edit to-dos, add links, set status (see README)
 //   install-hook [--remove]         Claude Code hook that reminds the agent to run /sync-project after progress
+//   prints-import <project> [<report>]   read the PRINT LIST of a CAD build report into the project (keeps counts printed)
 
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
 import { ROOT, DATA, INV_DIR, PROJ_DIR, norm, unitOf, inventoryExists, loadInventory, loadProjects, computeCheck, validateAll, initData, installSkill,
-  loadCadLibrary, cadWarnings, CAD_FILES, adjustStock, findProjectFile, updateProjectPlan, installHook, uninstallHook } from "./lib.mjs";
+  loadCadLibrary, cadWarnings, CAD_FILES, adjustStock, findProjectFile, updateProjectPlan, installHook, uninstallHook, importPrints } from "./lib.mjs";
 import { renderApp } from "./html.mjs";
 
 function requireInventory() {
@@ -148,13 +149,14 @@ function projectShow(q, asJson) {
   const p = projects.find((x) => x.file === projectFileOrExit(q));
   const count = (s) => p.rows.filter((r) => r.status === s).length;
   if (asJson) {
-    return console.log(JSON.stringify({ file: p.file, name: p.name, status: p.status ?? null, notes: p.notes ?? null, version: p.version,
+    return console.log(JSON.stringify({ file: p.file, name: p.name, status: p.status ?? null, folder: p.folder ?? null, notes: p.notes ?? null, version: p.version,
       todos: p.todos.map((t, i) => ({ n: i + 1, text: t.text, done: !!t.done })), links: p.links.map((l, i) => ({ n: i + 1, ...l })),
       images: p.images.length, needs: { ok: count("OK"), short: count("SHORT"), missing: count("MISSING"),
         open: p.rows.filter((r) => r.status !== "OK").map((r) => ({ need: r.need, qty: r.qty, have: r.got, unit: r.unit, optional: r.optional })),
         list: p.rows.map((r, i) => ({ n: i + 1, need: r.need, status: r.status, qty: r.qty, have: r.got, unit: r.unit, purpose: r.purpose ?? null })) } }, null, 2));
   }
   console.log(`# ${p.name}  (${p.file})${p.status ? `  [${p.status}]` : ""}`);
+  if (p.folder) console.log(`Folder: ${p.folder}`);
   if (p.notes) console.log(`\n${p.notes}`);
   const done = p.todos.filter((t) => t.done).length;
   console.log(`\n## To do (${done}/${p.todos.length} done)`);
@@ -166,6 +168,15 @@ function projectShow(q, asJson) {
   console.log(`\n## Needs: ${count("OK")} in stock, ${count("SHORT")} short, ${count("MISSING")} missing (details: check ${p.file.replace(/\.ya?ml$/, "")})`);
   const mark = { OK: "ok ", SHORT: "½  ", MISSING: "-  " };
   p.rows.forEach((r, i) => console.log(`${String(i + 1).padStart(3)}. ${mark[r.status]}${r.need}${r.purpose ? `  – ${r.purpose}` : "  (purpose not given)"}`));
+  if (p.prints.length) {
+    const all = p.prints.reduce((a, x) => a + x.qty, 0), done = p.prints.reduce((a, x) => a + x.done, 0);
+    console.log(`\n## Printed parts: ${done}/${all}${p.print_report ? `  (from ${p.print_report})` : ""}`);
+    p.prints.forEach((x, i) => console.log(`${String(i + 1).padStart(3)}. ${x.done >= x.qty ? "[x]" : "[ ]"} ${x.part}  ${x.done}/${x.qty}${x.g != null ? `  ${x.g} g each` : ""}`));
+  }
+  if (p.drawings.length) {
+    console.log(`\n## Drawings`);
+    p.drawings.forEach((d, i) => console.log(`${String(i + 1).padStart(3)}. ${d.title}  ${d.file}\n${(d.parts ?? []).map((x) => `       "${x.label}" -> need ${x.need}`).join("\n") || "       (no parts linked)"}`));
+  }
   if (p.images.length) console.log(`\n${p.images.length} picture(s)`);
 }
 
@@ -256,6 +267,14 @@ Find "Maker Inventory" in the Start menu; right-click it to pin it to the taskba
     break;
   case "project": projectShow(pos[0], flags.includes("--json")); break;
   case "project-update": await projectUpdate(pos[0], pos[1], flags.includes("--dry-run")); break;
+  case "prints-import": {
+    if (!pos[0]) { console.error("usage: prints-import <project> [<build_report.txt>]   (the report path is remembered)"); process.exit(2); }
+    try {
+      const r = importPrints({ file: projectFileOrExit(pos[0]), report: pos[1] });
+      console.log(`${r.parts} printed parts in ${r.file}${r.changes.length ? "\n" + r.changes.join("\n") : ""}`);
+    } catch (e) { console.error(e.message); process.exit(1); }
+    break;
+  }
   default: {
     const src = readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n");
     console.log(src.slice(1, src.findIndex((l, i) => i > 3 && !l.startsWith("//"))).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));

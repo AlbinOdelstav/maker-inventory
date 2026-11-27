@@ -9,7 +9,7 @@ import { createHash } from "node:crypto";
 import { DATA, ROOT, PROJ_DIR, SKILL_PATH, loadInventoryWithVersions, loadProjects, saveItem, deleteItem, saveProject, deleteProject,
   copyExampleProject, adjustStock, validateAll, installSkill, skillStatus, ConflictError, InputError,
   addProjectImage, deleteProjectImage, mediaFile, IMAGE_MAX_BYTES, loadCadLibrary, cadLibraryVersion, cadWarnings,
-  hookStatus, installHook, uninstallHook, CLAUDE_SETTINGS } from "./lib.mjs";
+  hookStatus, installHook, uninstallHook, CLAUDE_SETTINGS, drawingFile, importPrints } from "./lib.mjs";
 
 const IMAGE_MIME = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", gif: "image/gif" };
 import { renderApp } from "./html.mjs";
@@ -99,6 +99,22 @@ export function startServer({ port = 4310, open = true, host = "127.0.0.1", quie
         if (!existsSync(p)) return send(res, 404, { error: "not found" });
         res.writeHead(200, { "content-type": IMAGE_MIME[rel.split(".").pop()], "cache-control": "private, max-age=3600", "x-content-type-options": "nosniff" });
         return res.end(readFileSync(p));
+      }
+      // A project's drawing, as text: only SVG files the project lists. The page sanitizes it before
+      // showing it inline (no scripts, no event handlers, no outside links).
+      const dm = url.pathname.match(/^\/api\/projects\/([^/]+)\/drawings\/(\d+)$/);
+      if (dm && req.method === "GET") {
+        const path = drawingFile(decodeURIComponent(dm[1]), Number(dm[2]));
+        const text = readFileSync(path, "utf8");
+        if (text.length > 5e6) return send(res, 413, { error: "drawing is larger than 5 MB" });
+        return send(res, 200, text, "text/plain; charset=utf-8");
+      }
+      const pi = url.pathname.match(/^\/api\/projects\/([^/]+)\/prints\/import$/);
+      if (pi && req.method === "POST") {
+        const body = await readJson(req);
+        const result = importPrints({ file: decodeURIComponent(pi[1]), report: body.report, expect: body.expect });
+        refreshSnapshot();
+        return send(res, 200, { ...result, state: state() });
       }
       const im = url.pathname.match(/^\/api\/projects\/([^/]+)\/images$/);
       if (im) {

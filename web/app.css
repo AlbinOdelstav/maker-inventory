@@ -415,3 +415,46 @@ kbd { font: 12px ui-monospace, Consolas, monospace; border: 1px solid var(--line
 .nd-label { font-size: 11.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3px; }
 .nd-chip { display: inline-block; padding: 1px 8px; margin: 0 4px 4px 0; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 12px; }
 .nd-item a { color: var(--accent); }
+.proj-folder { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 12px; color: var(--muted); min-width: 0; }
+.proj-folder code { font: 11.5px ui-monospace, Consolas, monospace; background: var(--surface-2); padding: 1px 6px; border-radius: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- drawings ---------- */
+.drawings .panel-h { flex-wrap: wrap; gap: 8px; }
+.draw-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.draw-tools .seg button { min-width: 30px; font-variant-numeric: tabular-nums; }
+.draw-legend { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-right: 4px; }
+.draw-legend i { width: 12px; height: 12px; border-radius: 3px; border: 2px solid; margin-left: 6px; }
+.draw-legend .lg-OK { border-color: var(--ok); } .draw-legend .lg-SHORT { border-color: var(--warn); } .draw-legend .lg-MISSING { border-color: var(--bad); }
+.draw-tabs { display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 16px 0; }
+.draw-hint { margin: 10px 16px 0; padding: 8px 12px; border-radius: 8px; background: var(--accent-soft); color: var(--ink-2); font-size: 12.5px; }
+.draw-stage { position: relative; margin: 12px 16px 0; border: 1px solid var(--line); border-radius: 8px; background: #fff; overflow: auto; max-height: 72vh; }
+.draw-canvas { min-width: 100%; }
+.draw-canvas svg { display: block; width: 100%; height: auto; }
+.draw-canvas .empty-mini, .draw-canvas .form-err { margin: 12px; }
+.draw-part { fill: transparent; stroke-width: 3; cursor: pointer; transition: fill .12s; }
+.draw-part.st-OK { stroke: #16a34a; } .draw-part.st-SHORT { stroke: #d97706; } .draw-part.st-MISSING { stroke: #dc2626; }
+.draw-part:hover { fill: rgba(79, 70, 229, .10); stroke-width: 4; }
+.draw-part.flash { animation: draw-flash 1.1s ease-in-out 3; }
+@keyframes draw-flash { 50% { fill: rgba(79, 70, 229, .28); stroke-width: 6; } }
+.draw-label { fill: rgba(79, 70, 229, .04); stroke: #4f46e5; stroke-width: 1.5; stroke-dasharray: 4 3; cursor: pointer; }
+.draw-label:hover { fill: rgba(79, 70, 229, .16); }
+.draw-stage:not(.mapping) .draw-label { display: none; }
+.draw-tip { position: absolute; z-index: 5; max-width: 270px; padding: 8px 10px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: 12.5px; line-height: 1.4; pointer-events: none; box-shadow: var(--shadow-lg); }
+.draw-tip b { display: block; } .draw-tip .st { font-weight: 600; } .draw-tip p { margin: 4px 0 0; opacity: .85; } .draw-tip small { display: block; margin-top: 4px; opacity: .65; }
+.draw-tip .st-OK { color: #4ade80; } .draw-tip .st-SHORT { color: #fbbf24; } .draw-tip .st-MISSING { color: #f87171; }
+.draw-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 16px 12px; font-size: 12px; }
+.draw-foot code { font: 11.5px ui-monospace, Consolas, monospace; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%; }
+.part-menu { position: fixed; z-index: 90; width: 330px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow-lg); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.part-menu .pm-h { font-weight: 600; font-size: 13px; }
+.part-menu select { width: 100%; font: inherit; font-size: 12.5px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.part-menu .pm-f { display: flex; gap: 6px; align-items: center; } .part-menu .spacer { flex: 1; }
+.proj-table tr.need-row.flash td { animation: row-flash 1.1s ease-in-out 2; }
+@keyframes row-flash { 50% { background: var(--accent-soft); } }
+
+/* ---------- printed parts ---------- */
+.pr-table td, .pr-table th { padding: 7px 12px; }
+.pr-table tr.pr-done td { color: var(--muted); }
+.pr-table .pr-name { font-weight: 550; }
+.pr-step { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pr-table .pr-x { width: 30px; } .pr-table .pr-x .icon-btn { opacity: 0; } .pr-table tr:hover .pr-x .icon-btn { opacity: 1; }
+.prints .plan-add input[name=report] { flex: 1; }

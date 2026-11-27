@@ -45,6 +45,7 @@ export function loadProjects(inv) {
     const proj = YAML.parse(text) ?? {};
     return { file: f, name: proj.name ?? f, notes: proj.notes, needs: proj.needs ?? [], version: hash(text),
       status: proj.status, todos: proj.todos ?? [], links: proj.links ?? [], images: proj.images ?? [],
+      drawings: proj.drawings ?? [], prints: proj.prints ?? [], print_report: proj.print_report ?? null, folder: proj.folder ?? null,
       example: f.startsWith("_"), rows: computeCheck(inv, proj) };
   }).sort((a, b) => a.example - b.example);
 }
@@ -423,7 +424,7 @@ export function projectErrors(p) {
 
 // ---------- project planning: status, to-dos, links, pictures ----------
 export const PROJECT_STATUSES = ["idea", "planning", "building", "done", "paused"];
-const PLAN_FIELDS = ["status", "todos", "links", "images"];
+const PLAN_FIELDS = ["status", "folder", "todos", "links", "images", "drawings", "prints", "print_report"];
 const IMAGE_TYPES = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" };
 export const IMAGE_MAX_BYTES = 8 * 1024 * 1024;
 // Pictures live in projects/media/<folder>/<file>; the project YAML stores that path relative to projects/.
@@ -451,7 +452,75 @@ function cleanPlan(raw) {
     mediaFile(str(i.file));
     return str(i.caption) ? { file: str(i.file), caption: str(i.caption) } : { file: str(i.file) };
   });
+  // Drawings: SVG files kept where they are made (e.g. the CAD folder), with labels in them linked to needs.
+  if (raw.drawings !== undefined) out.drawings = list(raw.drawings, "file").map((d) => {
+    if (!/\.svg$/i.test(str(d.file))) throw new InputError(`drawings must be .svg files: ${str(d.file)}`);
+    const parts = [].concat(d.parts ?? []).filter((p) => str(p?.label) && str(p?.need))
+      .map((p) => ({ label: str(p.label), need: /^\d+$/.test(str(p.need)) ? Number(p.need) : str(p.need) }));
+    return { title: str(d.title) || basename(str(d.file)).replace(/\.svg$/i, ""), file: str(d.file), ...(parts.length ? { parts } : {}) };
+  });
+  // Printed parts: how many are needed and how many are printed.
+  if (raw.prints !== undefined) out.prints = list(raw.prints, "part").map((p) => {
+    const int = (v, k) => { const n = Number(v ?? 0); if (!Number.isFinite(n) || n < 0) throw new InputError(`${k} must be a number >= 0 (${str(p.part)})`); return Math.round(n); };
+    const qty = int(p.qty ?? 1, "qty"), done = Math.min(int(p.done, "done"), qty);
+    const o = { part: str(p.part), qty, done };
+    if (p.g !== undefined && p.g !== "" && Number.isFinite(Number(p.g))) o.g = Number(p.g);
+    if (str(p.size)) o.size = str(p.size);
+    if (str(p.note)) o.note = str(p.note);
+    return o;
+  });
+  if (raw.print_report !== undefined) out.print_report = str(raw.print_report);
+  // The project's own folder (CAD files, BOM, log): lets agents and the sync reminder find its files.
+  if (raw.folder !== undefined) out.folder = str(raw.folder);
   return out;
+}
+
+// The PRINT LIST block of a CAD build report:  "  BackPanel_1   1   183 x 211 x 5   75   75".
+export function parsePrintList(text) {
+  const lines = String(text).split(/\r?\n/);
+  const start = lines.findIndex((l) => /^\s*PRINT LIST\b/.test(l));
+  if (start < 0) throw new InputError("no PRINT LIST section in the report");
+  const rows = [];
+  const num = String.raw`\d+(?:\.\d+)?`;
+  const row = new RegExp(String.raw`^\s+([^\s\[]\S*)\s+(\d+)\s+(${num}\s*x\s*${num}\s*x\s*${num})\s+(${num})\s+(${num})\s*$`);
+  for (const l of lines.slice(start + 1)) {
+    if (/^\s*PART\s+QTY/i.test(l)) continue;
+    const m = row.exec(l);
+    if (!m) break;
+    rows.push({ part: m[1], qty: Number(m[2]), size: m[3].replace(/\s+/g, " "), g: Number(m[4]) });
+  }
+  if (!rows.length) throw new InputError("the PRINT LIST section has no parts");
+  return rows;
+}
+
+// Read the print list from a build report into the project. Counts already printed are kept for parts
+// that are still in the list; the report path is remembered so the app can read it again.
+export function importPrints({ file, report, expect }) {
+  const proj = readProject(file, expect);
+  const path = str(report) || str(proj.print_report);
+  if (!path) throw new InputError("no build report given");
+  if (!existsSync(path)) throw new InputError(`report not found: ${path}`);
+  const rows = parsePrintList(readFileSync(path, "utf8"));
+  const old = new Map((proj.prints ?? []).map((p) => [p.part, p]));
+  const changes = [];
+  const prints = rows.map((r) => {
+    const was = old.get(r.part);
+    if (!was) changes.push(`new: ${r.part} × ${r.qty}`);
+    else if (was.qty !== r.qty) changes.push(`qty: ${r.part} ${was.qty} -> ${r.qty}`);
+    return { ...r, done: Math.min(was?.done ?? 0, r.qty), ...(was?.note ? { note: was.note } : {}) };
+  });
+  for (const p of proj.prints ?? []) if (!rows.some((r) => r.part === p.part)) changes.push(`gone from the report: ${p.part}${p.done ? ` (${p.done} printed)` : ""}`);
+  saveProject({ originalFile: file, project: { name: proj.name, notes: proj.notes, needs: proj.needs ?? [], prints, print_report: path }, expect: hash(readFileSync(projPath(file), "utf8")) });
+  return { file, parts: prints.length, changes };
+}
+
+// The SVG file of a project drawing, only if the project lists it.
+export function drawingFile(file, index) {
+  const proj = readProject(file);
+  const d = (proj.drawings ?? [])[Number(index)];
+  if (!d || !/\.svg$/i.test(String(d.file ?? ""))) throw new InputError("no such drawing");
+  if (!existsSync(d.file)) throw new ConflictError(`drawing file not found: ${d.file}`);
+  return d.file;
 }
 
 function readProject(file, expect) {
@@ -464,13 +533,15 @@ function readProject(file, expect) {
 
 function writeProjectFile(file, project) {
   const clean = { ...project };
-  for (const k of ["todos", "links", "images"]) if (Array.isArray(clean[k]) && !clean[k].length) delete clean[k];
+  for (const k of ["todos", "links", "images", "drawings", "prints"]) if (Array.isArray(clean[k]) && !clean[k].length) delete clean[k];
   if (!clean.status) delete clean.status;
-  const doc = new YAML.Document(orderKeys(clean, ["name", "status", "notes", "todos", "links", "images", "needs"]));
+  if (!clean.print_report) delete clean.print_report;
+  if (!clean.folder) delete clean.folder;
+  const doc = new YAML.Document(orderKeys(clean, ["name", "status", "folder", "notes", "todos", "links", "images", "drawings", "print_report", "prints", "needs"]));
   YAML.visit(doc, { Pair(_, pair) {
     const k = pair.key?.value;
     if (["match", "buy", "tags", "specs"].includes(k) && pair.value) pair.value.flow = true;
-    if (["todos", "links", "images"].includes(k) && pair.value?.items) for (const m of pair.value.items) m.flow = true;
+    if (["todos", "links", "images", "prints", "parts"].includes(k) && pair.value?.items) for (const m of pair.value.items) m.flow = true;
   } });
   const out = projPath(file);
   writeFileSync(`${out}.tmp`, `${PROJECT_HEADER}\n\n${doc.toString({ lineWidth: 0 })}`);
@@ -546,7 +617,9 @@ export function findProjectFile(query) {
 
 // Apply a small change list to a project's planning (used by agents after a work session):
 //   { status, notes_append, todos: { done, undo, remove, add, edit: [{ ref, text }] }, links: { add: [{ title, url }], remove },
-//     needs: { purpose: [{ ref, text }] } }
+//     needs: { purpose: [{ ref, text }] }, folder,
+//     prints: { printed: [{ ref, n }], set: [{ ref, done }] },
+//     drawings: { add: [{ title, file }], remove: [ref], map: [{ drawing, label, need }], unmap: [{ drawing, label }] } }
 // A ref is a 1-based number, the exact text, or a part of the text that matches only one entry.
 // Returns what changed; with dryRun nothing is written.
 export function updateProjectPlan({ file, patch, expect, dryRun = false }) {
@@ -600,12 +673,51 @@ export function updateProjectPlan({ file, patch, expect, dryRun = false }) {
   }
   let status = proj.status;
   if (p.status !== undefined && p.status !== status) { status = p.status || undefined; changes.push(`status: ${proj.status ?? "none"} -> ${p.status || "none"}`); }
+  let folder = proj.folder;
+  if (p.folder !== undefined && String(p.folder ?? "").trim() !== (proj.folder ?? "")) { folder = String(p.folder ?? "").trim(); changes.push(`folder: ${proj.folder ?? "none"} -> ${folder || "none"}`); }
   let notes = proj.notes;
   if (String(p.notes_append ?? "").trim()) { notes = [notes, String(p.notes_append).trim()].filter(Boolean).join("\n"); changes.push(`notes: + ${String(p.notes_append).trim()}`); }
-  const real = changes.filter((c) => !/^(already listed|link already there)/.test(c));
+
+  // Printed parts: { prints: { printed: [{ ref, n }], set: [{ ref, done }] } } (ref = number or part name).
+  const prints = (proj.prints ?? []).map((x) => ({ ...x }));
+  const partRef = (ref) => find(prints.map((x) => ({ part: x.part })), ref, "part", "printed part");
+  for (const { ref, n } of p.prints?.printed ?? []) {
+    const i = partRef(ref), was = prints[i].done ?? 0;
+    prints[i].done = Math.max(0, Math.min(prints[i].qty, was + Number(n ?? 1)));
+    if (prints[i].done !== was) changes.push(`printed: ${prints[i].part} ${was} -> ${prints[i].done} of ${prints[i].qty}`);
+  }
+  for (const { ref, done } of p.prints?.set ?? []) {
+    const i = partRef(ref), was = prints[i].done ?? 0;
+    prints[i].done = Math.max(0, Math.min(prints[i].qty, Number(done ?? 0)));
+    if (prints[i].done !== was) changes.push(`printed: ${prints[i].part} ${was} -> ${prints[i].done} of ${prints[i].qty}`);
+  }
+
+  // Drawings: { drawings: { add: [{ title, file }], remove: [ref], map: [{ drawing, label, need }], unmap: [{ drawing, label }] } }
+  let drawings = (proj.drawings ?? []).map((d) => ({ ...d, parts: [...(d.parts ?? [])] }));
+  const dw = p.drawings ?? {};
+  const drawRef = (ref) => find(drawings.map((d) => ({ title: `${d.title} ${d.file}` })), ref, "title", "drawing");
+  for (const ref of dw.remove ?? []) { const i = drawRef(ref); changes.push(`remove drawing: ${drawings[i].title}`); drawings = drawings.filter((_, j) => j !== i); }
+  for (const d of dw.add ?? []) {
+    const f = String(d.file ?? "").trim();
+    if (drawings.some((x) => norm(x.file) === norm(f))) { changes.push(`drawing already there: ${f}`); continue; }
+    drawings.push({ title: String(d.title ?? "").trim(), file: f, parts: [] }); changes.push(`add drawing: ${d.title || f}`);
+  }
+  for (const { drawing, label, need } of dw.map ?? []) {
+    const i = drawRef(drawing ?? 1), l = String(label ?? "").trim();
+    const ni = find(needs.map((n) => ({ name: n.name ?? n.id ?? "" })), need, "name", "need");
+    drawings[i].parts = [...drawings[i].parts.filter((x) => norm(x.label) !== norm(l)), { label: l, need: ni + 1 }];
+    changes.push(`link: "${l}" in ${drawings[i].title} -> need ${ni + 1} (${needs[ni].name ?? needs[ni].id})`);
+  }
+  for (const { drawing, label } of dw.unmap ?? []) {
+    const i = drawRef(drawing ?? 1), before = drawings[i].parts.length;
+    drawings[i].parts = drawings[i].parts.filter((x) => norm(x.label) !== norm(label));
+    if (drawings[i].parts.length !== before) changes.push(`unlink: "${label}" in ${drawings[i].title}`);
+  }
+
+  const real = changes.filter((c) => !/^(already listed|link already there|drawing already there)/.test(c));
   if (!dryRun && real.length) {
     // saveProject validates everything (status, http links) and refuses if the file changed meanwhile.
-    const project = { name: proj.name, notes, needs, status: status ?? "", todos: keptTodos, links: keptLinks };
+    const project = { name: proj.name, notes, needs, status: status ?? "", folder: folder ?? "", todos: keptTodos, links: keptLinks, prints, drawings };
     saveProject({ originalFile: file, project, expect: expect ?? hash(readFileSync(projPath(file), "utf8")) });
   }
   return { file, changes, written: !dryRun && real.length > 0 };

@@ -22,7 +22,7 @@ const I18N = {
     "proj.hint": "Projects are YAML files in {dir}. Ask an agent: “check if I have everything for …”, or copy {ex}.",
     "proj.ready": "{a}/{b} ready", "proj.short": "{n} short", "proj.missing": "{n} missing", "proj.example": "example",
     "proj.need": "Need", "proj.qty": "Qty", "proj.have": "Have", "proj.from": "From stock", "proj.notes": "Notes",
-    "proj.needsTitle": "What it needs", "nd.toggle": "Show details", "nd.purpose": "What it is for", "nd.nopurpose": "Not described yet. Add it under Edit, or let an agent fill it in with /sync-project.", "nd.note": "Note", "nd.matches": "Counts as a match", "nd.item": "Specific item", "nd.from": "From stock", "nd.none": "Nothing in stock yet", "nd.buy": "Where to buy", "nd.expandAll": "Show all details", "nd.collapseAll": "Hide details", "pe.purpose": "What it is for", "pe.purpose.ph": "e.g. drives one coil motor per cell, switched by the Mega", "ps.label": "Status", "ps.none": "No status", "ps.idea": "Idea", "ps.planning": "Planning", "ps.building": "Building", "ps.done": "Done", "ps.paused": "Paused", "pl.todo": "To do", "pl.todo.ph": "Add a task and press Enter", "pl.todo.none": "No tasks yet.", "pl.showDone": "Show done ({n})", "pl.hideDone": "Hide done", "pl.links": "Links", "pl.link.title": "Title (optional)", "pl.links.none": "No links yet: the CAD model, a guide, a shop page …", "pl.badUrl": "Links must start with http:// or https://", "pl.add": "Add", "pl.remove": "Remove", "pl.images": "Pictures", "pl.images.add": "Add pictures", "pl.images.none": "Drop pictures here, paste one with Ctrl+V or click Add pictures. PNG, JPG, WebP or GIF up to 8 MB.", "pl.images.empty": "No pictures.", "pl.images.big": "{n} is larger than 8 MB", "pl.images.type": "{n} is not a PNG, JPG, WebP or GIF", "pl.images.added": "Pictures added: {n}", "pl.caption": "Caption", "pl.caption.ph": "Add a caption", "pl.delete": "Delete picture", "pl.confirm": "Click again to delete", "pl.prev": "Previous", "pl.next": "Next",
+    "proj.needsTitle": "What it needs", "dr.title": "Drawings", "dr.none": "No drawings yet. Add an SVG (a schematic, a board layout, an assembly view) by its path; it is read from where it is, so a redrawn file shows up as it is.", "dr.title.ph": "Title (e.g. Schematic)", "dr.file.ph": "Path to an .svg file", "dr.add": "Add drawing", "dr.remove": "Remove", "dr.reload": "Reload the drawing", "dr.have": "in stock", "dr.short": "too few", "dr.missing": "to buy", "dr.zoomIn": "Zoom in", "dr.zoomOut": "Zoom out", "dr.map": "Link parts", "dr.map.done": "Done linking", "dr.map.hint": "Click labels in the drawing and choose which need they are", "dr.map.how": "Click a label in the drawing (dashed boxes) to link it to a need. Click a coloured frame to change or remove its link.", "dr.map.for": "\"{label}\" is", "dr.link": "Link", "dr.unmap": "Remove link", "dr.linked": "{n} of {m} links point at a need", "dr.loading": "Loading the drawing…", "dr.liveOnly": "Drawings are shown in the app (node inv.mjs app), not in the snapshot.", "dr.bad": "This file is not a valid SVG drawing.", "dr.tip.go": "Click to see this need", "dr.tip.unmap": "Click to change the link", "dr.tip.map": "Click to link it to a need", "dr.show": "Show in drawing", "pr.title": "Printed parts", "pr.summary": "{a} of {b} printed · {g} g of {all} g left to print", "pr.part": "Part", "pr.size": "Size (mm)", "pr.each": "Each", "pr.printed": "Printed", "pr.left": "Left", "pr.f.left": "To print", "pr.f.done": "Printed", "pr.f.all": "All", "pr.none": "No print list yet. Read it from a CAD build report (its PRINT LIST), or add parts by hand.", "pr.allDone": "Everything is printed.", "pr.noneDone": "Nothing printed yet.", "pr.report.ph": "Path to a build report with a PRINT LIST", "pr.import": "Read print list", "pr.reimport": "Read again", "pr.imported": "Print list read: {n} parts", "pe.folder": "Project folder", "pe.folder.ph": "e.g. C:\\Users\\you\\Documents\\Cad\\lamp", "pe.folder.hint": "Where the project's own files are (CAD, BOM, notes). Agents read them when they sync the project, and the sync reminder knows sessions there belong to this project.", "proj.folder": "Folder", "nd.toggle": "Show details", "nd.purpose": "What it is for", "nd.nopurpose": "Not described yet. Add it under Edit, or let an agent fill it in with /sync-project.", "nd.note": "Note", "nd.matches": "Counts as a match", "nd.item": "Specific item", "nd.from": "From stock", "nd.none": "Nothing in stock yet", "nd.buy": "Where to buy", "nd.expandAll": "Show all details", "nd.collapseAll": "Hide details", "pe.purpose": "What it is for", "pe.purpose.ph": "e.g. drives one coil motor per cell, switched by the Mega", "ps.label": "Status", "ps.none": "No status", "ps.idea": "Idea", "ps.planning": "Planning", "ps.building": "Building", "ps.done": "Done", "ps.paused": "Paused", "pl.todo": "To do", "pl.todo.ph": "Add a task and press Enter", "pl.todo.none": "No tasks yet.", "pl.showDone": "Show done ({n})", "pl.hideDone": "Hide done", "pl.links": "Links", "pl.link.title": "Title (optional)", "pl.links.none": "No links yet: the CAD model, a guide, a shop page …", "pl.badUrl": "Links must start with http:// or https://", "pl.add": "Add", "pl.remove": "Remove", "pl.images": "Pictures", "pl.images.add": "Add pictures", "pl.images.none": "Drop pictures here, paste one with Ctrl+V or click Add pictures. PNG, JPG, WebP or GIF up to 8 MB.", "pl.images.empty": "No pictures.", "pl.images.big": "{n} is larger than 8 MB", "pl.images.type": "{n} is not a PNG, JPG, WebP or GIF", "pl.images.added": "Pictures added: {n}", "pl.caption": "Caption", "pl.caption.ph": "Add a caption", "pl.delete": "Delete picture", "pl.confirm": "Click again to delete", "pl.prev": "Previous", "pl.next": "Next",
     "f.cad": "CAD component", "f.cad.hint": "Id of a file in the CAD library. The dimensions below are read from it.", "cad.title": "CAD dimensions", "cad.none": "No CAD dimensions yet.", "cad.nofile": "There is no {id}.yaml in {dir}.", "cad.suggest": "{id}.yaml lists this item.", "cad.use": "Link it", "cad.dim": "Dimension", "cad.value": "Value", "cad.src": "Source", "cad.ref": "Ref", "cad.confirm": "Measure on your own part if a check asks:", "cad.count": "{n} dimensions · {file}", "cad.readonly": "Read-only here. Edit the library file to change them.", "cad.error": "Could not read {file}: {e}", "cad.missing": "No CAD dimensions", "cad.sources": "Sources", "cad.nolink": "No link given in the library file", "cad.nosources": "The library file names no sources.", "cad.nosrc": "No source given", "cad.unknownRef": "Source \"{ref}\" is not listed", "cad.link": "Source", "cad.missingCount": "{n} values have no source you can check.", "cad.legend": "What the labels mean", "cad.read": "read {d}", "cad.frame": "Coordinate system", "cad.about": "About these values", "cad.other": "Other", "src.MEASURED": "Measured on the real part", "src.DRAWING": "Read off the maker's dimensioned drawing or CAD/board file", "src.DATASHEET": "From the maker's datasheet, or a standard value (e.g. 1.6 mm boards)", "src.STEP": "From a manufacturer 3D model", "src.DISTRIBUTOR": "From a shop or distributor page", "src.COMMUNITY": "Typical value from forums, other people's models or measurements; not checked for this part", "src.SCALED": "Measured off a picture", "src.ASSUMED": "Guess", "st.cad": "CAD library", "st.cad.hint": "Dimension files for bought parts, linked from items with cad_component. Set MAKER_CAD_LIBRARY to use another folder.", "st.cad.count": "{n} component files · {l} linked items", "st.cad.warn": "{n} warnings", "st.cad.nodir": "Folder not found", "st.cad.show": "Items without CAD dimensions",
     "proj.shop": "Shopping list", "proj.copy": "Copy as Markdown", "proj.copied": "Shopping list copied", "proj.nothing": "Nothing to buy. You have everything.",
     "proj.optional": "optional", "proj.altHead": "Similar in stock · {why}", "proj.altToggle": "{n} similar", "proj.altMissing": "no {key}", "why.other color": "other color", "why.other specs": "other sizes",
@@ -59,7 +59,7 @@ const I18N = {
     "proj.hint": "Projekt är YAML-filer i {dir}. Fråga en agent: ”kolla om jag har allt för …”, eller kopiera {ex}.",
     "proj.ready": "{a}/{b} klart", "proj.short": "{n} räcker inte", "proj.missing": "{n} saknas", "proj.example": "exempel",
     "proj.need": "Behov", "proj.qty": "Antal", "proj.have": "Hemma", "proj.from": "Från lagret", "proj.notes": "Noteringar",
-    "proj.needsTitle": "Vad som behövs", "nd.toggle": "Visa detaljer", "nd.purpose": "Används till", "nd.nopurpose": "Inte beskrivet än. Lägg till under Ändra, eller låt en agent fylla i det med /sync-project.", "nd.note": "Anteckning", "nd.matches": "Räknas som träff", "nd.item": "Specifik post", "nd.from": "Från lagret", "nd.none": "Inget i lagret än", "nd.buy": "Var man köper", "nd.expandAll": "Visa alla detaljer", "nd.collapseAll": "Dölj detaljer", "pe.purpose": "Används till", "pe.purpose.ph": "t.ex. driver en spiralmotor per cell, styrs av Megan", "ps.label": "Status", "ps.none": "Ingen status", "ps.idea": "Idé", "ps.planning": "Planering", "ps.building": "Bygger", "ps.done": "Klar", "ps.paused": "Pausad", "pl.todo": "Att göra", "pl.todo.ph": "Skriv en uppgift och tryck Enter", "pl.todo.none": "Inga uppgifter än.", "pl.showDone": "Visa klara ({n})", "pl.hideDone": "Dölj klara", "pl.links": "Länkar", "pl.link.title": "Titel (valfri)", "pl.links.none": "Inga länkar än: CAD-modellen, en guide, en butikssida …", "pl.badUrl": "Länkar måste börja med http:// eller https://", "pl.add": "Lägg till", "pl.remove": "Ta bort", "pl.images": "Bilder", "pl.images.add": "Lägg till bilder", "pl.images.none": "Släpp bilder här, klistra in en med Ctrl+V eller klicka Lägg till bilder. PNG, JPG, WebP eller GIF upp till 8 MB.", "pl.images.empty": "Inga bilder.", "pl.images.big": "{n} är större än 8 MB", "pl.images.type": "{n} är inte PNG, JPG, WebP eller GIF", "pl.images.added": "Bilder tillagda: {n}", "pl.caption": "Bildtext", "pl.caption.ph": "Skriv en bildtext", "pl.delete": "Ta bort bilden", "pl.confirm": "Klicka igen för att ta bort", "pl.prev": "Föregående", "pl.next": "Nästa",
+    "proj.needsTitle": "Vad som behövs", "dr.title": "Ritningar", "dr.none": "Inga ritningar än. Lägg till en SVG (kretsschema, hålkortslayout, sprängskiss) med sin sökväg; den läses där den ligger, så en omritad fil syns som den är.", "dr.title.ph": "Titel (t.ex. Kretsschema)", "dr.file.ph": "Sökväg till en .svg-fil", "dr.add": "Lägg till ritning", "dr.remove": "Ta bort", "dr.reload": "Läs in ritningen igen", "dr.have": "i lager", "dr.short": "för få", "dr.missing": "att köpa", "dr.zoomIn": "Zooma in", "dr.zoomOut": "Zooma ut", "dr.map": "Koppla delar", "dr.map.done": "Klar med kopplingar", "dr.map.hint": "Klicka på etiketter i ritningen och välj vilket behov de är", "dr.map.how": "Klicka på en etikett i ritningen (streckade rutor) för att koppla den till ett behov. Klicka på en färgad ram för att ändra eller ta bort kopplingen.", "dr.map.for": "\"{label}\" är", "dr.link": "Koppla", "dr.unmap": "Ta bort koppling", "dr.linked": "{n} av {m} kopplingar pekar på ett behov", "dr.loading": "Läser in ritningen…", "dr.liveOnly": "Ritningar visas i appen (node inv.mjs app), inte i ögonblicksbilden.", "dr.bad": "Filen är ingen giltig SVG-ritning.", "dr.tip.go": "Klicka för att se behovet", "dr.tip.unmap": "Klicka för att ändra kopplingen", "dr.tip.map": "Klicka för att koppla till ett behov", "dr.show": "Visa i ritningen", "pr.title": "Utskrivna delar", "pr.summary": "{a} av {b} utskrivna · {g} g av {all} g kvar att skriva ut", "pr.part": "Del", "pr.size": "Storlek (mm)", "pr.each": "Per st", "pr.printed": "Utskrivna", "pr.left": "Kvar", "pr.f.left": "Att skriva ut", "pr.f.done": "Utskrivna", "pr.f.all": "Alla", "pr.none": "Ingen utskriftslista än. Läs in den från en CAD-byggrapport (dess PRINT LIST), eller lägg till delar för hand.", "pr.allDone": "Allt är utskrivet.", "pr.noneDone": "Inget är utskrivet än.", "pr.report.ph": "Sökväg till en byggrapport med PRINT LIST", "pr.import": "Läs in utskriftslista", "pr.reimport": "Läs in igen", "pr.imported": "Utskriftslistan inläst: {n} delar", "pe.folder": "Projektmapp", "pe.folder.ph": "t.ex. C:\\Users\\du\\Documents\\Cad\\lampa", "pe.folder.hint": "Där projektets egna filer ligger (CAD, BOM, anteckningar). Agenter läser dem när de synkar projektet, och synkpåminnelsen vet att sessioner där hör till projektet.", "proj.folder": "Mapp", "nd.toggle": "Visa detaljer", "nd.purpose": "Används till", "nd.nopurpose": "Inte beskrivet än. Lägg till under Ändra, eller låt en agent fylla i det med /sync-project.", "nd.note": "Anteckning", "nd.matches": "Räknas som träff", "nd.item": "Specifik post", "nd.from": "Från lagret", "nd.none": "Inget i lagret än", "nd.buy": "Var man köper", "nd.expandAll": "Visa alla detaljer", "nd.collapseAll": "Dölj detaljer", "pe.purpose": "Används till", "pe.purpose.ph": "t.ex. driver en spiralmotor per cell, styrs av Megan", "ps.label": "Status", "ps.none": "Ingen status", "ps.idea": "Idé", "ps.planning": "Planering", "ps.building": "Bygger", "ps.done": "Klar", "ps.paused": "Pausad", "pl.todo": "Att göra", "pl.todo.ph": "Skriv en uppgift och tryck Enter", "pl.todo.none": "Inga uppgifter än.", "pl.showDone": "Visa klara ({n})", "pl.hideDone": "Dölj klara", "pl.links": "Länkar", "pl.link.title": "Titel (valfri)", "pl.links.none": "Inga länkar än: CAD-modellen, en guide, en butikssida …", "pl.badUrl": "Länkar måste börja med http:// eller https://", "pl.add": "Lägg till", "pl.remove": "Ta bort", "pl.images": "Bilder", "pl.images.add": "Lägg till bilder", "pl.images.none": "Släpp bilder här, klistra in en med Ctrl+V eller klicka Lägg till bilder. PNG, JPG, WebP eller GIF upp till 8 MB.", "pl.images.empty": "Inga bilder.", "pl.images.big": "{n} är större än 8 MB", "pl.images.type": "{n} är inte PNG, JPG, WebP eller GIF", "pl.images.added": "Bilder tillagda: {n}", "pl.caption": "Bildtext", "pl.caption.ph": "Skriv en bildtext", "pl.delete": "Ta bort bilden", "pl.confirm": "Klicka igen för att ta bort", "pl.prev": "Föregående", "pl.next": "Nästa",
     "f.cad": "CAD-komponent", "f.cad.hint": "Id för en fil i CAD-biblioteket. Måtten nedan läses därifrån.", "cad.title": "CAD-mått", "cad.none": "Inga CAD-mått än.", "cad.nofile": "Det finns ingen {id}.yaml i {dir}.", "cad.suggest": "{id}.yaml nämner den här artikeln.", "cad.use": "Koppla", "cad.dim": "Mått", "cad.value": "Värde", "cad.src": "Källa", "cad.ref": "Ref", "cad.confirm": "Mät på ditt eget exemplar om en kontroll frågar efter det:", "cad.count": "{n} mått · {file}", "cad.readonly": "Skrivskyddat här. Ändra i biblioteksfilen för att ändra dem.", "cad.error": "Kunde inte läsa {file}: {e}", "cad.missing": "Utan CAD-mått", "cad.sources": "Källor", "cad.nolink": "Ingen länk angiven i biblioteksfilen", "cad.nosources": "Biblioteksfilen anger inga källor.", "cad.nosrc": "Ingen källa angiven", "cad.unknownRef": "Källan \"{ref}\" finns inte i listan", "cad.link": "Källa", "cad.missingCount": "{n} värden saknar en källa som går att kontrollera.", "cad.legend": "Vad märkningarna betyder", "cad.read": "läst {d}", "cad.frame": "Koordinatsystem", "cad.about": "Om värdena", "cad.other": "Övrigt", "src.MEASURED": "Uppmätt på den riktiga delen", "src.DRAWING": "Läst ur tillverkarens måttsatta ritning eller CAD-/kortfil", "src.DATASHEET": "Från tillverkarens datablad, eller ett standardvärde (t.ex. 1,6 mm kretskort)", "src.STEP": "Från tillverkarens 3D-modell", "src.DISTRIBUTOR": "Från en butiks- eller återförsäljarsida", "src.COMMUNITY": "Typiskt värde från forum, andras modeller eller mätningar; inte kontrollerat för just den här delen", "src.SCALED": "Uppmätt på en bild", "src.ASSUMED": "Gissning", "st.cad": "CAD-bibliotek", "st.cad.hint": "Måttfiler för köpta delar, som artiklar kopplas till med cad_component. Sätt MAKER_CAD_LIBRARY för att använda en annan mapp.", "st.cad.count": "{n} komponentfiler · {l} kopplade artiklar", "st.cad.warn": "{n} varningar", "st.cad.nodir": "Mappen finns inte", "st.cad.show": "Artiklar utan CAD-mått",
     "proj.shop": "Inköpslista", "proj.copy": "Kopiera som Markdown", "proj.copied": "Inköpslistan kopierad", "proj.nothing": "Inget att köpa. Du har allt.",
     "proj.optional": "valfri", "proj.altHead": "Liknande i lager · {why}", "proj.altToggle": "{n} liknande", "proj.altMissing": "saknar {key}", "why.other color": "annan färg", "why.other specs": "andra mått",
@@ -132,7 +132,8 @@ applyTheme();
 let S = normalize(BOOT.data || { items: [], projects: [] });
 let route = parseRoute();
 let query = "";
-const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, project: null, altsOpen: new Set(), lightbox: null, lbArmed: false, showDone: new Set(), needsOpen: new Set() };
+const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, project: null, altsOpen: new Set(), lightbox: null, lbArmed: false, showDone: new Set(), needsOpen: new Set(),
+  drawingTab: new Map(), drawZoom: new Map(), drawMap: null, drawArmed: null, drawFlash: null, printFilter: new Map() };
 let drawer = null; // { mode: "new"|"edit"|"view", originalId, file, form, dirty, armed }
 let saving = false;
 
@@ -250,7 +251,7 @@ function renderShell() {
 function renderContent() {
   const el = $("#content");
   if (!el) return;
-  if (route.page === "projects") el.innerHTML = projectsView();
+  if (route.page === "projects") { el.innerHTML = projectsView(); mountDrawings(); }
   else if (route.page === "settings") el.innerHTML = settingsView();
   else if (route.page === "file") el.innerHTML = fileView(route.file);
   else if (route.page === "attention") el.innerHTML = attentionView(route.kind);
@@ -436,7 +437,7 @@ function projectsView() {
     const key = needKey(cur, ri), open = ui.needsOpen.has(key);
     return `<tr class="need-row" data-needrow="${esc(key)}" aria-expanded="${open}"><td><button type="button" class="need-chev" data-needtoggle="${esc(key)}" aria-expanded="${open}" aria-label="${esc(t("nd.toggle"))}">▸</button><span class="st st-${r.status}">${r.status === "OK" ? "✓" : r.status === "SHORT" ? "◐" : "✕"}</span></td>
       <td><div class="name">${esc(r.need)} ${altToggle(cur, r, ri)}</div></td><td class="num">${fmtNum(r.qty)} ${esc(unitLabel(r.unit))}</td><td class="num">${fmtNum(r.got)}</td>
-      <td class="hide-sm">${r.from.map((f) => `<a href="#" data-open="${esc(f.id)}">${esc(fromLabel(f))}</a>`).join(", ") || "–"}</td><td class="hide-sm">${notes}</td></tr>${open ? needDetail(r) : ""}${altRow(cur, r, ri, why)}`;
+      <td class="hide-sm">${r.from.map((f) => `<a href="#" data-open="${esc(f.id)}">${esc(fromLabel(f))}</a>`).join(", ") || "–"}</td><td class="hide-sm">${notes}</td></tr>${open ? needDetail({ ...r, ni: ri, inDrawing: cur.drawings.some((d) => (d.parts || []).some((x) => needIndexOf(cur, x.need) === ri)) }) : ""}${altRow(cur, r, ri, why)}`;
   }).join("");
   const allOpen = cur.rows.length && cur.rows.every((_, i) => ui.needsOpen.has(needKey(cur, i)));
   const buyIdx = cur.rows.map((r, i) => [r, i]).filter(([r]) => r.status !== "OK");
@@ -447,19 +448,238 @@ function projectsView() {
   return `<div class="proj-page">
     <nav class="proj-tabs" aria-label="${esc(t("proj.title"))}">${tabs}</nav>
     <div>
-      <section class="panel proj-head"><div class="panel-h"><div style="min-width:0"><h2>${esc(cur.name)}</h2>${cur.notes ? `<div class="muted" style="font-size:12.5px;margin-top:2px">${esc(cur.notes)}</div>` : ""}</div>
+      <section class="panel proj-head"><div class="panel-h"><div style="min-width:0"><h2>${esc(cur.name)}</h2>${cur.notes ? `<div class="muted" style="font-size:12.5px;margin-top:2px">${esc(cur.notes)}</div>` : ""}${cur.folder ? `<div class="proj-folder"><span>${esc(t("proj.folder"))}</span> <code>${esc(cur.folder)}</code> <button type="button" class="icon-btn xs" data-copy="${esc(cur.folder)}" title="${esc(t("st.copy"))}" aria-label="${esc(t("st.copy"))}">${icon("copy")}</button></div>` : ""}</div>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">${statusControl(cur)}
         ${LIVE ? `<button class="btn sm" data-act="edit-project">${icon("edit")}${esc(t("proj.edit"))}</button>
           <button class="btn sm" data-act="build-project" ${canBuild ? "" : "disabled"} title="${esc(t("proj.build.hint"))}">${icon("check")}${esc(t("proj.build"))}</button>` : ""}</div></div></section>
       ${planPanels(cur)}
-      <section class="panel full"><div class="panel-h"><h2>${esc(t("proj.needsTitle"))}</h2><div style="display:flex;gap:10px;align-items:center">
+      ${drawingsPanel(cur)}
+      <section class="panel full" id="needs-panel"><div class="panel-h"><h2>${esc(t("proj.needsTitle"))}</h2><div style="display:flex;gap:10px;align-items:center">
         ${cur.rows.length ? `<button type="button" class="btn sm ghost" data-needall="${esc(cur.file)}">${esc(t(allOpen ? "nd.collapseAll" : "nd.expandAll"))}</button>` : ""}
         ${progBar(projStats(cur)).replace('class="prog"', 'class="prog" style="width:110px"')}</div></div>
         ${cur.rows.length ? `<div style="overflow-x:auto"><table class="proj-table"><thead><tr><th></th><th>${esc(t("proj.need"))}</th><th class="num">${esc(t("proj.qty"))}</th><th class="num">${esc(t("proj.have"))}</th><th class="hide-sm">${esc(t("proj.from"))}</th><th class="hide-sm">${esc(t("proj.notes"))}</th></tr></thead><tbody>${rows}</tbody></table></div>`
           : `<div class="empty-mini">${esc(t("proj.noNeeds"))}</div>`}</section>
+      ${printsPanel(cur)}
       <section class="panel full"><div class="panel-h"><h2>${esc(t("proj.shop"))}</h2>${buyIdx.length ? `<button class="btn sm" data-act="copy-shop">${icon("copy")}${esc(t("proj.copy"))}</button>` : ""}</div><div class="shop">${shop}</div></section>
     </div></div>`;
 }
+// ---------------------------------------------------------------- drawings: clickable schematics and layouts
+// A drawing is an SVG file the project points at (e.g. electronics/schema.svg in the CAD folder). Labels
+// in it are linked to needs (drawing.parts: [{ label, need }]); the page frames each linked component in
+// the colour of its stock status, and a click jumps to the need. SVGs are sanitized before they are shown.
+const drawingCache = new Map(); // "file#i" -> { svg?: string, error?: string, loading?: true }
+const drawKey = (p, i) => p.file + "#" + i;
+function needIndexOf(p, ref) {
+  if (typeof ref === "number" || /^\d+$/.test(String(ref))) { const i = Number(ref) - 1; return p.rows[i] ? i : -1; }
+  const r = String(ref ?? "").toLowerCase();
+  const exact = p.rows.findIndex((x) => x.need.toLowerCase() === r);
+  if (exact >= 0) return exact;
+  const hits = p.rows.map((x, i) => [x, i]).filter(([x]) => x.need.toLowerCase().includes(r));
+  return hits.length === 1 ? hits[0][1] : -1;
+}
+const curDrawing = (p) => Math.min(ui.drawingTab.get(p.file) ?? 0, Math.max(0, p.drawings.length - 1));
+
+function drawingsPanel(p) {
+  const edit = LIVE && !p.example;
+  if (!p.drawings.length && !edit) return "";
+  const i = curDrawing(p), d = p.drawings[i], key = drawKey(p, i);
+  const mapping = ui.drawMap === key, zoom = ui.drawZoom.get(key) ?? 1;
+  const linked = (d?.parts || []).filter((x) => needIndexOf(p, x.need) >= 0).length;
+  const tabs = p.drawings.length > 1 ? `<div class="draw-tabs">${p.drawings.map((x, j) => `<button type="button" class="chip" data-drawtab="${j}" aria-pressed="${j === i}">${esc(x.title)}</button>`).join("")}</div>` : "";
+  const addForm = edit ? `<form class="plan-add draw-add" data-adddrawing><input name="title" placeholder="${esc(t("dr.title.ph"))}" autocomplete="off" style="max-width:30%">
+      <input name="file" class="mono" placeholder="${esc(t("dr.file.ph"))}" autocomplete="off" spellcheck="false"><button class="btn sm">${icon("plus")}${esc(t("dr.add"))}</button></form>` : "";
+  if (!d) return `<section class="panel full"><div class="panel-h"><h2>${esc(t("dr.title"))}</h2></div><div class="empty-mini">${esc(t("dr.none"))}</div>${addForm}</section>`;
+  return `<section class="panel full drawings" id="drawings-panel"><div class="panel-h"><h2>${esc(t("dr.title"))}</h2>
+      <div class="draw-tools">
+        <span class="draw-legend"><i class="lg-OK"></i>${esc(t("dr.have"))}<i class="lg-SHORT"></i>${esc(t("dr.short"))}<i class="lg-MISSING"></i>${esc(t("dr.missing"))}</span>
+        <div class="seg"><button type="button" data-drawzoom="-1" aria-label="${esc(t("dr.zoomOut"))}">−</button><button type="button" data-drawzoom="0">${Math.round(zoom * 100)} %</button><button type="button" data-drawzoom="1" aria-label="${esc(t("dr.zoomIn"))}">+</button></div>
+        <button type="button" class="icon-btn" data-drawreload title="${esc(t("dr.reload"))}" aria-label="${esc(t("dr.reload"))}">↻</button>
+        ${edit ? `<button type="button" class="btn sm ${mapping ? "primary" : ""}" data-drawmap="${esc(key)}" title="${esc(t("dr.map.hint"))}">${esc(t(mapping ? "dr.map.done" : "dr.map"))}</button>
+          <button type="button" class="btn sm danger ${ui.drawArmed === key ? "armed" : ""}" data-drawremove="${i}">${esc(t(ui.drawArmed === key ? "pl.confirm" : "dr.remove"))}</button>` : ""}
+      </div></div>
+    ${tabs}
+    ${mapping ? `<div class="draw-hint">${esc(t("dr.map.how"))}</div>` : ""}
+    <div class="draw-stage ${mapping ? "mapping" : ""}" data-drawstage="${esc(key)}"><div class="draw-canvas" style="width:${zoom * 100}%"></div><div class="draw-tip" hidden></div></div>
+    <div class="draw-foot"><code>${esc(d.file)}</code><span class="muted">${esc(t("dr.linked", { n: linked, m: (d.parts || []).length }))}</span></div>
+    ${addForm}</section>`;
+}
+
+// Keep only drawing markup: no scripts, event handlers, outside links or embedded documents.
+function sanitizeSvg(text) {
+  const doc = new DOMParser().parseFromString(text, "image/svg+xml");
+  const svg = doc.documentElement;
+  if (svg.nodeName !== "svg" || doc.querySelector("parsererror")) throw new Error(t("dr.bad"));
+  const bad = new Set(["script", "foreignobject", "iframe", "object", "embed", "audio", "video", "animate", "set", "animatemotion", "animatetransform"]);
+  for (const el of [...svg.querySelectorAll("*")]) {
+    if (bad.has(el.nodeName.toLowerCase())) { el.remove(); continue; }
+    for (const a of [...el.attributes]) {
+      const n = a.name.toLowerCase(), v = a.value.trim().toLowerCase();
+      if (n.startsWith("on")) el.removeAttribute(a.name);
+      else if ((n === "href" || n === "xlink:href") && !v.startsWith("#") && !v.startsWith("data:image/")) el.removeAttribute(a.name);
+      else if (n === "style" && /url\s*\(\s*['"]?(?!#)/.test(v)) el.removeAttribute(a.name);
+    }
+  }
+  return document.importNode(svg, true);
+}
+
+function mountDrawings() {
+  for (const stage of document.querySelectorAll("[data-drawstage]")) {
+    const key = stage.dataset.drawstage, [file, idx] = [key.slice(0, key.lastIndexOf("#")), key.slice(key.lastIndexOf("#") + 1)];
+    const c = drawingCache.get(key);
+    const canvas = stage.querySelector(".draw-canvas");
+    if (!c) {
+      canvas.innerHTML = `<div class="empty-mini">${esc(t("dr.loading"))}</div>`;
+      if (!LIVE) { canvas.innerHTML = `<div class="empty-mini">${esc(t("dr.liveOnly"))}</div>`; continue; }
+      drawingCache.set(key, { loading: true });
+      fetch(`/api/projects/${encodeURIComponent(file)}/drawings/${idx}`).then(async (r) => {
+        const text = await r.text();
+        if (!r.ok) throw new Error((() => { try { return JSON.parse(text).error; } catch { return r.statusText; } })());
+        drawingCache.set(key, { svg: text });
+      }).catch((e) => drawingCache.set(key, { error: e.message })).finally(() => { if (route.page === "projects") renderContent(); });
+      continue;
+    }
+    if (c.loading) { canvas.innerHTML = `<div class="empty-mini">${esc(t("dr.loading"))}</div>`; continue; }
+    if (c.error) { canvas.innerHTML = `<div class="form-err">${esc(c.error)}</div>`; continue; }
+    let svg;
+    try { svg = sanitizeSvg(c.svg); } catch (e) { canvas.innerHTML = `<div class="form-err">${esc(e.message)}</div>`; continue; }
+    svg.removeAttribute("width"); svg.removeAttribute("height");
+    canvas.replaceChildren(svg);
+    decorateDrawing(stage, svg, file, Number(idx));
+  }
+}
+
+// Frame every linked component, coloured by the need's status; in mapping mode, make every label clickable.
+function decorateDrawing(stage, svg, file, idx) {
+  const p = S.projects.find((x) => x.file === file); if (!p) return;
+  const d = p.drawings[idx]; if (!d) return;
+  const NS = "http://www.w3.org/2000/svg";
+  const layer = document.createElementNS(NS, "g"); layer.setAttribute("class", "draw-overlay"); svg.appendChild(layer);
+  const shapes = [...svg.querySelectorAll("rect, circle, ellipse, polygon, path")].map((el) => ({ el, b: el.getBBox() }))
+    .filter(({ b }) => b.width > 4 && b.height > 4 && b.width * b.height < (svg.viewBox.baseVal?.width || 1e9) * (svg.viewBox.baseVal?.height || 1e9) * 0.25);
+  const texts = [...svg.querySelectorAll("text")];
+  // The component a label names: the smallest closed shape around the label, else the label itself.
+  // A shape far bigger than its label is a grouping frame (e.g. "× 12 channels"), not the component.
+  const frameOf = (el) => {
+    const b = el.getBBox(), cx = b.x + b.width / 2, cy = b.y + b.height / 2;
+    if (el.nodeName !== "text") return b;
+    const limit = Math.max(b.width * b.height, 200) * 40;
+    const around = shapes.filter(({ b: s }) => cx >= s.x && cx <= s.x + s.width && cy >= s.y && cy <= s.y + s.height && s.width * s.height <= limit)
+      .sort((a, z) => a.b.width * a.b.height - z.b.width * z.b.height)[0];
+    if (!around) return b;
+    const s = around.b, x = Math.min(s.x, b.x), y = Math.min(s.y, b.y);
+    return { x, y, width: Math.max(s.x + s.width, b.x + b.width) - x, height: Math.max(s.y + s.height, b.y + b.height) - y };
+  };
+  const box = (b, cls, data) => {
+    const r = document.createElementNS(NS, "rect"), pad = 4;
+    r.setAttribute("x", b.x - pad); r.setAttribute("y", b.y - pad); r.setAttribute("width", b.width + 2 * pad); r.setAttribute("height", b.height + 2 * pad);
+    r.setAttribute("rx", 6); r.setAttribute("class", cls);
+    for (const [k, v] of Object.entries(data)) r.dataset[k] = v;
+    layer.appendChild(r); return r;
+  };
+  const elementsFor = (label) => {
+    const l = String(label).toLowerCase();
+    const tagged = [...svg.querySelectorAll("[data-part]")].filter((e) => e.dataset.part.toLowerCase() === l);
+    return tagged.length ? tagged : texts.filter((e) => e.textContent.toLowerCase().includes(l));
+  };
+  const flash = ui.drawFlash; ui.drawFlash = null;
+  for (const part of d.parts || []) {
+    const ni = needIndexOf(p, part.need); if (ni < 0) continue;
+    const r = p.rows[ni];
+    for (const el of elementsFor(part.label)) {
+      const o = box(frameOf(el), `draw-part st-${r.status}${flash === ni ? " flash" : ""}`, { need: ni, label: part.label });
+      if (flash === ni) setTimeout(() => o.scrollIntoView({ block: "center", behavior: "smooth" }), 50);
+    }
+  }
+  if (ui.drawMap === drawKey(p, idx)) {
+    const mapped = new Set((d.parts || []).map((x) => x.label.toLowerCase()));
+    for (const el of texts) {
+      const txt = el.textContent.trim(); if (!txt || mapped.has(txt.toLowerCase())) continue;
+      box(el.getBBox(), "draw-label", { label: txt });
+    }
+  }
+  // hover tooltip
+  const tip = stage.querySelector(".draw-tip");
+  layer.addEventListener("mousemove", (e) => {
+    const o = e.target.closest?.(".draw-part, .draw-label"); if (!o) { tip.hidden = true; return; }
+    const sb = stage.getBoundingClientRect();
+    if (o.dataset.need !== undefined) {
+      const r = p.rows[Number(o.dataset.need)];
+      tip.innerHTML = `<b>${esc(r.need)}</b><span class="st st-${r.status}">${fmtNum(r.got)} / ${fmtNum(r.qty)} ${esc(unitLabel(r.unit))}</span>${r.purpose ? `<p>${esc(r.purpose)}</p>` : ""}<small>${esc(t(ui.drawMap ? "dr.tip.unmap" : "dr.tip.go"))}</small>`;
+    } else tip.innerHTML = `<b>${esc(o.dataset.label)}</b><small>${esc(t("dr.tip.map"))}</small>`;
+    tip.hidden = false;
+    tip.style.left = Math.min(e.clientX - sb.left + 14, sb.width - 280) + "px"; tip.style.top = (e.clientY - sb.top + stage.scrollTop + 14) + "px";
+  });
+  layer.addEventListener("mouseleave", () => (tip.hidden = true));
+}
+
+// Link a label to a need (mapping mode): a small menu of the project's needs.
+function openPartMenu(p, idx, label, anchor) {
+  document.querySelector(".part-menu")?.remove();
+  const d = p.drawings[idx], cur = (d.parts || []).find((x) => x.label.toLowerCase() === label.toLowerCase());
+  const menu = document.createElement("div");
+  menu.className = "part-menu";
+  menu.innerHTML = `<div class="pm-h">${esc(t("dr.map.for", { label }))}</div>
+    <select size="8">${p.rows.map((r, i) => `<option value="${i + 1}" ${cur && needIndexOf(p, cur.need) === i ? "selected" : ""}>${i + 1}. ${esc(r.need)}</option>`).join("")}</select>
+    <div class="pm-f">${cur ? `<button type="button" class="btn sm danger" data-pm="unmap">${esc(t("dr.unmap"))}</button>` : ""}<span class="spacer"></span>
+      <button type="button" class="btn sm" data-pm="cancel">${esc(t("d.cancel"))}</button><button type="button" class="btn sm primary" data-pm="ok">${esc(t("dr.link"))}</button></div>`;
+  document.body.appendChild(menu);
+  const a = anchor.getBoundingClientRect();
+  menu.style.left = Math.min(a.left, innerWidth - 340) + "px"; menu.style.top = Math.min(a.bottom + 6, innerHeight - 280) + "px";
+  menu.querySelector("select").focus();
+  menu.addEventListener("click", (e) => {
+    const act = e.target.closest("[data-pm]")?.dataset.pm; if (!act) return;
+    const others = (d.parts || []).filter((x) => x.label.toLowerCase() !== label.toLowerCase());
+    if (act === "ok") { const v = Number(menu.querySelector("select").value); if (v) savePlan(p, { drawings: p.drawings.map((x, j) => (j === idx ? { ...x, parts: [...others, { label, need: v }] } : x)) }); }
+    if (act === "unmap") savePlan(p, { drawings: p.drawings.map((x, j) => (j === idx ? { ...x, parts: others } : x)) });
+    menu.remove();
+  });
+}
+
+// From a need row: show it in the drawing.
+function showNeedInDrawing(p, ni) {
+  const i = p.drawings.findIndex((d) => (d.parts || []).some((x) => needIndexOf(p, x.need) === ni));
+  if (i < 0) return;
+  ui.drawingTab.set(p.file, i); ui.drawFlash = ni; renderContent();
+  document.getElementById("drawings-panel")?.scrollIntoView({ block: "start", behavior: "smooth" });
+}
+// From the drawing: open the need's row and point at it.
+function goToNeed(p, ni) {
+  ui.needsOpen.add(needKey(p, ni)); renderContent();
+  const row = document.querySelector(`tr[data-needrow="${CSS.escape(needKey(p, ni))}"]`);
+  if (row) { row.scrollIntoView({ block: "center", behavior: "smooth" }); row.classList.add("flash"); setTimeout(() => row.classList.remove("flash"), 2200); }
+}
+
+// ---------------------------------------------------------------- printed parts
+function printsPanel(p) {
+  const edit = LIVE && !p.example;
+  if (!p.prints.length && !edit) return "";
+  const parts = p.prints.reduce((a, x) => a + x.qty, 0), done = p.prints.reduce((a, x) => a + Math.min(x.done, x.qty), 0);
+  const gLeft = p.prints.reduce((a, x) => a + (x.g ?? 0) * (x.qty - x.done), 0), gAll = p.prints.reduce((a, x) => a + (x.g ?? 0) * x.qty, 0);
+  const filter = ui.printFilter.get(p.file) ?? "left";
+  const shown = p.prints.map((x, i) => [x, i]).filter(([x]) => filter === "all" || (filter === "left" ? x.done < x.qty : x.done >= x.qty));
+  const rows = shown.map(([x, i]) => `<tr class="${x.done >= x.qty ? "pr-done" : ""}">
+      <td><span class="pr-name">${x.done >= x.qty ? "✓ " : ""}${esc(x.part)}</span>${x.note ? `<div class="muted" style="font-size:12px">${esc(x.note)}</div>` : ""}</td>
+      <td class="hide-sm muted">${esc(x.size ?? "")}</td>
+      <td class="num hide-sm">${x.g != null ? fmtNum(x.g) + " g" : "–"}</td>
+      <td class="num"><div class="pr-step">${edit ? `<button type="button" class="icon-btn xs" data-printstep="${i}" data-d="-1" aria-label="${esc(t("a.dec"))}" ${x.done ? "" : "disabled"}>${icon("minus")}</button>` : ""}
+        <b>${x.done}</b><span class="muted"> / ${x.qty}</span>
+        ${edit ? `<button type="button" class="icon-btn xs" data-printstep="${i}" data-d="1" aria-label="${esc(t("a.inc"))}" ${x.done < x.qty ? "" : "disabled"}>${icon("plus")}</button>` : ""}</div></td>
+      <td class="num hide-sm">${x.g != null ? fmtNum(x.g * (x.qty - x.done)) + " g" : "–"}</td>
+      <td class="pr-x">${edit ? `<button type="button" class="icon-btn xs" data-printrm="${i}" aria-label="${esc(t("pl.remove"))}" title="${esc(t("pl.remove"))}">${icon("x")}</button>` : ""}</td></tr>`).join("");
+  const chips = ["left", "done", "all"].map((k) => `<button type="button" class="chip" data-printfilter="${k}" aria-pressed="${filter === k}">${esc(t("pr.f." + k))}</button>`).join("");
+  return `<section class="panel full prints"><div class="panel-h"><div><h2>${esc(t("pr.title"))}</h2>
+      ${p.prints.length ? `<div class="muted" style="font-size:12.5px;margin-top:2px">${esc(t("pr.summary", { a: done, b: parts, g: fmtNum(Math.round(gLeft)), all: fmtNum(Math.round(gAll)) }))}</div>` : ""}</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        ${p.prints.length ? `<div class="prog" style="width:140px"><i class="p-ok" style="width:${parts ? (done / parts) * 100 : 0}%"></i></div>` : ""}
+        ${edit && p.print_report ? `<button type="button" class="btn sm" data-printimport title="${esc(p.print_report)}">${esc(t("pr.reimport"))}</button>` : ""}</div></div>
+    ${p.prints.length ? `<div class="toolbar" style="padding:10px 16px 0">${chips}</div>
+      <div style="overflow-x:auto"><table class="pr-table"><thead><tr><th>${esc(t("pr.part"))}</th><th class="hide-sm">${esc(t("pr.size"))}</th><th class="num hide-sm">${esc(t("pr.each"))}</th><th class="num">${esc(t("pr.printed"))}</th><th class="num hide-sm">${esc(t("pr.left"))}</th><th></th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="6" class="muted">${esc(t(filter === "left" ? "pr.allDone" : "pr.noneDone"))}</td></tr>`}</tbody></table></div>` : `<div class="empty-mini">${esc(t("pr.none"))}</div>`}
+    ${edit ? `<form class="plan-add" data-printimportform><input name="report" class="mono" value="${esc(p.print_report ?? "")}" placeholder="${esc(t("pr.report.ph"))}" spellcheck="false"><button class="btn sm">${esc(t("pr.import"))}</button></form>
+      <form class="plan-add" data-addprint><input name="part" placeholder="${esc(t("pr.part"))}" autocomplete="off"><input name="qty" type="number" min="1" value="1" style="max-width:80px" aria-label="${esc(t("f.qty"))}"><input name="g" type="number" min="0" step="any" placeholder="g" style="max-width:90px" aria-label="${esc(t("pr.each"))}"><button class="btn sm">${icon("plus")}${esc(t("pl.add"))}</button></form>` : ""}
+  </section>`;
+}
+
 // A need's details, shown when its row is expanded: what it is for, what counts as a match, what in
 // stock covers it and where to buy it.
 const needKey = (p, i) => p.file + "#" + i;
@@ -480,6 +700,7 @@ function needDetail(r) {
     ${item(t("nd.matches"), crit.length ? crit.map((c) => `<span class="nd-chip">${esc(c)}</span>`).join(" ") : "–")}
     ${item(t("nd.from"), from || `<span class="muted">${esc(t("nd.none"))}</span>`)}
     ${buy ? item(t("nd.buy"), buy) : ""}
+    ${r.inDrawing ? `<div class="nd-item"><button type="button" class="btn sm" data-showindrawing="${r.ni}">${esc(t("dr.show"))}</button></div>` : ""}
   </div></td></tr>`;
 }
 
@@ -550,6 +771,12 @@ async function savePlan(p, patch) {
     if (e.status === 409) await loadState(true);
     return false;
   }
+}
+async function importPrintList(p, report) {
+  try {
+    const r = await api("POST", "/api/projects/" + encodeURIComponent(p.file) + "/prints/import", { report, expect: p.version });
+    S = normalize(r.state); renderContent(); toast(t("pr.imported", { n: r.parts }));
+  } catch (e) { toast(e.status === 409 ? t("t.conflict") : t("t.error", { e: e.message }), true); if (e.status === 409) await loadState(true); }
 }
 async function uploadImages(files) {
   const okType = ["image/png", "image/jpeg", "image/webp", "image/gif"];
@@ -858,7 +1085,7 @@ function relabelNeed(n) {
 }
 function openProject(mode, p) {
   drawer = { kind: "project", mode, file: p?.file || null, version: p?.version, dirty: false, armed: false, error: "",
-    form: { name: p?.name || "", notes: p?.notes || "", needs: (p?.needs?.length ? p.needs : [{}]).map(needToForm) } };
+    form: { name: p?.name || "", notes: p?.notes || "", folder: p?.folder || "", needs: (p?.needs?.length ? p.needs : [{}]).map(needToForm) } };
   renderDrawer(); showDrawer("[name=pname]");
 }
 function showDrawer(focusSel) {
@@ -868,6 +1095,7 @@ function syncProject() {
   const form = $("#projForm"); if (!form || drawer?.kind !== "project") return;
   drawer.form.name = form.querySelector("[name=pname]").value;
   drawer.form.notes = form.querySelector("[name=pnotes]").value;
+  drawer.form.folder = form.querySelector("[name=pfolder]")?.value ?? drawer.form.folder;
   form.querySelectorAll(".need-card").forEach((card) => {
     const f = drawer.form.needs[Number(card.dataset.ni)];
     card.querySelectorAll("[data-nf]").forEach((el) => { f[el.dataset.nf] = el.type === "checkbox" ? el.checked : el.value; });
@@ -912,6 +1140,7 @@ function renderProjectDrawer() {
       ${d.error ? `<div class="form-err">${esc(d.error)}</div>` : ""}
       <label class="field"><span>${esc(t("pe.name"))} <em>*</em></span><input name="pname" value="${esc(f.name)}" placeholder="${esc(t("pe.name.ph"))}"></label>
       <label class="field"><span>${esc(t("f.notes"))}</span><textarea name="pnotes" placeholder="${esc(t("pe.notes.ph"))}">${esc(f.notes)}</textarea></label>
+      <label class="field"><span>${esc(t("pe.folder"))}</span><input name="pfolder" class="mono" spellcheck="false" value="${esc(f.folder ?? "")}" placeholder="${esc(t("pe.folder.ph"))}"><small>${esc(t("pe.folder.hint"))}</small></label>
       <div class="section-t">${esc(t("pe.needs"))} · ${f.needs.length}</div>
       <small class="muted" style="margin-top:-6px">${esc(t("pe.needs.hint"))}</small>
       ${cards}
@@ -933,7 +1162,7 @@ async function saveProjectDrawer() {
   if (!drawer || saving) return;
   syncProject();
   const d = drawer;
-  const project = { name: d.form.name, notes: d.form.notes, needs: d.form.needs.map(formToNeed) };
+  const project = { name: d.form.name, notes: d.form.notes, folder: d.form.folder, needs: d.form.needs.map(formToNeed) };
   saving = true; renderDrawerKeepScroll();
   try {
     const r = d.mode === "new" ? await api("POST", "/api/projects", { project })
@@ -1119,6 +1348,40 @@ document.addEventListener("click", (e) => {
   if (tEl.closest("#tagsBox")) { $("#tagIn")?.focus(); }
   const cadBtn = tEl.closest("[data-cadlink]");
   if (cadBtn && drawer?.kind === "item") { syncForm(); drawer.form.cad_component = cadBtn.dataset.cadlink; drawer.dirty = true; renderDrawerKeepScroll(); return; }
+  // drawings
+  const pd = curProj();
+  if (pd && !tEl.closest(".part-menu")) document.querySelector(".part-menu")?.remove();
+  const dtab = tEl.closest("[data-drawtab]");
+  if (dtab && pd) { ui.drawingTab.set(pd.file, Number(dtab.dataset.drawtab)); ui.drawMap = null; renderContent(); return; }
+  const dzoom = tEl.closest("[data-drawzoom]");
+  if (dzoom && pd) { const k = drawKey(pd, curDrawing(pd)), z = ui.drawZoom.get(k) ?? 1, d = Number(dzoom.dataset.drawzoom);
+    ui.drawZoom.set(k, d === 0 ? 1 : Math.min(4, Math.max(0.5, Math.round((z + d * 0.25) * 100) / 100))); renderContent(); return; }
+  if (tEl.closest("[data-drawreload]") && pd) { drawingCache.delete(drawKey(pd, curDrawing(pd))); renderContent(); return; }
+  const dmap = tEl.closest("[data-drawmap]");
+  if (dmap) { ui.drawMap = ui.drawMap === dmap.dataset.drawmap ? null : dmap.dataset.drawmap; renderContent(); return; }
+  const drm = tEl.closest("[data-drawremove]");
+  if (drm && pd) { const k = drawKey(pd, Number(drm.dataset.drawremove));
+    if (ui.drawArmed !== k) { ui.drawArmed = k; renderContent(); return; }
+    ui.drawArmed = null; drawingCache.clear(); ui.drawingTab.set(pd.file, 0);
+    savePlan(pd, { drawings: pd.drawings.filter((_, j) => j !== Number(drm.dataset.drawremove)) }); return; }
+  const dpart = tEl.closest(".draw-part, .draw-label");
+  if (dpart && pd) {
+    const idx = curDrawing(pd);
+    if (ui.drawMap === drawKey(pd, idx)) openPartMenu(pd, idx, dpart.dataset.label, dpart);
+    else if (dpart.dataset.need !== undefined) goToNeed(pd, Number(dpart.dataset.need));
+    return;
+  }
+  const sid = tEl.closest("[data-showindrawing]");
+  if (sid && pd) { showNeedInDrawing(pd, Number(sid.dataset.showindrawing)); return; }
+  // printed parts
+  const pstep = tEl.closest("[data-printstep]");
+  if (pstep && pd) { const i = Number(pstep.dataset.printstep), dd = Number(pstep.dataset.d);
+    savePlan(pd, { prints: pd.prints.map((x, j) => (j === i ? { ...x, done: Math.max(0, Math.min(x.qty, x.done + dd)) } : x)) }); return; }
+  const prm = tEl.closest("[data-printrm]");
+  if (prm && pd) { savePlan(pd, { prints: pd.prints.filter((_, j) => j !== Number(prm.dataset.printrm)) }); return; }
+  const pf = tEl.closest("[data-printfilter]");
+  if (pf && pd) { ui.printFilter.set(pd.file, pf.dataset.printfilter); renderContent(); return; }
+  if (tEl.closest("[data-printimport]") && pd) { importPrintList(pd, pd.print_report); return; }
   const allBtn = tEl.closest("[data-needall]");
   if (allBtn) { const p = S.projects.find((x) => x.file === allBtn.dataset.needall); if (p) { const keys = p.rows.map((_, i) => needKey(p, i)); const all = keys.every((k) => ui.needsOpen.has(k)); keys.forEach((k) => (all ? ui.needsOpen.delete(k) : ui.needsOpen.add(k))); renderContent(); } return; }
   const needRow = tEl.closest("[data-needtoggle]") || (!tEl.closest("a, button, input, select, label") && tEl.closest("tr[data-needrow]"));
@@ -1219,6 +1482,19 @@ document.addEventListener("change", (e) => {
 // Add a to-do or a link from the small forms under each list.
 document.addEventListener("submit", (e) => {
   const f = e.target, pp = curProj();
+  if (pp && f.matches("[data-adddrawing]")) {
+    e.preventDefault();
+    const file = f.file.value.trim(), title = f.title.value.trim(); if (!file) return;
+    drawingCache.clear(); ui.drawingTab.set(pp.file, pp.drawings.length);
+    savePlan(pp, { drawings: [...pp.drawings, { title, file }] }); return;
+  }
+  if (pp && f.matches("[data-printimportform]")) { e.preventDefault(); const r = f.report.value.trim(); if (r) importPrintList(pp, r); return; }
+  if (pp && f.matches("[data-addprint]")) {
+    e.preventDefault();
+    const part = f.part.value.trim(); if (!part) return;
+    savePlan(pp, { prints: [...pp.prints, { part, qty: Number(f.qty.value) || 1, done: 0, ...(f.g.value !== "" ? { g: Number(f.g.value) } : {}) }] }).then((ok) => { if (ok) $("[data-addprint] input")?.focus(); });
+    return;
+  }
   if (!pp || !f.matches("[data-addtodo], [data-addlink]")) return;
   e.preventDefault();
   if (f.matches("[data-addtodo]")) {
@@ -1241,6 +1517,7 @@ document.addEventListener("paste", (e) => {
   if (files.length) { e.preventDefault(); uploadImages(files); }
 });
 document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && document.querySelector(".part-menu")) { document.querySelector(".part-menu").remove(); return; }
   if (ui.lightbox != null && document.querySelector(".lightbox")) {
     if (e.key === "Escape") { ui.lightbox = null; ui.lbArmed = false; renderLightbox(); return; }
     if (e.target.dataset?.caption !== undefined) { if (e.key === "Enter") e.target.blur(); return; }
@@ -1262,7 +1539,7 @@ document.addEventListener("keydown", (e) => {
   if (!typing && LIVE && e.key.toLowerCase() === "n" && !drawer && !e.ctrlKey && !e.metaKey && route.page !== "settings") { e.preventDefault(); route.page === "projects" ? openProject("new") : openDrawer("new"); }
   if (e.target.id === "q" && e.key === "Escape") { query = ""; e.target.value = ""; renderContent(); }
 });
-window.addEventListener("hashchange", () => { ui.lightbox = null; renderLightbox(); route = parseRoute(); ui.category = ""; if (route.page !== "file") ui.attention = false; renderShell(); });
+window.addEventListener("hashchange", () => { ui.lightbox = null; ui.drawMap = null; ui.drawArmed = null; document.querySelector(".part-menu")?.remove(); renderLightbox(); route = parseRoute(); ui.category = ""; if (route.page !== "file") ui.attention = false; renderShell(); });
 window.addEventListener("beforeunload", (e) => { if (drawer?.dirty) { e.preventDefault(); e.returnValue = ""; } });
 
 // ---------------------------------------------------------------- boot

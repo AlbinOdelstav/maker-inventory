@@ -64,15 +64,18 @@ async function main() {
   }));
 }
 
-// A session belongs to a project when one of its folder names is the project's file name or
-// name (…/Cad/vending-machine/v15 -> vending-machine.yaml), or the project's notes mention the folder.
+// A session belongs to a project when it runs inside the project's `folder`; failing that, when one
+// of its folder names is the project's file name or name (…/Cad/vending-machine/v15 ->
+// vending-machine.yaml), or the project's notes mention the folder.
 function matchProject(lib, cwd) {
   const segs = cwd.toLowerCase().split(/[\\/]+/).filter(Boolean);
   const cwdNorm = cwd.toLowerCase().replaceAll("\\", "/");
   if (cwdNorm.startsWith(lib.ROOT.toLowerCase().replaceAll("\\", "/"))) return null; // working on the tool itself
   const slug = (s) => String(s ?? "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-  for (const p of lib.loadProjects([])) {
-    if (p.example) continue;
+  const projects = lib.loadProjects([]).filter((p) => !p.example);
+  const inFolder = projects.filter((p) => p.folder && (cwdNorm + "/").startsWith(p.folder.toLowerCase().replaceAll("\\", "/").replace(/\/?$/, "/")));
+  if (inFolder.length) return inFolder.sort((a, b) => b.folder.length - a.folder.length)[0];
+  for (const p of projects) {
     const keys = [slug(p.file.replace(/\.ya?ml$/, "")), slug(p.name)].filter((k) => k.length > 2);
     if (segs.some((s) => keys.includes(slug(s)))) return p;
     const notes = String(p.notes ?? "").toLowerCase().replaceAll("\\", "/");

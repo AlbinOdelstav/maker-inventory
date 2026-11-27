@@ -1,6 +1,6 @@
 ---
 name: sync-project
-description: Bring a maker project in the maker-inventory up to date with what happened in this session - tick off finished to-dos, add the next steps, record parts bought, used up or broken, add useful links, update the status and the parts list. Shows the changes and their evidence first, then applies them. Use when the user runs /sync-project, says "uppdatera projektet", "synka läget", "update the project", "sync progress", "spara läget", or wraps up a work session on a project that is in the inventory.
+description: Bring a maker project in the maker-inventory up to date - with what happened in this session and with the project's own files (latest version folder, README, BOM, build report, log), so to-dos left behind by earlier versions or other sessions get fixed too. Ticks off finished to-dos, adds next steps, records parts bought, used up or broken, adds links, updates status, needs and what each part is for. Shows the changes and their evidence first, then applies them. Use when the user runs /sync-project, says "uppdatera projektet", "synka läget", "update the project", "sync progress", "spara läget", or wraps up a work session on a project that is in the inventory.
 model: sonnet
 ---
 
@@ -9,10 +9,15 @@ model: sonnet
 Tool: `{{TOOL_DIR}}/inv.mjs` (run with `node`). Data: `{{DATA_DIR}}`. The app (`node {{TOOL_DIR}}/inv.mjs app`)
 shows the same files and reloads by itself when they change. Answer in the user's language.
 
-**Your stance: record what happened, not what was planned.** Every change must rest on something in
-this session: the user saying it, a test that passed, a file that was written. When unsure, list it
-as a question instead of a change. Stock changes only for things the user says were bought, used,
-broken, moved or counted (a shopping list or a plan is not a purchase).
+**Your stance: record what happened, not what was planned.** Every change must rest on evidence: the
+user saying it in this session, a test that passed, or a file in the project folder that says so
+(quote the file and line). When unsure, list it as a question instead of a change. Stock changes only
+for things the user says were bought, used, broken, moved or counted (a shopping list or a plan is
+not a purchase).
+
+**This session is not the whole story.** Work on a project is often spread over many sessions, and
+the session running this may have seen only one corner of it. The project's files are the record of
+the rest: always reconcile the to-do list with them (step 2), even when this session did little.
 
 ## 1. Which project
 
@@ -21,14 +26,39 @@ this session worked on (folder name, project name, files touched). If two fit or
 Then read its current state:
 
 ```sh
-node {{TOOL_DIR}}/inv.mjs project <project> --json   # status, numbered to-dos, links, open needs
+node {{TOOL_DIR}}/inv.mjs project <project> --json   # status, folder, numbered to-dos, links, needs
 node {{TOOL_DIR}}/inv.mjs check <project> --json     # which needs are in stock, short, missing
 ```
 
-If the project folder has its own records (e.g. a cadkit `project.yaml`, `LOG.md`, `BOM.md`, a
-version README) and they changed in this session, read the changed parts too.
+The project's `folder` says where its files are. If it is empty, find the folder (paths in the
+notes, this session's working folder, a folder named like the project) and propose setting it
+(`"folder": "<path>"` in step 5), so the next sync and the sync reminder find it directly.
 
-## 2. Harvest the session
+## 2. Reconcile with the project's files
+
+Read the project's current state from its folder, whatever this session did:
+
+- **The latest version.** If the folder has version folders (`v1` … `v15`), the highest one is
+  current. Read its README (status, what was changed, "not checked" lists), its BOM, and the build
+  report's verdict lines (PASS/FAIL, "known failure"). Skim the version folder names in between to
+  see what each version did.
+- **Logs and plans**: `LOG.md`, a cadkit `project.yaml` (phase, plan steps), an electronics or
+  firmware README, `buttons/`-style side folders. Read the newest parts.
+
+Then go through **every open to-do** and ask:
+
+| The to-do … | Propose |
+|---|---|
+| names an older version than the current one ("v13: …" when v15 exists) | `edit` it to the current version if the step still applies there, or `done`/`remove` if a later version finished or replaced it |
+| is done according to the files (a README says built, a BOM is written, a review passed, parts were chosen) | `done`, quoting the file |
+| was replaced by a different approach (e.g. self-tapping screws dropped for bolts and nuts) | `remove` or `edit`, saying what replaced it |
+| refers to files, quantities or parts the current BOM no longer has | `edit` to the current numbers |
+
+And the other way: steps the files say are next or open ("not checked", "print the nut coupon
+first", "measure the motor current", parts still to buy) and that no to-do covers → `todos.add`.
+Keep the user's own wording where a to-do is still right; don't rewrite for style.
+
+## 3. Harvest the session
 
 Go through the whole conversation, not only the last messages. Collect:
 
@@ -45,30 +75,43 @@ Go through the whole conversation, not only the last messages. Collect:
 | The parts list changed (new design, new BOM) | update `needs` (see below); every new need gets a `purpose` |
 | What a part is for became clear or changed (wiring, design, a decision: "the IRLZ44N switch one coil motor each") | `needs.purpose`: one or two plain sentences on exactly what it does in this build, where it sits and why this variant. Fill in needs that have none (marked "purpose not given" by `project`) when the session or the project's BOM/README says it |
 | A decision that changes what to buy or build | `notes_append`, one dated line, only if it isn't obvious from the to-dos |
+| Parts were printed ("printade 4 Cell_A", a print finished) | `prints.printed: [{ref, n}]`; ref = part name from `project`'s Printed parts list |
+| A new build report with a PRINT LIST (new version, parts changed) | `node {{TOOL_DIR}}/inv.mjs prints-import <project> <report>`: updates quantities, keeps counts printed |
+| A schematic, board layout or assembly drawing (.svg) was made or moved | `drawings.add: [{title, file}]`, then `drawings.map: [{drawing, label, need}]` for each component label in it that is a need (labels are texts in the SVG, e.g. "IRLZ44N", "1000 µF") |
 
 Not here: measurements and debugging details belong in the project's own log (e.g. cadkit `/log`),
 pictures are added in the app (drag them onto the Pictures panel).
 
-## 3. Show the plan, then wait
+When reconciling (step 2), also check: does the current version's build report differ from the
+project's `print_report` (an older version folder)? Then propose re-importing from the current one.
+Do the drawings point at files that still exist, and are new component labels unlinked?
 
-One compact list, grouped (To do / Stock / Links / Status / Needs and purposes / Notes). Each line says what
-changes and why, quoting or pointing at the session in a few words:
+## 4. Show the plan, then wait
+
+One compact list, grouped (To do / Stock / Links / Status / Needs and purposes / Notes / Folder).
+Each line says what changes and why: a few words from the session, or the file and line it rests on:
 
 ```
 To do
-  ✓ 8 "v13: bygg om och kör /cad-review"   - review passed, verdict READY
-  + "Skriv ut v13 testceller A + B"          - next step you agreed on
+  ✓ 8 "v13: bygg om och kör /cad-review"     - v15/README: "cadkit: all checks pass"
+  ~ 9 "Skriv ut v13 testceller" -> "Skriv ut v15 testceller A + B"   - v15 is current; cells unchanged since v13
+  - 11 "Skruva i M3×16 självgängande …"      - v15/BOM: no self-tapping screws any more
+  + "Skriv ut mutterprovet först"             - v15/BOM §6 step 1
 Stock
-  + 24 × varuspiral YD 20 (new row)          - "köpte spiralerna på AliExpress"
+  + 24 × varuspiral YD 20 (new row)           - "köpte spiralerna på AliExpress"
 Status  building (unchanged)
 ?  "Mät stallströmmen" - did you measure it? (not changed unless you say so)
 ```
 
+If the reconciliation finds a lot (a list several versions behind), say so in one line first, so
+the user sees why the list is long.
+
 Ask once: apply all, or which numbers to skip. Nothing is written before the user answers.
 
-## 4. Apply
+## 5. Apply
 
-- Planning, in one call (refs are to-do numbers from step 1, or a unique part of the text):
+- Planning, in one call (refs are to-do numbers from step 1, or a unique part of the text;
+  `"folder": "<path>"` sets the project folder):
 
   ```sh
   node {{TOOL_DIR}}/inv.mjs project-update <project> - <<'EOF'

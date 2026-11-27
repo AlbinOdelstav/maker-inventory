@@ -98,6 +98,7 @@ node inv.mjs cad                  # CAD dimension links: linked, broken, missing
 node inv.mjs project [<project>]  # list projects, or one project's status, numbered to-dos, links, needs
 node inv.mjs project-update <project> '<json>' [--dry-run]   # tick/add/edit to-dos, links, status
 node inv.mjs install-hook [--remove]   # Claude Code sync reminder (see "Workflow with an agent")
+node inv.mjs prints-import <project> [<build_report.txt>]   # print list from a CAD build report
 ```
 
 `project-update` takes a small change list; to-dos and links are referred to by number (from
@@ -222,6 +223,7 @@ Planning fields are optional:
 
 ```yaml
 status: building          # idea | planning | building | done | paused
+folder: C:/Users/you/Cad/plant-watering   # the project's own files (CAD, BOM, log)
 todos:
   - { text: Print the enclosure, done: true }
   - { text: Solder the pump driver }
@@ -229,11 +231,34 @@ links:
   - { title: CAD model, url: https://example.com/model }
 images:
   - { file: media/plant-watering/20261121193000.jpg, caption: First test fit }
+drawings:                 # SVGs read from where they are, labels linked to needs
+  - title: Schematic
+    file: C:/Users/you/Cad/plant-watering/electronics/schema.svg
+    parts:
+      - { label: Arduino Nano, need: 1 }        # need number, or a unique part of its name
+      - { label: IRLZ44N, need: pump driver }
+print_report: C:/Users/you/Cad/plant-watering/v3/build_report.txt
+prints:                   # printed parts: how many are needed and printed
+  - { part: Enclosure, qty: 1, done: 1, size: 120 x 80 x 40, g: 95 }
+  - { part: Clip, qty: 4, done: 0, g: 3 }
 ```
 
 Pictures are stored in `projects/media/<project>/` (git-ignored with the rest of `projects/`).
 The app adds and removes them; deleting a project deletes its pictures. Saving a project
 without these fields keeps the ones already in the file.
+
+**Drawings.** A schematic, a board layout or an assembly view, as an SVG file the project points
+at; it is read from that file every time, so a redrawn drawing shows up as it is. Each linked
+component gets a frame in the colour of its need (in stock, too few, to buy); hover for the
+need and what it is for, click to jump to it. A need's row has "Show in drawing". **Link parts**
+in the app makes every label clickable to link it, or a drawing generator can tag elements with
+`data-part="<label>"`. The SVG is shown inline after removing scripts, event handlers and outside
+links.
+
+**Printed parts.** `prints-import` (or the app's "Read print list") reads the `PRINT LIST` of a CAD
+build report (`PART QTY SIZE EACH TOTAL` rows). Reading it again updates quantities and grams and
+keeps the counts already printed. Count prints with + and − in the app, or with
+`project-update` (`{"prints": {"printed": [{"ref": "Cell_A", "n": 2}]}}`).
 
 `purpose` says what a part does in this build. In the app, click a need's row to see it together
 with what counts as a match, the stock that covers it and where to buy it.
