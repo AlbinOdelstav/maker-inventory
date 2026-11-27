@@ -22,7 +22,7 @@ const I18N = {
     "proj.hint": "Projects are YAML files in {dir}. Ask an agent: “check if I have everything for …”, or copy {ex}.",
     "proj.ready": "{a}/{b} ready", "proj.short": "{n} short", "proj.missing": "{n} missing", "proj.example": "example",
     "proj.need": "Need", "proj.qty": "Qty", "proj.have": "Have", "proj.from": "From stock", "proj.notes": "Notes",
-    "proj.needsTitle": "What it needs", "ps.label": "Status", "ps.none": "No status", "ps.idea": "Idea", "ps.planning": "Planning", "ps.building": "Building", "ps.done": "Done", "ps.paused": "Paused", "pl.todo": "To do", "pl.todo.ph": "Add a task and press Enter", "pl.todo.none": "No tasks yet.", "pl.links": "Links", "pl.link.title": "Title (optional)", "pl.links.none": "No links yet: the CAD model, a guide, a shop page …", "pl.badUrl": "Links must start with http:// or https://", "pl.add": "Add", "pl.remove": "Remove", "pl.images": "Pictures", "pl.images.add": "Add pictures", "pl.images.none": "Drop pictures here, paste one with Ctrl+V or click Add pictures. PNG, JPG, WebP or GIF up to 8 MB.", "pl.images.empty": "No pictures.", "pl.images.big": "{n} is larger than 8 MB", "pl.images.type": "{n} is not a PNG, JPG, WebP or GIF", "pl.images.added": "Pictures added: {n}", "pl.caption": "Caption", "pl.caption.ph": "Add a caption", "pl.delete": "Delete picture", "pl.confirm": "Click again to delete", "pl.prev": "Previous", "pl.next": "Next",
+    "proj.needsTitle": "What it needs", "ps.label": "Status", "ps.none": "No status", "ps.idea": "Idea", "ps.planning": "Planning", "ps.building": "Building", "ps.done": "Done", "ps.paused": "Paused", "pl.todo": "To do", "pl.todo.ph": "Add a task and press Enter", "pl.todo.none": "No tasks yet.", "pl.showDone": "Show done ({n})", "pl.hideDone": "Hide done", "pl.links": "Links", "pl.link.title": "Title (optional)", "pl.links.none": "No links yet: the CAD model, a guide, a shop page …", "pl.badUrl": "Links must start with http:// or https://", "pl.add": "Add", "pl.remove": "Remove", "pl.images": "Pictures", "pl.images.add": "Add pictures", "pl.images.none": "Drop pictures here, paste one with Ctrl+V or click Add pictures. PNG, JPG, WebP or GIF up to 8 MB.", "pl.images.empty": "No pictures.", "pl.images.big": "{n} is larger than 8 MB", "pl.images.type": "{n} is not a PNG, JPG, WebP or GIF", "pl.images.added": "Pictures added: {n}", "pl.caption": "Caption", "pl.caption.ph": "Add a caption", "pl.delete": "Delete picture", "pl.confirm": "Click again to delete", "pl.prev": "Previous", "pl.next": "Next",
     "f.cad": "CAD component", "f.cad.hint": "Id of a file in the CAD library. The dimensions below are read from it.", "cad.title": "CAD dimensions", "cad.none": "No CAD dimensions yet.", "cad.nofile": "There is no {id}.yaml in {dir}.", "cad.suggest": "{id}.yaml lists this item.", "cad.use": "Link it", "cad.dim": "Dimension", "cad.value": "Value", "cad.src": "Source", "cad.ref": "Ref", "cad.confirm": "Measure on your own part if a check asks:", "cad.count": "{n} dimensions · {file}", "cad.readonly": "Read-only here. Edit the library file to change them.", "cad.error": "Could not read {file}: {e}", "cad.missing": "No CAD dimensions", "cad.sources": "Sources", "cad.nolink": "No link given in the library file", "cad.nosources": "The library file names no sources.", "cad.nosrc": "No source given", "cad.unknownRef": "Source \"{ref}\" is not listed", "cad.link": "Source", "cad.missingCount": "{n} values have no source you can check.", "cad.legend": "What the labels mean", "cad.read": "read {d}", "cad.frame": "Coordinate system", "cad.about": "About these values", "cad.other": "Other", "src.MEASURED": "Measured on the real part", "src.DRAWING": "Read off the maker's dimensioned drawing or CAD/board file", "src.DATASHEET": "From the maker's datasheet, or a standard value (e.g. 1.6 mm boards)", "src.STEP": "From a manufacturer 3D model", "src.DISTRIBUTOR": "From a shop or distributor page", "src.COMMUNITY": "Typical value from forums, other people's models or measurements; not checked for this part", "src.SCALED": "Measured off a picture", "src.ASSUMED": "Guess", "st.cad": "CAD library", "st.cad.hint": "Dimension files for bought parts, linked from items with cad_component. Set MAKER_CAD_LIBRARY to use another folder.", "st.cad.count": "{n} component files · {l} linked items", "st.cad.warn": "{n} warnings", "st.cad.nodir": "Folder not found", "st.cad.show": "Items without CAD dimensions",
     "proj.shop": "Shopping list", "proj.copy": "Copy as Markdown", "proj.copied": "Shopping list copied", "proj.nothing": "Nothing to buy. You have everything.",
     "proj.optional": "optional", "proj.altHead": "Similar in stock · {why}", "proj.altToggle": "{n} similar", "proj.altMissing": "no {key}", "why.other color": "other color", "why.other specs": "other sizes",
@@ -59,7 +59,7 @@ const I18N = {
     "proj.hint": "Projekt är YAML-filer i {dir}. Fråga en agent: ”kolla om jag har allt för …”, eller kopiera {ex}.",
     "proj.ready": "{a}/{b} klart", "proj.short": "{n} räcker inte", "proj.missing": "{n} saknas", "proj.example": "exempel",
     "proj.need": "Behov", "proj.qty": "Antal", "proj.have": "Hemma", "proj.from": "Från lagret", "proj.notes": "Noteringar",
-    "proj.needsTitle": "Vad som behövs", "ps.label": "Status", "ps.none": "Ingen status", "ps.idea": "Idé", "ps.planning": "Planering", "ps.building": "Bygger", "ps.done": "Klar", "ps.paused": "Pausad", "pl.todo": "Att göra", "pl.todo.ph": "Skriv en uppgift och tryck Enter", "pl.todo.none": "Inga uppgifter än.", "pl.links": "Länkar", "pl.link.title": "Titel (valfri)", "pl.links.none": "Inga länkar än: CAD-modellen, en guide, en butikssida …", "pl.badUrl": "Länkar måste börja med http:// eller https://", "pl.add": "Lägg till", "pl.remove": "Ta bort", "pl.images": "Bilder", "pl.images.add": "Lägg till bilder", "pl.images.none": "Släpp bilder här, klistra in en med Ctrl+V eller klicka Lägg till bilder. PNG, JPG, WebP eller GIF upp till 8 MB.", "pl.images.empty": "Inga bilder.", "pl.images.big": "{n} är större än 8 MB", "pl.images.type": "{n} är inte PNG, JPG, WebP eller GIF", "pl.images.added": "Bilder tillagda: {n}", "pl.caption": "Bildtext", "pl.caption.ph": "Skriv en bildtext", "pl.delete": "Ta bort bilden", "pl.confirm": "Klicka igen för att ta bort", "pl.prev": "Föregående", "pl.next": "Nästa",
+    "proj.needsTitle": "Vad som behövs", "ps.label": "Status", "ps.none": "Ingen status", "ps.idea": "Idé", "ps.planning": "Planering", "ps.building": "Bygger", "ps.done": "Klar", "ps.paused": "Pausad", "pl.todo": "Att göra", "pl.todo.ph": "Skriv en uppgift och tryck Enter", "pl.todo.none": "Inga uppgifter än.", "pl.showDone": "Visa klara ({n})", "pl.hideDone": "Dölj klara", "pl.links": "Länkar", "pl.link.title": "Titel (valfri)", "pl.links.none": "Inga länkar än: CAD-modellen, en guide, en butikssida …", "pl.badUrl": "Länkar måste börja med http:// eller https://", "pl.add": "Lägg till", "pl.remove": "Ta bort", "pl.images": "Bilder", "pl.images.add": "Lägg till bilder", "pl.images.none": "Släpp bilder här, klistra in en med Ctrl+V eller klicka Lägg till bilder. PNG, JPG, WebP eller GIF upp till 8 MB.", "pl.images.empty": "Inga bilder.", "pl.images.big": "{n} är större än 8 MB", "pl.images.type": "{n} är inte PNG, JPG, WebP eller GIF", "pl.images.added": "Bilder tillagda: {n}", "pl.caption": "Bildtext", "pl.caption.ph": "Skriv en bildtext", "pl.delete": "Ta bort bilden", "pl.confirm": "Klicka igen för att ta bort", "pl.prev": "Föregående", "pl.next": "Nästa",
     "f.cad": "CAD-komponent", "f.cad.hint": "Id för en fil i CAD-biblioteket. Måtten nedan läses därifrån.", "cad.title": "CAD-mått", "cad.none": "Inga CAD-mått än.", "cad.nofile": "Det finns ingen {id}.yaml i {dir}.", "cad.suggest": "{id}.yaml nämner den här artikeln.", "cad.use": "Koppla", "cad.dim": "Mått", "cad.value": "Värde", "cad.src": "Källa", "cad.ref": "Ref", "cad.confirm": "Mät på ditt eget exemplar om en kontroll frågar efter det:", "cad.count": "{n} mått · {file}", "cad.readonly": "Skrivskyddat här. Ändra i biblioteksfilen för att ändra dem.", "cad.error": "Kunde inte läsa {file}: {e}", "cad.missing": "Utan CAD-mått", "cad.sources": "Källor", "cad.nolink": "Ingen länk angiven i biblioteksfilen", "cad.nosources": "Biblioteksfilen anger inga källor.", "cad.nosrc": "Ingen källa angiven", "cad.unknownRef": "Källan \"{ref}\" finns inte i listan", "cad.link": "Källa", "cad.missingCount": "{n} värden saknar en källa som går att kontrollera.", "cad.legend": "Vad märkningarna betyder", "cad.read": "läst {d}", "cad.frame": "Koordinatsystem", "cad.about": "Om värdena", "cad.other": "Övrigt", "src.MEASURED": "Uppmätt på den riktiga delen", "src.DRAWING": "Läst ur tillverkarens måttsatta ritning eller CAD-/kortfil", "src.DATASHEET": "Från tillverkarens datablad, eller ett standardvärde (t.ex. 1,6 mm kretskort)", "src.STEP": "Från tillverkarens 3D-modell", "src.DISTRIBUTOR": "Från en butiks- eller återförsäljarsida", "src.COMMUNITY": "Typiskt värde från forum, andras modeller eller mätningar; inte kontrollerat för just den här delen", "src.SCALED": "Uppmätt på en bild", "src.ASSUMED": "Gissning", "st.cad": "CAD-bibliotek", "st.cad.hint": "Måttfiler för köpta delar, som artiklar kopplas till med cad_component. Sätt MAKER_CAD_LIBRARY för att använda en annan mapp.", "st.cad.count": "{n} komponentfiler · {l} kopplade artiklar", "st.cad.warn": "{n} varningar", "st.cad.nodir": "Mappen finns inte", "st.cad.show": "Artiklar utan CAD-mått",
     "proj.shop": "Inköpslista", "proj.copy": "Kopiera som Markdown", "proj.copied": "Inköpslistan kopierad", "proj.nothing": "Inget att köpa. Du har allt.",
     "proj.optional": "valfri", "proj.altHead": "Liknande i lager · {why}", "proj.altToggle": "{n} liknande", "proj.altMissing": "saknar {key}", "why.other color": "annan färg", "why.other specs": "andra mått",
@@ -132,7 +132,7 @@ applyTheme();
 let S = normalize(BOOT.data || { items: [], projects: [] });
 let route = parseRoute();
 let query = "";
-const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, project: null, altsOpen: new Set(), lightbox: null, lbArmed: false };
+const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, project: null, altsOpen: new Set(), lightbox: null, lbArmed: false, showDone: new Set() };
 let drawer = null; // { mode: "new"|"edit"|"view", originalId, file, form, dirty, armed }
 let saving = false;
 
@@ -422,10 +422,12 @@ function projectsView() {
     ${LIVE ? `<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn primary" data-act="new-project">${icon("plus")}${esc(t("proj.new"))}</button>
       <button class="btn" data-act="example-project">${esc(t("proj.fromExample"))}</button></div>` : ""}<p class="hint" style="margin-top:14px">${esc(t("proj.agentHint"))}</p></div>`;
   const cur = S.projects.find((p) => p.file === route.project) || S.projects[0];
-  const list = S.projects.map((p) => {
+  // Project switcher: a row of tabs above the project, so the project itself gets the full width.
+  const tabs = S.projects.map((p) => {
     const s = projStats(p);
-    return `<div class="list-row" data-act="nav:projects/${esc(encodeURIComponent(p.file))}" aria-current="${p === cur}"><div class="grow">
-      <div class="title">${esc(p.name)}${p.status ? " " + statusBadge(p.status) : ""}</div>${progBar(s)}<div class="sub" style="margin-top:4px">${esc(t("proj.ready", { a: s.ok, b: p.rows.length }))}${p.example ? " · " + esc(t("proj.example")) : ""}</div></div></div>`;
+    return `<button type="button" class="proj-tab" data-act="nav:projects/${esc(encodeURIComponent(p.file))}" aria-current="${p === cur}">
+      <span class="pt-top"><span class="pt-name">${esc(p.name)}</span>${p.status ? statusBadge(p.status) : ""}</span>
+      <span class="pt-meta">${progBar(s)}<span>${esc(t("proj.ready", { a: s.ok, b: p.rows.length }))}${p.example ? " · " + esc(t("proj.example")) : ""}</span></span></button>`;
   }).join("");
   const why = (w) => t("why." + w);
   const rows = cur.rows.map((r, ri) => {
@@ -440,8 +442,8 @@ function projectsView() {
       ${LIVE ? `<button class="btn sm" data-act="restock:${i}" title="${esc(t("proj.restock.hint"))}">${icon("plus")}${esc(t("proj.restock"))}</button>` : ""}</div>`).join("")
     : `<span class="muted">${esc(t("proj.nothing"))}</span>`;
   const canBuild = cur.rows.some((r) => r.from.length);
-  return `<div class="proj-layout">
-    <section class="panel proj-list"><div class="panel-h"><h2>${esc(t("proj.title"))}</h2><span class="muted">${S.projects.length}</span></div><div class="panel-b">${list}</div></section>
+  return `<div class="proj-page">
+    <nav class="proj-tabs" aria-label="${esc(t("proj.title"))}">${tabs}</nav>
     <div>
       <section class="panel proj-head"><div class="panel-h"><div style="min-width:0"><h2>${esc(cur.name)}</h2>${cur.notes ? `<div class="muted" style="font-size:12.5px;margin-top:2px">${esc(cur.notes)}</div>` : ""}</div>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">${statusControl(cur)}
@@ -466,8 +468,14 @@ function statusControl(p) {
 function planPanels(p) {
   const edit = LIVE && !p.example;
   const done = p.todos.filter((x) => x.done).length;
-  const todos = p.todos.map((x, i) => `<li class="${x.done ? "done" : ""}"><label><input type="checkbox" data-todo="${i}" ${x.done ? "checked" : ""} ${edit ? "" : "disabled"}><span>${esc(x.text)}</span></label>
-    ${edit ? `<button class="icon-btn xs" data-rmtodo="${i}" aria-label="${esc(t("pl.remove"))}" title="${esc(t("pl.remove"))}">${icon("x")}</button>` : ""}</li>`).join("");
+  // Open tasks first; finished ones fold away under "Show done (n)" so a long list stays short.
+  const todoLi = (x, i) => `<li class="${x.done ? "done" : ""}"><label><input type="checkbox" data-todo="${i}" ${x.done ? "checked" : ""} ${edit ? "" : "disabled"}><span>${esc(x.text)}</span></label>
+    ${edit ? `<button class="icon-btn xs" data-rmtodo="${i}" aria-label="${esc(t("pl.remove"))}" title="${esc(t("pl.remove"))}">${icon("x")}</button>` : ""}</li>`;
+  const indexed = p.todos.map((x, i) => [x, i]);
+  const showDone = ui.showDone.has(p.file);
+  const todos = indexed.filter(([x]) => !x.done).map(([x, i]) => todoLi(x, i)).join("")
+    + (done ? `<li class="todo-more"><button type="button" class="btn ghost sm" data-donetoggle="${esc(p.file)}" aria-expanded="${showDone}">${esc(showDone ? t("pl.hideDone") : t("pl.showDone", { n: done }))}<span class="chev">▾</span></button></li>` : "")
+    + (showDone ? indexed.filter(([x]) => x.done).map(([x, i]) => todoLi(x, i)).join("") : "");
   const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
   const links = p.links.map((l, i) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.title || host(l.url) || l.url)}</a><span class="muted">${esc(l.title ? host(l.url) : "")}</span>
     ${edit ? `<button class="icon-btn xs" data-rmlink="${i}" aria-label="${esc(t("pl.remove"))}" title="${esc(t("pl.remove"))}">${icon("x")}</button>` : ""}</li>`).join("");
@@ -1080,6 +1088,8 @@ document.addEventListener("click", (e) => {
   if (tEl.closest("#tagsBox")) { $("#tagIn")?.focus(); }
   const cadBtn = tEl.closest("[data-cadlink]");
   if (cadBtn && drawer?.kind === "item") { syncForm(); drawer.form.cad_component = cadBtn.dataset.cadlink; drawer.dirty = true; renderDrawerKeepScroll(); return; }
+  const doneBtn = tEl.closest("[data-donetoggle]");
+  if (doneBtn) { const k = doneBtn.dataset.donetoggle; ui.showDone.has(k) ? ui.showDone.delete(k) : ui.showDone.add(k); renderContent(); return; }
   const altBtn = tEl.closest("[data-alts]");
   if (altBtn) { const k = altBtn.dataset.alts; ui.altsOpen.has(k) ? ui.altsOpen.delete(k) : ui.altsOpen.add(k); renderContent(); return; }
   // project planning
