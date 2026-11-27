@@ -140,7 +140,8 @@ export function computeCheck(inv, proj) {
     const unit = need.unit ?? (cands[0] ? unitOf(cands[0]) : need.match?.material ? "g" : "pcs");
     const alternatives = status !== "OK" && need.match ? findAlternatives(inv, need.match, cands) : [];
     rows.push({ need: describe(need), qty, unit, got, status, from, alternatives,
-      unverified: from.some((f) => !f.verified), optional: !!need.optional, buy: need.buy, note: need.note });
+      unverified: from.some((f) => !f.verified), optional: !!need.optional, buy: need.buy, note: need.note,
+      purpose: need.purpose, match: need.match, id: need.id });
   }
   return rows;
 }
@@ -375,7 +376,7 @@ export function deleteItem({ id, expect = {} }) {
 
 // ---------- projects ----------
 const PROJECT_HEADER = "# Project: needs and planning. Edited in the maker-inventory app or by hand; format: README.md \"Project file\".";
-const NEED_ORDER = ["name", "id", "match", "qty", "unit", "optional", "note", "buy"];
+const NEED_ORDER = ["name", "purpose", "id", "match", "qty", "unit", "optional", "note", "buy"];
 const MATCH_ORDER = ["file", "category", "material", "color", "finish", "brand", "tags", "specs", "text"];
 const orderKeys = (o, order) => { const r = {}; for (const k of order) if (k in o) r[k] = o[k]; for (const k of Object.keys(o)) if (!(k in r)) r[k] = o[k]; return r; };
 const projPath = (file) => {
@@ -388,7 +389,7 @@ export const projectFileName = (name) => `${(norm(name).normalize("NFKD").replac
 function cleanNeed(raw) {
   const n = {};
   const str = (v) => (typeof v === "string" ? v.trim() : v);
-  for (const k of ["name", "id", "unit", "note"]) if (str(raw[k])) n[k] = str(raw[k]);
+  for (const k of ["name", "purpose", "id", "unit", "note"]) if (str(raw[k])) n[k] = str(raw[k]);
   if (raw.qty !== undefined && raw.qty !== "") n.qty = Number(raw.qty);
   if (raw.optional) n.optional = true;
   if (!n.id && raw.match && typeof raw.match === "object") {
@@ -544,7 +545,8 @@ export function findProjectFile(query) {
 }
 
 // Apply a small change list to a project's planning (used by agents after a work session):
-//   { status, notes_append, todos: { done, undo, remove, add, edit: [{ ref, text }] }, links: { add: [{ title, url }], remove } }
+//   { status, notes_append, todos: { done, undo, remove, add, edit: [{ ref, text }] }, links: { add: [{ title, url }], remove },
+//     needs: { purpose: [{ ref, text }] } }
 // A ref is a 1-based number, the exact text, or a part of the text that matches only one entry.
 // Returns what changed; with dryRun nothing is written.
 export function updateProjectPlan({ file, patch, expect, dryRun = false }) {
@@ -589,6 +591,13 @@ export function updateProjectPlan({ file, patch, expect, dryRun = false }) {
     if (keptLinks.some((x) => norm(x.url) === norm(add.url))) { changes.push(`link already there: ${add.url}`); continue; }
     keptLinks.push(add); changes.push(`add link: ${add.title ? add.title + " – " : ""}${add.url}`);
   }
+  // What each part is for: needs.purpose [{ ref, text }], ref = need number or (part of) its name.
+  const needs = (proj.needs ?? []).map((n) => ({ ...n }));
+  for (const { ref, text } of p.needs?.purpose ?? []) {
+    const i = find(needs.map((n) => ({ name: n.name ?? n.id ?? "" })), ref, "name", "need");
+    const v = String(text ?? "").trim();
+    if ((needs[i].purpose ?? "") !== v) { changes.push(`purpose: ${needs[i].name ?? needs[i].id} -> ${v || "(none)"}`); if (v) needs[i].purpose = v; else delete needs[i].purpose; }
+  }
   let status = proj.status;
   if (p.status !== undefined && p.status !== status) { status = p.status || undefined; changes.push(`status: ${proj.status ?? "none"} -> ${p.status || "none"}`); }
   let notes = proj.notes;
@@ -596,7 +605,7 @@ export function updateProjectPlan({ file, patch, expect, dryRun = false }) {
   const real = changes.filter((c) => !/^(already listed|link already there)/.test(c));
   if (!dryRun && real.length) {
     // saveProject validates everything (status, http links) and refuses if the file changed meanwhile.
-    const project = { name: proj.name, notes, needs: proj.needs ?? [], status: status ?? "", todos: keptTodos, links: keptLinks };
+    const project = { name: proj.name, notes, needs, status: status ?? "", todos: keptTodos, links: keptLinks };
     saveProject({ originalFile: file, project, expect: expect ?? hash(readFileSync(projPath(file), "utf8")) });
   }
   return { file, changes, written: !dryRun && real.length > 0 };

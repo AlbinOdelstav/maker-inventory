@@ -42,7 +42,8 @@ Go through the whole conversation, not only the last messages. Collect:
 | Parts used up, broken, or built into this project | `adjust <id> -n`, or set `in_use` in the app/YAML |
 | Web pages that mattered: datasheets, shop pages, guides, the CAD repo | `links.add` with a short title; only http(s) links you saw in the session |
 | The phase changed (idea → planning → building → done, or paused) | `status` |
-| The parts list changed (new design, new BOM) | update `needs` (see below) |
+| The parts list changed (new design, new BOM) | update `needs` (see below); every new need gets a `purpose` |
+| What a part is for became clear or changed (wiring, design, a decision: "the IRLZ44N switch one coil motor each") | `needs.purpose`: one or two plain sentences on exactly what it does in this build, where it sits and why this variant. Fill in needs that have none (marked "purpose not given" by `project`) when the session or the project's BOM/README says it |
 | A decision that changes what to buy or build | `notes_append`, one dated line, only if it isn't obvious from the to-dos |
 
 Not here: measurements and debugging details belong in the project's own log (e.g. cadkit `/log`),
@@ -50,7 +51,7 @@ pictures are added in the app (drag them onto the Pictures panel).
 
 ## 3. Show the plan, then wait
 
-One compact list, grouped (To do / Stock / Links / Status / Needs / Notes). Each line says what
+One compact list, grouped (To do / Stock / Links / Status / Needs and purposes / Notes). Each line says what
 changes and why, quoting or pointing at the session in a few words:
 
 ```
@@ -73,9 +74,12 @@ Ask once: apply all, or which numbers to skip. Nothing is written before the use
   node {{TOOL_DIR}}/inv.mjs project-update <project> - <<'EOF'
   {"todos": {"done": [8], "add": ["Skriv ut v13 testceller A + B"], "edit": [{"ref": 9, "text": "…"}], "remove": []},
    "links": {"add": [{"title": "Datasheet IRLZ44N", "url": "https://…"}]},
+   "needs": {"purpose": [{"ref": 7, "text": "Slår av och på en spiralmotor var (12 st), styrs från Megans pinnar; logiknivå så 5 V räcker."}]},
    "status": "building", "notes_append": "2026-11-27: knappar Omron D2F valda"}
   EOF
   ```
+
+  Need refs are the numbers in the Needs list from `project`, or a unique part of the need's name.
 
   Add `--dry-run` first if the change list is long. It refuses if the file changed meanwhile:
   then read it again and redo the step.

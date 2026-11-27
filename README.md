@@ -107,8 +107,11 @@ node inv.mjs install-hook [--remove]   # Claude Code sync reminder (see "Workflo
 { "todos": { "done": [3, "print the base"], "undo": [], "add": ["Order springs"], "remove": [],
              "edit": [{ "ref": 4, "text": "Solder the LEDs" }] },
   "links": { "add": [{ "title": "Datasheet", "url": "https://…" }], "remove": [] },
+  "needs": { "purpose": [{ "ref": 2, "text": "Lights the shade; 12 V strip, cut to 30 cm" }] },
   "status": "building", "notes_append": "2026-11-27: chose white LEDs" }
 ```
+
+Needs are referred to by their number in `project`'s Needs list, or a unique part of the name.
 
 `<project>` is a file in `projects/` (with or without `.yaml`), an example name such as
 `plant-watering`, or a path.
@@ -202,6 +205,7 @@ app shows the dimensions read-only on the item.
 name: Automatic plant watering
 needs:
   - name: Microcontroller
+    purpose: Reads the soil sensor and switches the pump relay   # shown when the row is expanded
     match: { category: mcu, tags: [5v] }   # any matching item
     qty: 1
   - id: sg90-servo                          # exactly this item
@@ -230,6 +234,9 @@ images:
 Pictures are stored in `projects/media/<project>/` (git-ignored with the rest of `projects/`).
 The app adds and removes them; deleting a project deletes its pictures. Saving a project
 without these fields keeps the ones already in the file.
+
+`purpose` says what a part does in this build. In the app, click a need's row to see it together
+with what counts as a match, the stock that covers it and where to buy it.
 
 `match` keys: `category`, `material`, `color`, `finish`, `brand` and `file` must be equal.
 With `tags`, the item must have all of them. `text` is a substring of the name or id. With

@@ -52,7 +52,7 @@ function check(projectPath, asJson) {
   console.log("|---|---|---|---|---|---|");
   for (const r of rows) {
     const from = r.from.map((f) => `${f.id}${f.verified ? "" : " ⚠"}${f.location ? ` (${f.location})` : ""}`).join(", ");
-    const notes = [r.optional && "optional", r.note, r.unverified && "⚠ not verified",
+    const notes = [r.purpose && `for: ${r.purpose}`, r.optional && "optional", r.note, r.unverified && "⚠ not verified",
       ...r.from.filter((f) => f.in_use).map((f) => `in use in ${f.in_use} (must be taken out)`),
       ...r.alternatives.slice(0, 3).map((a) => `alt (${a.why}): ${a.name} ${a.qty} ${a.unit}${a.diff?.length ? ` [${a.diff.map((d) => `${d.key} ${d.have ?? "–"}`).join(", ")}]` : ""}`), r.alternatives.length > 3 && `+${r.alternatives.length - 3} more`].filter(Boolean).join("; ");
     console.log(`| ${icon[r.status]} | ${r.need} | ${r.qty} ${r.unit} | ${r.got} | ${from || "–"} | ${notes} |`);
@@ -151,7 +151,8 @@ function projectShow(q, asJson) {
     return console.log(JSON.stringify({ file: p.file, name: p.name, status: p.status ?? null, notes: p.notes ?? null, version: p.version,
       todos: p.todos.map((t, i) => ({ n: i + 1, text: t.text, done: !!t.done })), links: p.links.map((l, i) => ({ n: i + 1, ...l })),
       images: p.images.length, needs: { ok: count("OK"), short: count("SHORT"), missing: count("MISSING"),
-        open: p.rows.filter((r) => r.status !== "OK").map((r) => ({ need: r.need, qty: r.qty, have: r.got, unit: r.unit, optional: r.optional })) } }, null, 2));
+        open: p.rows.filter((r) => r.status !== "OK").map((r) => ({ need: r.need, qty: r.qty, have: r.got, unit: r.unit, optional: r.optional })),
+        list: p.rows.map((r, i) => ({ n: i + 1, need: r.need, status: r.status, qty: r.qty, have: r.got, unit: r.unit, purpose: r.purpose ?? null })) } }, null, 2));
   }
   console.log(`# ${p.name}  (${p.file})${p.status ? `  [${p.status}]` : ""}`);
   if (p.notes) console.log(`\n${p.notes}`);
@@ -163,6 +164,8 @@ function projectShow(q, asJson) {
   p.links.forEach((l, i) => console.log(`${String(i + 1).padStart(3)}. ${l.title ? `${l.title} – ` : ""}${l.url}`));
   if (!p.links.length) console.log("(none)");
   console.log(`\n## Needs: ${count("OK")} in stock, ${count("SHORT")} short, ${count("MISSING")} missing (details: check ${p.file.replace(/\.ya?ml$/, "")})`);
+  const mark = { OK: "ok ", SHORT: "½  ", MISSING: "-  " };
+  p.rows.forEach((r, i) => console.log(`${String(i + 1).padStart(3)}. ${mark[r.status]}${r.need}${r.purpose ? `  – ${r.purpose}` : "  (purpose not given)"}`));
   if (p.images.length) console.log(`\n${p.images.length} picture(s)`);
 }
 

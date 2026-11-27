@@ -22,7 +22,7 @@ const I18N = {
     "proj.hint": "Projects are YAML files in {dir}. Ask an agent: “check if I have everything for …”, or copy {ex}.",
     "proj.ready": "{a}/{b} ready", "proj.short": "{n} short", "proj.missing": "{n} missing", "proj.example": "example",
     "proj.need": "Need", "proj.qty": "Qty", "proj.have": "Have", "proj.from": "From stock", "proj.notes": "Notes",
-    "proj.needsTitle": "What it needs", "ps.label": "Status", "ps.none": "No status", "ps.idea": "Idea", "ps.planning": "Planning", "ps.building": "Building", "ps.done": "Done", "ps.paused": "Paused", "pl.todo": "To do", "pl.todo.ph": "Add a task and press Enter", "pl.todo.none": "No tasks yet.", "pl.showDone": "Show done ({n})", "pl.hideDone": "Hide done", "pl.links": "Links", "pl.link.title": "Title (optional)", "pl.links.none": "No links yet: the CAD model, a guide, a shop page …", "pl.badUrl": "Links must start with http:// or https://", "pl.add": "Add", "pl.remove": "Remove", "pl.images": "Pictures", "pl.images.add": "Add pictures", "pl.images.none": "Drop pictures here, paste one with Ctrl+V or click Add pictures. PNG, JPG, WebP or GIF up to 8 MB.", "pl.images.empty": "No pictures.", "pl.images.big": "{n} is larger than 8 MB", "pl.images.type": "{n} is not a PNG, JPG, WebP or GIF", "pl.images.added": "Pictures added: {n}", "pl.caption": "Caption", "pl.caption.ph": "Add a caption", "pl.delete": "Delete picture", "pl.confirm": "Click again to delete", "pl.prev": "Previous", "pl.next": "Next",
+    "proj.needsTitle": "What it needs", "nd.toggle": "Show details", "nd.purpose": "What it is for", "nd.nopurpose": "Not described yet. Add it under Edit, or let an agent fill it in with /sync-project.", "nd.note": "Note", "nd.matches": "Counts as a match", "nd.item": "Specific item", "nd.from": "From stock", "nd.none": "Nothing in stock yet", "nd.buy": "Where to buy", "nd.expandAll": "Show all details", "nd.collapseAll": "Hide details", "pe.purpose": "What it is for", "pe.purpose.ph": "e.g. drives one coil motor per cell, switched by the Mega", "ps.label": "Status", "ps.none": "No status", "ps.idea": "Idea", "ps.planning": "Planning", "ps.building": "Building", "ps.done": "Done", "ps.paused": "Paused", "pl.todo": "To do", "pl.todo.ph": "Add a task and press Enter", "pl.todo.none": "No tasks yet.", "pl.showDone": "Show done ({n})", "pl.hideDone": "Hide done", "pl.links": "Links", "pl.link.title": "Title (optional)", "pl.links.none": "No links yet: the CAD model, a guide, a shop page …", "pl.badUrl": "Links must start with http:// or https://", "pl.add": "Add", "pl.remove": "Remove", "pl.images": "Pictures", "pl.images.add": "Add pictures", "pl.images.none": "Drop pictures here, paste one with Ctrl+V or click Add pictures. PNG, JPG, WebP or GIF up to 8 MB.", "pl.images.empty": "No pictures.", "pl.images.big": "{n} is larger than 8 MB", "pl.images.type": "{n} is not a PNG, JPG, WebP or GIF", "pl.images.added": "Pictures added: {n}", "pl.caption": "Caption", "pl.caption.ph": "Add a caption", "pl.delete": "Delete picture", "pl.confirm": "Click again to delete", "pl.prev": "Previous", "pl.next": "Next",
     "f.cad": "CAD component", "f.cad.hint": "Id of a file in the CAD library. The dimensions below are read from it.", "cad.title": "CAD dimensions", "cad.none": "No CAD dimensions yet.", "cad.nofile": "There is no {id}.yaml in {dir}.", "cad.suggest": "{id}.yaml lists this item.", "cad.use": "Link it", "cad.dim": "Dimension", "cad.value": "Value", "cad.src": "Source", "cad.ref": "Ref", "cad.confirm": "Measure on your own part if a check asks:", "cad.count": "{n} dimensions · {file}", "cad.readonly": "Read-only here. Edit the library file to change them.", "cad.error": "Could not read {file}: {e}", "cad.missing": "No CAD dimensions", "cad.sources": "Sources", "cad.nolink": "No link given in the library file", "cad.nosources": "The library file names no sources.", "cad.nosrc": "No source given", "cad.unknownRef": "Source \"{ref}\" is not listed", "cad.link": "Source", "cad.missingCount": "{n} values have no source you can check.", "cad.legend": "What the labels mean", "cad.read": "read {d}", "cad.frame": "Coordinate system", "cad.about": "About these values", "cad.other": "Other", "src.MEASURED": "Measured on the real part", "src.DRAWING": "Read off the maker's dimensioned drawing or CAD/board file", "src.DATASHEET": "From the maker's datasheet, or a standard value (e.g. 1.6 mm boards)", "src.STEP": "From a manufacturer 3D model", "src.DISTRIBUTOR": "From a shop or distributor page", "src.COMMUNITY": "Typical value from forums, other people's models or measurements; not checked for this part", "src.SCALED": "Measured off a picture", "src.ASSUMED": "Guess", "st.cad": "CAD library", "st.cad.hint": "Dimension files for bought parts, linked from items with cad_component. Set MAKER_CAD_LIBRARY to use another folder.", "st.cad.count": "{n} component files · {l} linked items", "st.cad.warn": "{n} warnings", "st.cad.nodir": "Folder not found", "st.cad.show": "Items without CAD dimensions",
     "proj.shop": "Shopping list", "proj.copy": "Copy as Markdown", "proj.copied": "Shopping list copied", "proj.nothing": "Nothing to buy. You have everything.",
     "proj.optional": "optional", "proj.altHead": "Similar in stock · {why}", "proj.altToggle": "{n} similar", "proj.altMissing": "no {key}", "why.other color": "other color", "why.other specs": "other sizes",
@@ -59,7 +59,7 @@ const I18N = {
     "proj.hint": "Projekt är YAML-filer i {dir}. Fråga en agent: ”kolla om jag har allt för …”, eller kopiera {ex}.",
     "proj.ready": "{a}/{b} klart", "proj.short": "{n} räcker inte", "proj.missing": "{n} saknas", "proj.example": "exempel",
     "proj.need": "Behov", "proj.qty": "Antal", "proj.have": "Hemma", "proj.from": "Från lagret", "proj.notes": "Noteringar",
-    "proj.needsTitle": "Vad som behövs", "ps.label": "Status", "ps.none": "Ingen status", "ps.idea": "Idé", "ps.planning": "Planering", "ps.building": "Bygger", "ps.done": "Klar", "ps.paused": "Pausad", "pl.todo": "Att göra", "pl.todo.ph": "Skriv en uppgift och tryck Enter", "pl.todo.none": "Inga uppgifter än.", "pl.showDone": "Visa klara ({n})", "pl.hideDone": "Dölj klara", "pl.links": "Länkar", "pl.link.title": "Titel (valfri)", "pl.links.none": "Inga länkar än: CAD-modellen, en guide, en butikssida …", "pl.badUrl": "Länkar måste börja med http:// eller https://", "pl.add": "Lägg till", "pl.remove": "Ta bort", "pl.images": "Bilder", "pl.images.add": "Lägg till bilder", "pl.images.none": "Släpp bilder här, klistra in en med Ctrl+V eller klicka Lägg till bilder. PNG, JPG, WebP eller GIF upp till 8 MB.", "pl.images.empty": "Inga bilder.", "pl.images.big": "{n} är större än 8 MB", "pl.images.type": "{n} är inte PNG, JPG, WebP eller GIF", "pl.images.added": "Bilder tillagda: {n}", "pl.caption": "Bildtext", "pl.caption.ph": "Skriv en bildtext", "pl.delete": "Ta bort bilden", "pl.confirm": "Klicka igen för att ta bort", "pl.prev": "Föregående", "pl.next": "Nästa",
+    "proj.needsTitle": "Vad som behövs", "nd.toggle": "Visa detaljer", "nd.purpose": "Används till", "nd.nopurpose": "Inte beskrivet än. Lägg till under Ändra, eller låt en agent fylla i det med /sync-project.", "nd.note": "Anteckning", "nd.matches": "Räknas som träff", "nd.item": "Specifik post", "nd.from": "Från lagret", "nd.none": "Inget i lagret än", "nd.buy": "Var man köper", "nd.expandAll": "Visa alla detaljer", "nd.collapseAll": "Dölj detaljer", "pe.purpose": "Används till", "pe.purpose.ph": "t.ex. driver en spiralmotor per cell, styrs av Megan", "ps.label": "Status", "ps.none": "Ingen status", "ps.idea": "Idé", "ps.planning": "Planering", "ps.building": "Bygger", "ps.done": "Klar", "ps.paused": "Pausad", "pl.todo": "Att göra", "pl.todo.ph": "Skriv en uppgift och tryck Enter", "pl.todo.none": "Inga uppgifter än.", "pl.showDone": "Visa klara ({n})", "pl.hideDone": "Dölj klara", "pl.links": "Länkar", "pl.link.title": "Titel (valfri)", "pl.links.none": "Inga länkar än: CAD-modellen, en guide, en butikssida …", "pl.badUrl": "Länkar måste börja med http:// eller https://", "pl.add": "Lägg till", "pl.remove": "Ta bort", "pl.images": "Bilder", "pl.images.add": "Lägg till bilder", "pl.images.none": "Släpp bilder här, klistra in en med Ctrl+V eller klicka Lägg till bilder. PNG, JPG, WebP eller GIF upp till 8 MB.", "pl.images.empty": "Inga bilder.", "pl.images.big": "{n} är större än 8 MB", "pl.images.type": "{n} är inte PNG, JPG, WebP eller GIF", "pl.images.added": "Bilder tillagda: {n}", "pl.caption": "Bildtext", "pl.caption.ph": "Skriv en bildtext", "pl.delete": "Ta bort bilden", "pl.confirm": "Klicka igen för att ta bort", "pl.prev": "Föregående", "pl.next": "Nästa",
     "f.cad": "CAD-komponent", "f.cad.hint": "Id för en fil i CAD-biblioteket. Måtten nedan läses därifrån.", "cad.title": "CAD-mått", "cad.none": "Inga CAD-mått än.", "cad.nofile": "Det finns ingen {id}.yaml i {dir}.", "cad.suggest": "{id}.yaml nämner den här artikeln.", "cad.use": "Koppla", "cad.dim": "Mått", "cad.value": "Värde", "cad.src": "Källa", "cad.ref": "Ref", "cad.confirm": "Mät på ditt eget exemplar om en kontroll frågar efter det:", "cad.count": "{n} mått · {file}", "cad.readonly": "Skrivskyddat här. Ändra i biblioteksfilen för att ändra dem.", "cad.error": "Kunde inte läsa {file}: {e}", "cad.missing": "Utan CAD-mått", "cad.sources": "Källor", "cad.nolink": "Ingen länk angiven i biblioteksfilen", "cad.nosources": "Biblioteksfilen anger inga källor.", "cad.nosrc": "Ingen källa angiven", "cad.unknownRef": "Källan \"{ref}\" finns inte i listan", "cad.link": "Källa", "cad.missingCount": "{n} värden saknar en källa som går att kontrollera.", "cad.legend": "Vad märkningarna betyder", "cad.read": "läst {d}", "cad.frame": "Koordinatsystem", "cad.about": "Om värdena", "cad.other": "Övrigt", "src.MEASURED": "Uppmätt på den riktiga delen", "src.DRAWING": "Läst ur tillverkarens måttsatta ritning eller CAD-/kortfil", "src.DATASHEET": "Från tillverkarens datablad, eller ett standardvärde (t.ex. 1,6 mm kretskort)", "src.STEP": "Från tillverkarens 3D-modell", "src.DISTRIBUTOR": "Från en butiks- eller återförsäljarsida", "src.COMMUNITY": "Typiskt värde från forum, andras modeller eller mätningar; inte kontrollerat för just den här delen", "src.SCALED": "Uppmätt på en bild", "src.ASSUMED": "Gissning", "st.cad": "CAD-bibliotek", "st.cad.hint": "Måttfiler för köpta delar, som artiklar kopplas till med cad_component. Sätt MAKER_CAD_LIBRARY för att använda en annan mapp.", "st.cad.count": "{n} komponentfiler · {l} kopplade artiklar", "st.cad.warn": "{n} varningar", "st.cad.nodir": "Mappen finns inte", "st.cad.show": "Artiklar utan CAD-mått",
     "proj.shop": "Inköpslista", "proj.copy": "Kopiera som Markdown", "proj.copied": "Inköpslistan kopierad", "proj.nothing": "Inget att köpa. Du har allt.",
     "proj.optional": "valfri", "proj.altHead": "Liknande i lager · {why}", "proj.altToggle": "{n} liknande", "proj.altMissing": "saknar {key}", "why.other color": "annan färg", "why.other specs": "andra mått",
@@ -132,7 +132,7 @@ applyTheme();
 let S = normalize(BOOT.data || { items: [], projects: [] });
 let route = parseRoute();
 let query = "";
-const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, project: null, altsOpen: new Set(), lightbox: null, lbArmed: false, showDone: new Set() };
+const ui = { attention: false, category: "", sort: { key: "name", dir: 1 }, project: null, altsOpen: new Set(), lightbox: null, lbArmed: false, showDone: new Set(), needsOpen: new Set() };
 let drawer = null; // { mode: "new"|"edit"|"view", originalId, file, form, dirty, armed }
 let saving = false;
 
@@ -433,10 +433,12 @@ function projectsView() {
   const rows = cur.rows.map((r, ri) => {
     const notes = [r.optional && `<span class="badge b-info">${esc(t("proj.optional"))}</span>`, r.unverified && `<span class="badge b-warn">${esc(t("b.unverified"))}</span>`,
       ...r.from.filter((f) => f.in_use).map((f) => `<span class="badge b-info">${esc(t("proj.inuse", { p: f.in_use }))}</span>`), r.note && `<span class="muted">${esc(r.note)}</span>`].filter(Boolean).join(" ");
-    return `<tr style="cursor:default"><td><span class="st st-${r.status}">${r.status === "OK" ? "✓" : r.status === "SHORT" ? "◐" : "✕"}</span></td>
+    const key = needKey(cur, ri), open = ui.needsOpen.has(key);
+    return `<tr class="need-row" data-needrow="${esc(key)}" aria-expanded="${open}"><td><button type="button" class="need-chev" data-needtoggle="${esc(key)}" aria-expanded="${open}" aria-label="${esc(t("nd.toggle"))}">▸</button><span class="st st-${r.status}">${r.status === "OK" ? "✓" : r.status === "SHORT" ? "◐" : "✕"}</span></td>
       <td><div class="name">${esc(r.need)} ${altToggle(cur, r, ri)}</div></td><td class="num">${fmtNum(r.qty)} ${esc(unitLabel(r.unit))}</td><td class="num">${fmtNum(r.got)}</td>
-      <td class="hide-sm">${r.from.map((f) => `<a href="#" data-open="${esc(f.id)}">${esc(fromLabel(f))}</a>`).join(", ") || "–"}</td><td class="hide-sm">${notes}</td></tr>${altRow(cur, r, ri, why)}`;
+      <td class="hide-sm">${r.from.map((f) => `<a href="#" data-open="${esc(f.id)}">${esc(fromLabel(f))}</a>`).join(", ") || "–"}</td><td class="hide-sm">${notes}</td></tr>${open ? needDetail(r) : ""}${altRow(cur, r, ri, why)}`;
   }).join("");
+  const allOpen = cur.rows.length && cur.rows.every((_, i) => ui.needsOpen.has(needKey(cur, i)));
   const buyIdx = cur.rows.map((r, i) => [r, i]).filter(([r]) => r.status !== "OK");
   const shop = buyIdx.length ? buyIdx.map(([r, i]) => `<div class="shop-row"><span class="grow">${esc(r.need)}: <b>${fmtNum(r.qty - r.got)} ${esc(unitLabel(r.unit))}</b>${r.optional ? ` <span class="muted">(${esc(t("proj.optional"))})</span>` : ""}${r.buy?.where ? ` <span class="muted">· ${esc(r.buy.where)}</span>` : ""}${r.buy?.link ? ` <a href="${esc(r.buy.link)}" target="_blank" rel="noopener noreferrer">↗</a>` : ""}</span>
       ${LIVE ? `<button class="btn sm" data-act="restock:${i}" title="${esc(t("proj.restock.hint"))}">${icon("plus")}${esc(t("proj.restock"))}</button>` : ""}</div>`).join("")
@@ -450,12 +452,37 @@ function projectsView() {
         ${LIVE ? `<button class="btn sm" data-act="edit-project">${icon("edit")}${esc(t("proj.edit"))}</button>
           <button class="btn sm" data-act="build-project" ${canBuild ? "" : "disabled"} title="${esc(t("proj.build.hint"))}">${icon("check")}${esc(t("proj.build"))}</button>` : ""}</div></div></section>
       ${planPanels(cur)}
-      <section class="panel full"><div class="panel-h"><h2>${esc(t("proj.needsTitle"))}</h2>${progBar(projStats(cur)).replace('class="prog"', 'class="prog" style="width:110px"')}</div>
+      <section class="panel full"><div class="panel-h"><h2>${esc(t("proj.needsTitle"))}</h2><div style="display:flex;gap:10px;align-items:center">
+        ${cur.rows.length ? `<button type="button" class="btn sm ghost" data-needall="${esc(cur.file)}">${esc(t(allOpen ? "nd.collapseAll" : "nd.expandAll"))}</button>` : ""}
+        ${progBar(projStats(cur)).replace('class="prog"', 'class="prog" style="width:110px"')}</div></div>
         ${cur.rows.length ? `<div style="overflow-x:auto"><table class="proj-table"><thead><tr><th></th><th>${esc(t("proj.need"))}</th><th class="num">${esc(t("proj.qty"))}</th><th class="num">${esc(t("proj.have"))}</th><th class="hide-sm">${esc(t("proj.from"))}</th><th class="hide-sm">${esc(t("proj.notes"))}</th></tr></thead><tbody>${rows}</tbody></table></div>`
           : `<div class="empty-mini">${esc(t("proj.noNeeds"))}</div>`}</section>
       <section class="panel full"><div class="panel-h"><h2>${esc(t("proj.shop"))}</h2>${buyIdx.length ? `<button class="btn sm" data-act="copy-shop">${icon("copy")}${esc(t("proj.copy"))}</button>` : ""}</div><div class="shop">${shop}</div></section>
     </div></div>`;
 }
+// A need's details, shown when its row is expanded: what it is for, what counts as a match, what in
+// stock covers it and where to buy it.
+const needKey = (p, i) => p.file + "#" + i;
+function needDetail(r) {
+  const m = r.match || {}, file = guessFile(m);
+  const crit = r.id
+    ? [`${t("nd.item")}: ${fromLabel({ id: r.id })}`]
+    : [m.file && `${t("f.section")}: ${fileLabel(m.file)}`, m.category && `${t("f.category")}: ${catLabel(m.category, file)}`,
+      m.material && `${t("f.material")}: ${m.material}`, m.color && `${t("f.color")}: ${colorLabel(m.color)}`, m.finish && `${t("f.finish")}: ${finishLabel(m.finish)}`,
+      m.brand && `${t("f.brand")}: ${m.brand}`, m.tags?.length && `${t("pe.tags")}: ${m.tags.join(", ")}`,
+      ...Object.entries(m.specs || {}).map(([k, v]) => `${specLabel(k)}: ${v}`), m.text && `${t("pe.text")}: “${m.text}”`].filter(Boolean);
+  const from = r.from.map((f) => `<a href="#" data-open="${esc(f.id)}">${esc(fromLabel(f))}</a> <span class="muted">× ${fmtNum(f.take)}</span>`).join("<br>");
+  const buy = [r.buy?.where, r.buy?.est_price].filter(Boolean).map(esc).join(" · ") + (r.buy?.link ? ` <a href="${esc(r.buy.link)}" target="_blank" rel="noopener noreferrer">${esc(t("pe.link"))} ↗</a>` : "");
+  const item = (label, html) => `<div class="nd-item"><div class="nd-label">${esc(label)}</div><div>${html}</div></div>`;
+  return `<tr class="need-detail"><td></td><td colspan="5"><div class="nd-grid">
+    <div class="nd-purpose">${item(t("nd.purpose"), r.purpose ? esc(r.purpose) : `<span class="muted">${esc(t("nd.nopurpose"))}</span>`)}</div>
+    ${r.note ? item(t("nd.note"), esc(r.note)) : ""}
+    ${item(t("nd.matches"), crit.length ? crit.map((c) => `<span class="nd-chip">${esc(c)}</span>`).join(" ") : "–")}
+    ${item(t("nd.from"), from || `<span class="muted">${esc(t("nd.none"))}</span>`)}
+    ${buy ? item(t("nd.buy"), buy) : ""}
+  </div></td></tr>`;
+}
+
 // ---------------------------------------------------------------- project planning
 const PROJECT_STATUSES = ["idea", "planning", "building", "done", "paused"];
 const statusBadge = (s) => `<span class="badge ps ps-${esc(s)}">${esc(t("ps." + s))}</span>`;
@@ -810,13 +837,13 @@ function guessFile(m) {
 function needToForm(n = {}) {
   const m = n.match || {}, file = guessFile(m);
   return { name: n.name || "", mode: n.id ? "item" : "match", id: n.id || "", qty: n.qty ?? 1, unit: n.unit ? unitLabel(n.unit) : "",
-    optional: !!n.optional, note: n.note || "", where: n.buy?.where || "", price: n.buy?.est_price || "", link: n.buy?.link || "",
+    optional: !!n.optional, note: n.note || "", purpose: n.purpose || "", where: n.buy?.where || "", price: n.buy?.est_price || "", link: n.buy?.link || "",
     file: m.file || "", category: m.category ? catLabel(m.category, file) : "", material: m.material || "",
     color: m.color ? colorLabel(m.color) : "", finish: m.finish ? finishLabel(m.finish) : "", brand: m.brand || "",
     tags: (m.tags || []).join(", "), specs: Object.entries(m.specs || {}).map(([k, v]) => `${specLabel(k)}=${v}`).join(", "), text: m.text || "" };
 }
 function formToNeed(f) {
-  const n = { name: f.name, qty: f.qty, unit: f.unit, optional: f.optional, note: f.note, buy: { where: f.where, est_price: f.price, link: f.link } };
+  const n = { name: f.name, purpose: f.purpose, qty: f.qty, unit: f.unit, optional: f.optional, note: f.note, buy: { where: f.where, est_price: f.price, link: f.link } };
   if (f.mode === "item") n.id = f.id;
   else n.match = { file: f.file, category: f.file === "filament" ? "" : f.category, material: f.material, color: f.color, finish: f.finish, brand: f.brand, text: f.text,
     tags: f.tags.split(",").map((s) => s.trim()).filter(Boolean),
@@ -869,6 +896,7 @@ function renderProjectDrawer() {
         <div class="seg" role="group"><button type="button" data-nmode="match" aria-pressed="${n.mode === "match"}">${esc(t("pe.mode.match"))}</button><button type="button" data-nmode="item" aria-pressed="${n.mode === "item"}">${esc(t("pe.mode.item"))}</button></div>
         <span class="spacer"></span><button type="button" class="icon-btn" data-rmneed="${i}" aria-label="${esc(t("pe.remove"))}" title="${esc(t("pe.remove"))}">${icon("x")}</button></div>
       <div class="row-need">${inp("name", n.name, t("pe.what"), `placeholder="${esc(t("pe.what.ph"))}"`)}${inp("qty", n.qty, t("f.qty"), 'type="number" min="0" step="any"')}${inp("unit", n.unit, t("f.unit"), `list="dl-unit" placeholder="${esc(unitLabel(fil ? "g" : "pcs"))}"`)}</div>
+      <label class="field"><span>${esc(t("pe.purpose"))}</span><textarea data-nf="purpose" rows="2" placeholder="${esc(t("pe.purpose.ph"))}">${esc(n.purpose ?? "")}</textarea></label>
       ${n.mode === "item" ? `<label class="field"><span>${esc(t("pe.item"))}</span>${itemSelect(n.id)}<small>${esc(t("pe.item.hint"))}</small></label>` : matchFields}
       <label class="check"><input type="checkbox" data-nf="optional" ${n.optional ? "checked" : ""}><span>${esc(t("pe.optional"))}</span></label>
       <details ${n.note || n.where || n.price || n.link || n.text ? "open" : ""}><summary>${esc(t("pe.more"))}</summary>
@@ -1091,6 +1119,10 @@ document.addEventListener("click", (e) => {
   if (tEl.closest("#tagsBox")) { $("#tagIn")?.focus(); }
   const cadBtn = tEl.closest("[data-cadlink]");
   if (cadBtn && drawer?.kind === "item") { syncForm(); drawer.form.cad_component = cadBtn.dataset.cadlink; drawer.dirty = true; renderDrawerKeepScroll(); return; }
+  const allBtn = tEl.closest("[data-needall]");
+  if (allBtn) { const p = S.projects.find((x) => x.file === allBtn.dataset.needall); if (p) { const keys = p.rows.map((_, i) => needKey(p, i)); const all = keys.every((k) => ui.needsOpen.has(k)); keys.forEach((k) => (all ? ui.needsOpen.delete(k) : ui.needsOpen.add(k))); renderContent(); } return; }
+  const needRow = tEl.closest("[data-needtoggle]") || (!tEl.closest("a, button, input, select, label") && tEl.closest("tr[data-needrow]"));
+  if (needRow) { const k = needRow.dataset.needtoggle || needRow.dataset.needrow; ui.needsOpen.has(k) ? ui.needsOpen.delete(k) : ui.needsOpen.add(k); renderContent(); return; }
   const doneBtn = tEl.closest("[data-donetoggle]");
   if (doneBtn) { const k = doneBtn.dataset.donetoggle; ui.showDone.has(k) ? ui.showDone.delete(k) : ui.showDone.add(k); renderContent(); return; }
   const altBtn = tEl.closest("[data-alts]");

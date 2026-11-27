@@ -91,7 +91,7 @@ try {
 
     // projects: create (Swedish input), check, rename, build, delete
     r = await call("POST", "/api/projects", { project: { name: "Lampa v1", notes: "test", needs: [
-      { name: "Kort", id: "uno", qty: 1 },
+      { name: "Kort", purpose: "  Styr lampan  ", id: "uno", qty: 1 },
       { name: "Hölje", match: { file: "filament", material: "PETG", color: "svart", tags: [], specs: {} }, qty: 100, unit: "g" },
       { name: "Skruv", match: { category: "skruv", specs: { "gänga": "M3" } }, qty: 4, unit: "st", buy: { where: "", est_price: "" } },
     ] } });
@@ -172,6 +172,16 @@ try {
     assert.ok(fails(JSON.stringify({ todos: { done: [9] } })), "unknown to-do number");
     assert.ok(fails(JSON.stringify({ links: { add: ["javascript:alert(1)"] } })), "http(s) links only");
     assert.ok(fails(JSON.stringify({ status: "someday" })), "known statuses only");
+    // What each part is for: kept through saves, shown by project/check, set by project-update.
+    const pjN = JSON.parse(run("project", "lampa", "--json"));
+    assert.equal(pjN.needs.list[0].purpose, "Styr lampan", "purpose trimmed and kept");
+    assert.equal(pjN.needs.list[1].purpose, null);
+    assert.match(upd(JSON.stringify({ needs: { purpose: [{ ref: "skruv", text: "Fäster foten" }, { ref: 1, text: "" }] } })), /purpose: Skruv -> Fäster foten\npurpose: Kort -> \(none\)/);
+    const pjN2 = JSON.parse(run("project", "lampa", "--json"));
+    assert.deepEqual(pjN2.needs.list.map((x) => x.purpose), [null, null, "Fäster foten"]);
+    assert.equal(JSON.parse(run("check", "lampa-v2", "--json")).rows[2].purpose, "Fäster foten");
+    assert.match(run("check", "lampa-v2"), /for: Fäster foten/);
+    assert.ok(fails(JSON.stringify({ needs: { purpose: [{ ref: 9, text: "x" }] } })), "unknown need number");
 
     // The sync reminder hook: settings.json is merged, never overwritten, and the hook only speaks
     // for sessions in a project's folder that made progress.

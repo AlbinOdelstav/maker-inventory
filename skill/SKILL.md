@@ -17,6 +17,8 @@ Answer in the user's language.
 2. Write them to `{{DATA_DIR}}/projects/<kebab-name>.yaml`
    (format: `{{TOOL_DIR}}/examples/projects/plant-watering.yaml`).
    Prefer `match:` on category/tags/specs over exact `id:` so substitutes are found.
+   Give every need a `purpose`: one or two sentences on exactly what the part does in this build
+   (which function, where it sits, why this variant). It shows when the user expands the row.
 3. Run `node {{TOOL_DIR}}/inv.mjs check <kebab-name>`, then `node {{TOOL_DIR}}/inv.mjs html`.
 4. Answer briefly:
    - what they already have (and which rows rest on `verified: false` or `in_use` items),
