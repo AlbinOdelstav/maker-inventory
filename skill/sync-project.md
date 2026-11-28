@@ -49,8 +49,8 @@ Then go through **every open to-do** and ask:
 
 | The to-do … | Propose |
 |---|---|
-| names an older version than the current one ("v13: …" when v15 exists) | `edit` it to the current version if the step still applies there, or `done`/`remove` if a later version finished or replaced it |
-| is done according to the files (a README says built, a BOM is written, a review passed, parts were chosen) | `done`, quoting the file |
+| names an older version than the current one ("v13: …" when v15 exists) | `remove` it if a later version finished or replaced it (not `done`: the list should never show an old vN, ticked or not), or `edit` it to the current version if the step still applies there |
+| is done according to the files (a README says built, a BOM is written, a review passed, parts were chosen) | `done`, quoting the file; but `remove` instead when it names an old version |
 | was replaced by a different approach (e.g. self-tapping screws dropped for bolts and nuts) | `remove` or `edit`, saying what replaced it |
 | refers to files, quantities or parts the current BOM no longer has | `edit` to the current numbers |
 
@@ -117,12 +117,17 @@ Ask once: apply all, or which numbers to skip. Nothing is written before the use
   node {{TOOL_DIR}}/inv.mjs project-update <project> - <<'EOF'
   {"todos": {"done": [8], "add": ["Skriv ut v13 testceller A + B"], "edit": [{"ref": 9, "text": "…"}], "remove": []},
    "links": {"add": [{"title": "Datasheet IRLZ44N", "url": "https://…"}]},
-   "needs": {"purpose": [{"ref": 7, "text": "Slår av och på en spiralmotor var (12 st), styrs från Megans pinnar; logiknivå så 5 V räcker."}]},
+   "needs": {"purpose": [{"ref": 7, "text": "Slår av och på en spiralmotor var (12 st), styrs från Megans pinnar; logiknivå så 5 V räcker."}],
+             "buy": [{"ref": "akryl", "where": "Clas Ohlson 34-1360", "est_price": "129 kr", "link": "https://…"}],
+             "note": [{"ref": "spiral", "text": "Från Jula-kompostgallret; räkna hur många som räcker"}]},
    "status": "building", "notes_append": "2026-11-27: knappar Omron D2F valda"}
   EOF
   ```
 
   Need refs are the numbers in the Needs list from `project`, or a unique part of the need's name.
+  `buy` sets where to buy a need, an estimated price and a shop link (http/https only; an empty
+  value clears it); use it when the session found the right product page. `note` replaces a
+  need's note.
 
   Add `--dry-run` first if the change list is long. It refuses if the file changed meanwhile:
   then read it again and redo the step.

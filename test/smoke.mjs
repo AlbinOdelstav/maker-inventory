@@ -182,6 +182,14 @@ try {
     assert.equal(JSON.parse(run("check", "lampa-v2", "--json")).rows[2].purpose, "Fäster foten");
     assert.match(run("check", "lampa-v2"), /for: Fäster foten/);
     assert.ok(fails(JSON.stringify({ needs: { purpose: [{ ref: 9, text: "x" }] } })), "unknown need number");
+    // Where to buy and a note, per need.
+    assert.match(upd(JSON.stringify({ needs: { buy: [{ ref: "skruv", where: "Clas Ohlson", link: "https://example.com/m3" }], note: [{ ref: 1, text: "Lånas från lampa v1" }] } })),
+      /buy: Skruv -> Clas Ohlson · https:\/\/example.com\/m3\nnote: Kort -> Lånas från lampa v1/);
+    let chk = JSON.parse(run("check", "lampa-v2", "--json")).rows;
+    assert.deepEqual(chk[2].buy, { where: "Clas Ohlson", link: "https://example.com/m3" }); assert.equal(chk[0].note, "Lånas från lampa v1");
+    upd(JSON.stringify({ needs: { buy: [{ ref: "skruv", where: "", est_price: "20 kr" }] } }));
+    assert.deepEqual(JSON.parse(run("check", "lampa-v2", "--json")).rows[2].buy, { link: "https://example.com/m3", est_price: "20 kr" }, "empty clears, others kept");
+    assert.ok(fails(JSON.stringify({ needs: { buy: [{ ref: "skruv", link: "javascript:x" }] } })), "http(s) buy links only");
 
     // The sync reminder hook: settings.json is merged, never overwritten, and the hook only speaks
     // for sessions in a project's folder that made progress.

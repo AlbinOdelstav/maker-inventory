@@ -108,11 +108,14 @@ node inv.mjs prints-import <project> [<build_report.txt>]   # print list from a 
 { "todos": { "done": [3, "print the base"], "undo": [], "add": ["Order springs"], "remove": [],
              "edit": [{ "ref": 4, "text": "Solder the LEDs" }] },
   "links": { "add": [{ "title": "Datasheet", "url": "https://…" }], "remove": [] },
-  "needs": { "purpose": [{ "ref": 2, "text": "Lights the shade; 12 V strip, cut to 30 cm" }] },
+  "needs": { "purpose": [{ "ref": 2, "text": "Lights the shade; 12 V strip, cut to 30 cm" }],
+             "buy": [{ "ref": 2, "where": "Local shop", "est_price": "8 USD", "link": "https://…" }],
+             "note": [{ "ref": 3, "text": "Reuse the screws from v1" }] },
   "status": "building", "notes_append": "2026-11-27: chose white LEDs" }
 ```
 
 Needs are referred to by their number in `project`'s Needs list, or a unique part of the name.
+In `buy`, the keys you give are set and an empty value clears one; `note` replaces the need's note.
 
 `<project>` is a file in `projects/` (with or without `.yaml`), an example name such as
 `plant-watering`, or a path.

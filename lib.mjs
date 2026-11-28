@@ -671,6 +671,23 @@ export function updateProjectPlan({ file, patch, expect, dryRun = false }) {
     const v = String(text ?? "").trim();
     if ((needs[i].purpose ?? "") !== v) { changes.push(`purpose: ${needs[i].name ?? needs[i].id} -> ${v || "(none)"}`); if (v) needs[i].purpose = v; else delete needs[i].purpose; }
   }
+  // Where to buy a need: needs.buy [{ ref, where, est_price, link }]; given keys are set, "" clears one.
+  for (const { ref, ...b } of p.needs?.buy ?? []) {
+    const i = find(needs.map((n) => ({ name: n.name ?? n.id ?? "" })), ref, "name", "need");
+    const buy = { ...(needs[i].buy ?? {}) };
+    for (const k of ["where", "est_price", "link"]) if (b[k] !== undefined) { const v = String(b[k] ?? "").trim(); if (v) buy[k] = v; else delete buy[k]; }
+    if (buy.link && !/^https?:\/\/\S+$/i.test(buy.link)) throw new InputError(`buy link must start with http:// or https://: ${buy.link}`);
+    if (JSON.stringify(buy) !== JSON.stringify(needs[i].buy ?? {})) {
+      changes.push(`buy: ${needs[i].name ?? needs[i].id} -> ${Object.values(buy).join(" · ") || "(none)"}`);
+      if (Object.keys(buy).length) needs[i].buy = buy; else delete needs[i].buy;
+    }
+  }
+  // A need's note: needs.note [{ ref, text }] replaces it ("" clears it).
+  for (const { ref, text } of p.needs?.note ?? []) {
+    const i = find(needs.map((n) => ({ name: n.name ?? n.id ?? "" })), ref, "name", "need");
+    const v = String(text ?? "").trim();
+    if ((needs[i].note ?? "") !== v) { changes.push(`note: ${needs[i].name ?? needs[i].id} -> ${v || "(none)"}`); if (v) needs[i].note = v; else delete needs[i].note; }
+  }
   let status = proj.status;
   if (p.status !== undefined && p.status !== status) { status = p.status || undefined; changes.push(`status: ${proj.status ?? "none"} -> ${p.status || "none"}`); }
   let folder = proj.folder;
